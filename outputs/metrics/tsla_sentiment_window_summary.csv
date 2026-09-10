@@ -1,0 +1,5 @@
+window,headline_count,unweighted_sentiment,recency_weighted_sentiment,positive_percent,neutral_percent,negative_percent
+Last 30 days,30,0.1238,0.1474,16.6667,76.6667,6.6667
+Last 180 days,178,0.0655,0.1019,15.1685,73.5955,11.236
+Last 365 days,362,0.04,0.1017,16.0221,69.337,14.6409
+All available history,872,0.0238,0.1017,14.4495,69.3807,16.1697
