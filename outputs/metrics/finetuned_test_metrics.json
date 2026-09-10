@@ -1,0 +1,12 @@
+{
+  "model": "distilbert-base-uncased fine-tuned on Financial PhraseBank",
+  "evaluation_split": "held-out test set",
+  "num_examples": 726,
+  "accuracy": 0.854,
+  "macro_f1": 0.8388,
+  "per_class_f1": {
+    "negative": 0.8394,
+    "neutral": 0.8871,
+    "positive": 0.79
+  }
+}

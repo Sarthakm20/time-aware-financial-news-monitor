@@ -1,0 +1,14 @@
+{
+  "model": "distilbert-base-uncased",
+  "training_examples": 3385,
+  "validation_examples": 725,
+  "epochs": 3,
+  "learning_rate": 2e-05,
+  "validation_accuracy": 0.8331,
+  "validation_macro_f1": 0.8106,
+  "per_class_validation_f1": {
+    "negative": 0.8065,
+    "neutral": 0.8772,
+    "positive": 0.7481
+  }
+}

@@ -1,0 +1,107 @@
+sentence,label,label_id,predicted_label,confidence,negative_probability,neutral_probability,positive_probability
+The shopping center will have a prime location right next to the Myllypuro metro station .,positive,2,neutral,0.9715266,0.0045146784,0.9715266,0.023958689
+"As a result , the distribution companies will start to distribute , in addition to their current product offering , Shimano reels , rods and other Shimano fishing tackle products on an exclusive basis .",positive,2,neutral,0.96690005,0.004049163,0.96690005,0.029050807
+"There are companies , which are ready to invest their own funds in this deal such as Rostelecom RTS : RTKM .",positive,2,neutral,0.95952576,0.003937431,0.95952576,0.036536768
+A tinyurl link takes users to a scamming site promising that users can earn thousands of dollars by becoming a Google ( NASDAQ : GOOG ) Cash advertiser .,negative,0,neutral,0.95881194,0.0061977287,0.95881194,0.03499033
+Airbus has 100 firm orders for the A350 and 89 nonbinding commitments .,positive,2,neutral,0.9556548,0.0052665174,0.9556548,0.03907862
+Finnish food industry companies HK Ruokatalo and Atria will form a joint venture company called L+ñnsi-Kalkkuna to produce turkey meat .,positive,2,neutral,0.9553583,0.004931232,0.9553583,0.03971039
+Raisio 's malting capacity was in full use in 2008 .,positive,2,neutral,0.9489725,0.0067189145,0.9489725,0.044308502
+"The circuit 's overall production rate on a weekly basis is now in excess of an average of 40,000 tonnes per day , with volumes in excess of 50,000 tonnes per day being reached on individual days .",positive,2,neutral,0.9489063,0.0063553024,0.9489063,0.044738326
+"We can choose the most efficient , best overall value option for our customers already at the bidding stage .",positive,2,neutral,0.94315785,0.005250359,0.94315785,0.05159181
+A new Kveyt light variety of Suomalainen Pekoni marketed under the Atria brand name is now available to consumers in Finland .,positive,2,neutral,0.9376191,0.0062087304,0.9376191,0.056172155
+The reduction notice applied to 17 people .,negative,0,neutral,0.9371209,0.033555124,0.9371209,0.029323934
+"As part of the reorganisation measures that will take place in spring 2006 , Tamglass Finton will start personnel negotiations that will affect its entire staff of 33 .",negative,0,neutral,0.93509907,0.036953595,0.93509907,0.027947387
+Metso will supply the equipment for two process lines at Northland Resources ' new Kaunisvaara iron ore project in Sweden which exploits Tapuli and Sahavaara iron ore deposits .,positive,2,neutral,0.93368065,0.005285621,0.93368065,0.0610338
+Tekla will implement the renewal in software versions which will be introduced in spring 2011 .,positive,2,neutral,0.92962706,0.006273849,0.92962706,0.06409903
+Scandic Feed will also diversify Tosno 's product portfolio further .,neutral,1,positive,0.92608833,0.013790906,0.06012082,0.92608833
+"The planned facility , estimated to cost around $ 814 million , would be the largest biodiesel plant in the world , and use palm oil certified by the Roundtable on Sustainable Palm Oil ( RSPO ) .",positive,2,neutral,0.9226858,0.005149381,0.9226858,0.07216475
+Earnings per share EPS in the first quarter amounted to a loss of EUR0 .20 .,neutral,1,negative,0.9170282,0.9170282,0.05341111,0.029560601
+"The airline has ordered nine Airbus A350-900 aircraft with deliveries from 2011 , and in doing so becomes the lead airline for the latest variant of Rolls-Royce Trent series engines , called the 1700 .",positive,2,neutral,0.91066265,0.004593999,0.91066265,0.084743366
+"In 2007 , Marimekko has also opened concept stores in Yokohama and Nagoya , central Japan , in Silver Spring in metropolitan Washington DC , USA , in Graz , central Austria , and in Aalborg , northern Denmark .",positive,2,neutral,0.9097202,0.0052615874,0.9097202,0.085018136
+"Finnish Neste Oil that was previously on the list , has fallen off the list completely .",neutral,1,negative,0.9069923,0.9069923,0.06796209,0.025045596
+The result before taxes was a loss of 25.0 million euros .,neutral,1,negative,0.90425324,0.90425324,0.06951938,0.026227415
+Sales fell abroad but increased in Finland .,neutral,1,negative,0.9025716,0.9025716,0.05055665,0.04687169
+"In November , the Finnish government decreased its ownership in the company further to 31.1 percent from 38 percent .",neutral,1,negative,0.89639753,0.89639753,0.07213088,0.031471696
+Operating loss increased to EUR 17mn from a loss of EUR 10.8 mn in 2005 .,negative,0,positive,0.8879416,0.08583579,0.02622267,0.8879416
+Three students from Universiti Sains Malaysia have won a study trip to Helsinki .,neutral,1,positive,0.8854377,0.021692201,0.09287005,0.8854377
+"In future , the company intends to look for know-how from outside the company and to cooperate with other actors in the sector .",positive,2,neutral,0.87911457,0.0050044046,0.87911457,0.11588095
+"Lemminkainen Oyj said that it has signed credit agreements with Nordea Bank STO : NDA , Pohjola Bank HEL : POH1S , Sampo Bank HEL : SAMAS and Svenska Handelsbanken STO : SHB A .",neutral,1,positive,0.87276745,0.0124649,0.1147676,0.87276745
+"` It is a testament to the quality of our LTE solution and our commitment to the Japanese market ' , he added .",neutral,1,positive,0.86705095,0.016546521,0.11640255,0.86705095
+"The highest growth would be in China , while weakening demand would continue in North America , UPM said .",neutral,1,positive,0.86565006,0.0515283,0.08282159,0.86565006
+Those will be partially offset by a 186 mln eur gain on the sale of its Celbi pulp plant in Portugal .,positive,2,neutral,0.8642781,0.037949275,0.8642781,0.09777266
+Her work at NetApp included strategically repositioning the brand in the category and a major global relaunch .,neutral,1,positive,0.8632799,0.014833711,0.121886455,0.8632799
+"Biohit , Inc. , has expanded its mLINE Family of Pipettors with the addition of the NEW 1-10 ml volume range .",neutral,1,positive,0.8602357,0.014343065,0.12542123,0.8602357
+"When open next year , it will be the largest facility in the world to produce diesel fuel from renewable feedstock such as palm oil and animal fat .",positive,2,neutral,0.8556811,0.0055169105,0.8556811,0.1388019
+Loss after taxes amounted to EUR 1.2 mn compared to a loss of 2.6 mn .,positive,2,negative,0.85437685,0.85437685,0.04670359,0.098919526
+Industry Investment is very interested in Glaston 's solar energy projects .,positive,2,neutral,0.8540909,0.005298146,0.8540909,0.14061083
+We are also pleased to welcome the new employees to Tieto . ',neutral,1,positive,0.8506655,0.01930679,0.13002767,0.8506655
+The layoffs were aimed at reaching an annual savings target of 1.5 billion euros $ 2 billion by the end of 2010 .,positive,2,negative,0.84892744,0.84892744,0.08048242,0.07059006
+`` The sale of the oxygen measurement business strengthens our goal to focus on our chosen market segments .,neutral,1,positive,0.8476825,0.009751899,0.14256564,0.8476825
+"`` We will continue to make it easier for users to explore services on their handsets and will work towards bringing Internet to a wider range of devices including mid and low-end devices , '' said Kallasvuo .",neutral,1,positive,0.8427464,0.010514656,0.14673896,0.8427464
+"One of the installed elevators will be a double-deck elevator , which enables more efficient use of the building 's core space .",positive,2,neutral,0.8424894,0.0068293884,0.8424894,0.1506812
+Repeats sees 2008 EBITA above 18 pct of sales .,positive,2,neutral,0.841835,0.03630789,0.841835,0.121857084
+The second-quarter net sales are expected to be on par with the first quarter of 2009 .,neutral,1,positive,0.81097335,0.099580996,0.08944559,0.81097335
+"Its main business area , the Glass Machinery Group of Glaston Technologies , is the global market leader in glass processing machines .",positive,2,neutral,0.80976427,0.006192688,0.80976427,0.18404306
+`` I see my new post as an inspiring challenge .,neutral,1,positive,0.8024913,0.015842587,0.18166609,0.8024913
+The executive group will participate in the adjustments with a fixed-term 5 % salary cut .,positive,2,neutral,0.80133736,0.09381502,0.80133736,0.1048476
+"`` The summer collection 2008 will be joyfully fresh like a vitamin injection , '' said H&M 's head of design Margareta van den Bosch .",neutral,1,positive,0.79209,0.014542584,0.19336736,0.79209
+"After the transaction , Danske Bank becomes an equal player with Nordic bank group Nordea in the Nordic countries .",neutral,1,positive,0.7907178,0.009692036,0.19959019,0.7907178
+We have made long-term investments in developing the system 's implementation model .,neutral,1,positive,0.7865191,0.0093570845,0.20412381,0.7865191
+"The Swedish Maritime Administration has closed the Furusund Channel , which Viking Line normally charters en route to Stockholm .",neutral,1,negative,0.7760371,0.7760371,0.19211191,0.031850986
+I thank Jarmo Ukonaho warmly for his contribution and wish him all the best in the future challenges . '',neutral,1,positive,0.7675545,0.01533909,0.21710636,0.7675545
+"According to Kesko , the company agreed with the city administration about lease of the building in 2006 , its resettlement and construction of a five-star hotel Hilton for 120 rooms .",positive,2,neutral,0.76314116,0.0075910995,0.76314116,0.22926769
+"As a domestic business , Best-In is already close to Finnish dog owners .",positive,2,neutral,0.75691736,0.011295769,0.75691736,0.23178685
+"In the Asia-Pacific region , Visa Wave is available in Malaysia , Taiwan and South Korea and will be expanded to Japan and Southeast Asia this year , Jung added .",positive,2,neutral,0.75015324,0.009100061,0.75015324,0.24074666
+hybrid bond 18 January 2010 - Finnish IT consultancy Trainers ' House Oyj HEL : TRH1V said last Friday it resolved to issue a EUR5m hybrid bond to domestic investors in a bid to strengthen its capital structure .,neutral,1,positive,0.74423015,0.009884636,0.24588521,0.74423015
+YIT says the acquisition is a part of its strategy for expansion in Central and Eastern European markets .,positive,2,neutral,0.7420252,0.0065231086,0.7420252,0.25145173
+"Tekla Structures BIM Building Information Modeling software is being developed according to a long-term plan of improved user experience , process , and functionality .",positive,2,neutral,0.74173516,0.0067909667,0.74173516,0.2514738
+"The repo rate will gradually reach 2 % at the end of 2010 , according to Nordea 's Economic Outlook .",neutral,1,positive,0.7322722,0.013748585,0.2539792,0.7322722
+NetCom expects to complete Turbo 3G deployment in these areas this year .,neutral,1,positive,0.73213834,0.010794478,0.25706723,0.73213834
+Finnish Stockmann Group 's mail order unit Hobby Hall has launched a trial marketing campaign in Russia .,neutral,1,positive,0.7312823,0.0138836065,0.25483406,0.7312823
+"The number of permanent reductions of clerical workers is 22 employees , of which 19 in Finland .",negative,0,neutral,0.72071815,0.2554677,0.72071815,0.02381415
+"The developers of that project predict that once it is completed in April 2009 , Skanssi will attract some 4.5 million visitors annually .",positive,2,neutral,0.71254164,0.0089405645,0.71254164,0.27851787
+"When the negotiations were started , Neste Oil anticipated that 450 people would be affected .",neutral,1,negative,0.7121581,0.7121581,0.24136364,0.046478238
+The parties have also agreed on options that allow UH to extensively implement later on also functionalities of human resources management .,positive,2,neutral,0.7111873,0.008126468,0.7111873,0.28068626
+"EBIT totalled EUR 14.4 mn , compared to a loss of EUR 0.3 mn in the corresponding period in 2009 .",positive,2,negative,0.7051292,0.7051292,0.045831937,0.24903888
+It helps our stakeholders get a better understanding of our operations and the challenges in stainless steel business .,neutral,1,positive,0.7027537,0.01170537,0.2855409,0.7027537
+"Other measures included increasing synergies and economies of scale within the Grimaldi Group and personnel adjustments , divestments and redelivery of excess tonnage .",neutral,1,positive,0.69935864,0.024209103,0.27643234,0.69935864
+"With this , the company will exit the contract manufacturing service segment .",neutral,1,negative,0.69639504,0.69639504,0.26435977,0.039245237
+"Juhani J+ñrvi , Corporate Executive Vice President of Kesko , says the Russian food retail sector is fragmented .",neutral,1,negative,0.69636124,0.69636124,0.26750013,0.036138564
+Diluted earnings per share ( EPS ) stood at EUR 0.25 versus EUR 0.42 .,negative,0,positive,0.6915321,0.06423254,0.24423532,0.6915321
+"The company , which celebrates its fiftieth anniversary next year , has been exporting distinctive detached homes to Central Europe for several decades .",positive,2,neutral,0.6873893,0.008735342,0.6873893,0.30387533
+"A corresponding increase of 85,432.50 euros in Ahlstrom 's share capital has been entered in the Trade Register today .",neutral,1,positive,0.6812059,0.0123230815,0.30647102,0.6812059
+"Finnish Metso will supply new wood handling and bleaching lines , as well as a rebuild of the kraft liner washing line for Klabin 's Tel+¬maco Borba mill in the Brazilian state of Paran+í .",positive,2,neutral,0.68043894,0.009363195,0.68043894,0.3101978
+"Nokia will continue to invest in future development of Qt for the benefit of all users , both Commercial and LGPL .",positive,2,neutral,0.67588466,0.0077383025,0.67588466,0.31637707
+`` The new unit is a major investment in the Finnish media scene .,neutral,1,positive,0.6733,0.0094282655,0.31727174,0.6733
+"The company reported a profit of 800,000 euro ($ 1.2 mln)on the sale of its Varesvuo Partners sub-group and a loss of 400,000 euro $ 623,000 caused by the sale of its program production subsidiary Oy Filmiteollisuus Fine Ab .",neutral,1,negative,0.66928047,0.66928047,0.2760539,0.054665636
+"However , the broker gave an `` outperform '' recommendation on the stock .",positive,2,negative,0.66561884,0.66561884,0.18960482,0.14477636
+The GeoSolutions team further provides an intriguing new technology combining GPS and Mobile-based technologies together with Internet-based social networking .,neutral,1,positive,0.65502024,0.009047812,0.335932,0.65502024
+"Nokia controls more than 50 percent of phone sales in India and Africa , and has a strong prosition on most other emerging markets .",positive,2,neutral,0.6514542,0.010655759,0.6514542,0.33789006
+One of the challenges in the oil production in the North Sea is scale formation that can plug pipelines and halt production .,negative,0,neutral,0.6509453,0.2915167,0.6509453,0.057538018
+"In the spring 2006 , a total of 386,530 Stock Options 2002 B were annulled .",neutral,1,negative,0.6384241,0.6384241,0.3316945,0.0298814
+The current lay-offs are additional to the temporary lay-offs agreed in December 2008 and in May 2009 .,negative,0,neutral,0.6379904,0.33503237,0.6379904,0.026977256
+One attractive factor about the tablets for media companies is that they provide a new way of making money .,positive,2,neutral,0.6277668,0.009867815,0.6277668,0.36236537
+The cooperation with airBaltic is expected to lead to the transfer of Finncomm to the ownership of airBaltic in time .,neutral,1,positive,0.6220515,0.0094244145,0.36852413,0.6220515
+"Additionally , retailers can use the same hardware across all tasks in stores and throughout the warehouse , providing substantial savings on support and infrastructure costs .",neutral,1,positive,0.62011206,0.015608447,0.36427948,0.62011206
+Managing Director Timo Kohtam+ñki of Lemmink+ñinen Infra nevertheless points out the continued need for infrastructure construction in the Baltic markets .,neutral,1,positive,0.6138061,0.091374464,0.29481938,0.6138061
+Finnish automation solutions developer Cencorp Corporation ( OMX Helsinki : CNC1V ) said on Friday ( 27 June ) that it has completed employee negotiations regarding a reorganisation of its operations .,positive,2,neutral,0.6124969,0.02883345,0.6124969,0.35866964
+"MANAVIGATOR-September 7 , 2010-Kemira unveils Indian JV with IVRCL Finnish chemicals group Kemira ( HEL : KRA1V ) on Tuesday announced it has inked a deal to form a joint venture in India with local construction firm IVRCL Infrastructure and Projects Ltd ( BOM :530773 ) .",positive,2,neutral,0.6094205,0.009654379,0.6094205,0.3809251
+Under the terms of this agreement Lextel Group has committed to an opening order of EUR3 .75 m for Benefon mobile units to be co-branded with Capitel for the China market .,neutral,1,positive,0.6002317,0.009472673,0.39029565,0.6002317
+In 2008 Stockmann earned 3.398 million lats in profit on 48.012 million lats in turnover .,neutral,1,positive,0.5997001,0.021709219,0.3785907,0.5997001
+"Stora Enso , a global paper , packaging and wood products company , and Neste Oil , a Finnish company engaged in the refining and marketing of oil , have inaugurated the demonstration plant at Varkaus , Finland for biomass to liquids production utilizing forestry residues .",neutral,1,positive,0.59599656,0.009962804,0.39404064,0.59599656
+"Pretax profit totalled EUR 80.8 mn , compared to a loss of EUR 13.1 mn in the corresponding period in 2009 .",positive,2,negative,0.5909385,0.5909385,0.04295515,0.3661063
+"The Americas represents 25 % of Gemalto 's billing , and Latin America is one of the fastest growing regions for the company .",neutral,1,positive,0.589877,0.01269341,0.39742953,0.589877
+As a consequence of the merger the number of administration personnel at the factories will be reduced by six .,neutral,1,negative,0.5751389,0.5751389,0.38003063,0.044830408
+"While I cant understand what theyre saying , its impressive to watch him hit that ball at those speeds .",neutral,1,positive,0.5749942,0.019745814,0.40525994,0.5749942
+"He announced a `` solutions unit '' to speed co-operation in August , and shifted Simonson from finance chief to low-end phones in October .",neutral,1,positive,0.5722616,0.016034145,0.41170436,0.5722616
+KESKO FOOD LTD PRESS RELEASE 04.01.2006 AT 13.00 Kesko Food Ltd is launching a major TV campaign to recruit as many as one hundred new K-food retailers .,positive,2,neutral,0.5508095,0.00906001,0.5508095,0.44013056
+"Pretax profit totalled EUR 2.0 mn , compared to a loss of EUR 159.2 mn in the fourth quarter of 2008 .",positive,2,negative,0.55012596,0.55012596,0.042787503,0.40708658
+"Jukka Hienonen , the current Finnair CEO , will step down at the end of January 2010 .",neutral,1,negative,0.531043,0.531043,0.43787858,0.031078476
+"It provides customers with industry-leading elevators , escalators and innovative solutions for maintenance and modernization .",positive,2,neutral,0.5300542,0.008246267,0.5300542,0.46169952
+"`` QPR 8 integrated management system is the fastest , easiest and most efficient way for organizations all around the world to take control of their human-centric business processes .",positive,2,neutral,0.52975404,0.009753369,0.52975404,0.46049258
+"Linde acts responsibly towards its shareholders , business partners , employees , society and the environment - in every one of its business areas , regions and locations across the globe .",neutral,1,positive,0.5119646,0.013832796,0.47420263,0.5119646
+Atria chose the DeLight to attract consumers in the 25-45 age group to its Atria Fresh range of microwaveable meals .,neutral,1,positive,0.50884753,0.010507464,0.48064497,0.50884753
+"Metsaliitto , however , narrowed its net loss for the second quarter of 2007 to 5.0 mln euro $ 6.9 mln from 61 mln euro $ 83.7 mln a year ago .",positive,2,negative,0.48077112,0.48077112,0.06253155,0.4566974
+"National Conciliator Juhani Salonius , who met both parties on Wednesday , said they were too far apart in their views for him to propose mediation .",negative,0,neutral,0.4801188,0.46730942,0.4801188,0.052571785
+It is a disappointment to see the plan folded .,negative,0,neutral,0.4646816,0.44912103,0.4646816,0.086197406
+"Amer , which bought Salomon from adidas in October , said the job cuts are aimed at boosting competitiveness .",neutral,1,negative,0.44082168,0.44082168,0.14696632,0.41221198
