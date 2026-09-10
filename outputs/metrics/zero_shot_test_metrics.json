@@ -1,0 +1,12 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "evaluation_split": "held-out test set",
+  "num_examples": 726,
+  "accuracy": 0.5,
+  "macro_f1": 0.5299,
+  "per_class_f1": {
+    "negative": 0.7063,
+    "neutral": 0.325,
+    "positive": 0.5583
+  }
+}
