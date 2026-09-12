@@ -236,3 +236,10 @@ pip install -r requirements.txt
 ```
 
 Run the notebooks in the order listed above. All logic imports modularly from `src/`.
+
+
+---
+
+## Link for briefing about the idea for the project
+
+https://drive.google.com/file/d/1cAkBFAwn92-9G91cO5rYZCoCQIeb6KHW/view?usp=drive_link
