@@ -1,0 +1,13 @@
+{
+  "model": "ProsusAI/finbert",
+  "evaluation_split": "held-out test set",
+  "num_examples": 726,
+  "accuracy": 0.8994,
+  "macro_f1": 0.8938,
+  "per_class_f1": {
+    "negative": 0.8934,
+    "neutral": 0.9141,
+    "positive": 0.8738
+  },
+  "caveat": "Off-the-shelf checkpoint. If it was fine-tuned on Financial PhraseBank (FinBERT was), it has likely seen these test sentences, so this score is optimistic. Compare models on the hand-labelled headlines instead."
+}

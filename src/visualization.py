@@ -141,3 +141,31 @@ def plot_rolling_sentiment_timeline(
 
     return fig
 
+
+
+def plot_reliability_diagram(
+    curves: Dict[str, List[Dict[str, float]]],
+    title: str = "Reliability diagram",
+    save_path: Optional[Path] = None,
+) -> plt.Figure:
+    """Accuracy vs confidence per bin for one or more models (bins from stats.expected_calibration_error)."""
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.plot([0, 1], [0, 1], linestyle="--", color="gray", linewidth=1, label="Perfect calibration")
+    for (name, bins), color in zip(curves.items(), ["#1f77b4", "#d62728", "#2ca02c", "#9467bd"]):
+        conf = [b["confidence"] for b in bins]
+        acc = [b["accuracy"] for b in bins]
+        sizes = [max(15, b["count"] / 2) for b in bins]
+        ax.plot(conf, acc, marker="o", color=color, linewidth=1.5, label=name)
+        ax.scatter(conf, acc, s=sizes, color=color, alpha=0.35)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("Mean predicted confidence")
+    ax.set_ylabel("Accuracy")
+    ax.set_title(title, fontsize=12, fontweight="bold")
+    ax.legend(loc="upper left", fontsize=9)
+    ax.grid(True, linestyle="--", alpha=0.4)
+    plt.tight_layout()
+    if save_path:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(save_path, dpi=200, bbox_inches="tight")
+    return fig
