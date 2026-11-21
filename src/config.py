@@ -11,6 +11,7 @@ PROCESSED_DATA_DIR = DATA_DIR / "processed"
 MODELS_DIR = PROJECT_ROOT / "models"
 DEFAULT_FINETUNED_MODEL_DIR = MODELS_DIR / "distilbert_financial_sentiment"
 WEIGHTED_MODEL_DIR = MODELS_DIR / "distilbert_weighted"
+ADAPTED_MODEL_DIR = MODELS_DIR / "distilbert_headline_adapted"
 
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 METRICS_DIR = OUTPUTS_DIR / "metrics"

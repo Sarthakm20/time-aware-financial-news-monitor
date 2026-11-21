@@ -1,0 +1,21 @@
+{
+  "model": "distilbert-base-uncased (PhraseBank fine-tuned, then headline-adapted)",
+  "class_weighted_loss": false,
+  "training_examples": 636,
+  "validation_examples": 80,
+  "epochs": 3,
+  "best_epoch": 2.0,
+  "learning_rate": 2e-05,
+  "validation_accuracy": 0.7875,
+  "validation_macro_f1": 0.7402,
+  "per_class_validation_f1": {
+    "negative": 0.6316,
+    "neutral": 0.8333,
+    "positive": 0.7556
+  },
+  "base_model": "DistilBERT fine-tuned on PhraseBank (continued fine-tuning)",
+  "train_headlines": 318,
+  "replay_phrasebank_sentences": 318,
+  "validation": "held-out 20% of the training headlines (other companies)",
+  "label_source": "LLM-annotated (see data/labelled/headline_train_labels.csv)"
+}

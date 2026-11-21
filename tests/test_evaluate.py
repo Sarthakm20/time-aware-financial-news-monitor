@@ -75,3 +75,17 @@ def test_committed_metric_files_are_internally_consistent():
     from src.config import NUM_TRAIN_EPOCHS
 
     assert val["epochs"] == NUM_TRAIN_EPOCHS
+
+
+def test_committed_outputs_do_not_leak_local_paths():
+    """Metric files are published; they must not contain absolute paths (usernames, machine layout)."""
+    import re
+
+    from src.config import OUTPUTS_DIR
+
+    # Windows paths (single or JSON-escaped backslashes) and POSIX home directories
+    leak = re.compile(r"[A-Za-z]:[\\/]+Users[\\/]+|/home/[^/\s\"]+/|/Users/[^/\s\"]+/")
+    assert leak.search(r'{"model": "C:\\Users\\someone\\models"}')  # self-check: catches the original bug
+    offenders = [str(path.relative_to(OUTPUTS_DIR)) for path in OUTPUTS_DIR.rglob("*.json")
+                 if leak.search(path.read_text(encoding="utf-8"))]
+    assert offenders == []

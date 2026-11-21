@@ -169,3 +169,27 @@ def plot_reliability_diagram(
         save_path.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(save_path, dpi=200, bbox_inches="tight")
     return fig
+
+
+def plot_car_paths(paths: pd.DataFrame, title: str = "Cumulative abnormal return around headline days",
+                   save_path: Optional[Path] = None) -> plt.Figure:
+    """Mean CAR by event day for positive vs negative sentiment days (from src.event_study.mean_car_paths)."""
+    fig, ax = plt.subplots(figsize=(9, 5))
+    for group, color in [("positive", "#2ca02c"), ("negative", "#d62728")]:
+        g = paths[paths["group"] == group].sort_values("day")
+        if g.empty:
+            continue
+        ax.plot(g["day"], g["mean_car"] * 100, marker="o", color=color,
+                label=f"{group} sentiment days (n={int(g['n_events'].iloc[0]):,})")
+    ax.axvline(0, color="gray", linestyle="--", linewidth=1)
+    ax.axhline(0, color="black", linewidth=0.8)
+    ax.set_xlabel("Trading days relative to headline day (0)")
+    ax.set_ylabel("Mean cumulative abnormal return vs QQQ (%)")
+    ax.set_title(title, fontsize=11, fontweight="bold")
+    ax.legend()
+    ax.grid(True, linestyle="--", alpha=0.4)
+    plt.tight_layout()
+    if save_path:
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(save_path, dpi=200, bbox_inches="tight")
+    return fig

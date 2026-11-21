@@ -61,6 +61,10 @@ class Paths:
         return self.models / config.WEIGHTED_MODEL_DIR.name
 
     @property
+    def adapted_model(self) -> Path:
+        return self.models / config.ADAPTED_MODEL_DIR.name
+
+    @property
     def news_csv(self) -> Path:
         return self.processed / f"fnspid_{self.ticker.lower()}_2019_2023.csv"
 
@@ -308,6 +312,7 @@ TEST_SET_MODELS = {
     "Zero-shot BART-MNLI": "zero_shot_test_predictions.csv",
     "DistilBERT fine-tuned": "finetuned_test_predictions.csv",
     "DistilBERT class-weighted": "weighted_test_predictions.csv",
+    "DistilBERT headline-adapted": "adapted_test_predictions.csv",
 }
 REFERENCE_MODEL = "DistilBERT fine-tuned"
 
@@ -479,7 +484,8 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
     gold["Date"] = pd.to_datetime(gold["Date"], utc=True)
 
     sources = {"DistilBERT fine-tuned": p.scored_csv,
-               "DistilBERT class-weighted": _headline_scored_csv(p, "weighted")}
+               "DistilBERT class-weighted": _headline_scored_csv(p, "weighted"),
+               "DistilBERT headline-adapted": _headline_scored_csv(p, "adapted")}
     sources.update({f"{model_slug(m)} (off-the-shelf)": _headline_scored_csv(p, model_slug(m))
                     for m in args.external_models})
 
@@ -541,6 +547,167 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
     print(table[[c for c in cols if c in table]].to_string(index=False))
 
 
+def stage_adapt(p: Paths, args: argparse.Namespace) -> None:
+    """Continue fine-tuning DistilBERT on annotated headlines from other companies (+ PhraseBank replay)."""
+    from sklearn.model_selection import train_test_split
+
+    from src.evaluate import calculate_metrics
+    from src.inference import score_news_dataframe
+    from src.labelling import labelled_rows, load_gold
+    from src.train import train_distilbert_classifier
+
+    labels_csv = p.data / "labelled" / "headline_train_labels.csv"
+    heads = labelled_rows(load_gold(_require(labels_csv, "label headline_train_labels.csv"))).copy()
+    if (heads["Stock_symbol"].str.upper() == p.ticker.upper()).any():
+        raise ValueError(f"training headlines include the evaluation ticker {p.ticker}")
+    heads = heads.rename(columns={"Article_title": "sentence"})[["sentence", "label"]]
+    train_h, val_h = train_test_split(heads, test_size=0.2, stratify=heads["label"], random_state=args.seed)
+
+    phrasebank = pd.read_csv(_require(p.processed / "train.csv", "prepare"))
+    replay = phrasebank.sample(n=min(len(train_h), len(phrasebank)), random_state=args.seed)[["sentence", "label"]]
+    train_df = pd.concat([train_h, replay], ignore_index=True).sample(frac=1.0, random_state=args.seed)
+    print(f"  training on {len(train_h)} headlines + {len(replay)} PhraseBank sentences; "
+          f"validating on {len(val_h)} headlines")
+
+    metrics = train_distilbert_classifier(
+        train_df, val_h.reset_index(drop=True), output_dir=p.adapted_model,
+        base_model_name=str(_require(p.model, "train")), num_epochs=args.adapt_epochs,
+        seed=args.seed, keep_checkpoints=False, max_length=64,
+    )
+    metrics.update({"model": f"{config.BASE_MODEL_NAME} (PhraseBank fine-tuned, then headline-adapted)",
+                    "base_model": "DistilBERT fine-tuned on PhraseBank (continued fine-tuning)",
+                    "train_headlines": len(train_h), "replay_phrasebank_sentences": len(replay),
+                    "validation": "held-out 20% of the training headlines (other companies)",
+                    "label_source": "LLM-annotated (see data/labelled/headline_train_labels.csv)"})
+    _write_json(metrics, p.metrics / "adapted_validation_metrics.json")
+
+    test_df = pd.read_csv(p.processed / "test.csv")
+    preds = _evaluate_model(p.adapted_model, test_df)
+    _write_csv(preds, p.predictions / "adapted_test_predictions.csv")
+    test_m = calculate_metrics(preds["label"].tolist(), preds["predicted_label"].tolist())
+    _write_json({"model": "DistilBERT headline-adapted", "evaluation_split": "held-out test set",
+                 "num_examples": len(preds), **test_m}, p.metrics / "adapted_test_metrics.json")
+    print(f"  PhraseBank test after adaptation: accuracy={test_m['accuracy']} macro_f1={test_m['macro_f1']}")
+
+    if p.news_csv.exists():
+        news = pd.read_csv(p.news_csv)
+        news["Date"] = pd.to_datetime(news["Date"], utc=True)
+        news = news.sort_values("Date", kind="stable").reset_index(drop=True)
+        _write_csv(score_news_dataframe(news, model_path=p.adapted_model), _headline_scored_csv(p, "adapted"))
+
+
+SCORING_MODELS = {"base": "model", "adapted": "adapted_model"}  # slug -> Paths attribute
+
+
+def all_scored_csv(p: Paths, slug: str) -> Path:
+    return p.predictions / f"nasdaq100_scored_headlines_{slug}.csv"
+
+
+def stage_score_all(p: Paths, args: argparse.Namespace) -> None:
+    """Score every relevant headline for every ticker with each model (resumable per-ticker cache)."""
+    from src.inference import load_fine_tuned_model, predict_sentiment_batch
+    from src.relevance import add_relevance
+
+    news = pd.read_csv(_require(p.processed / "fnspid_all_2019_2023.csv", "fetch-news --ticker ALL"))
+    news = add_relevance(news)
+    news = news[news["relevant"]].reset_index(drop=True)
+    print(f"  {len(news)} relevant headlines across {news['Stock_symbol'].nunique()} tickers")
+
+    for slug, attr in SCORING_MODELS.items():
+        model_dir = getattr(p, attr)
+        if not (model_dir / "model.safetensors").exists():
+            print(f"  skipping {slug}: {model_dir.name} not trained")
+            continue
+        cache = p.data / "cache" / "scores" / slug
+        cache.mkdir(parents=True, exist_ok=True)
+        model, tokenizer, device = load_fine_tuned_model(model_dir)
+        for ticker, group in news.groupby("Stock_symbol"):
+            out = cache / f"{ticker}.csv"
+            if out.exists():
+                continue
+            labels, probs, confs, scores = predict_sentiment_batch(
+                group["Article_title"].astype(str).tolist(), model, tokenizer, device, max_length=64)
+            scored = group[["Date", "Stock_symbol", "Article_title"]].copy()
+            scored["predicted_label"] = labels
+            scored["sentiment_score"] = scores
+            scored["confidence"] = confs
+            scored.to_csv(out, index=False)
+        combined = pd.concat([pd.read_csv(f) for f in sorted(cache.glob("*.csv"))], ignore_index=True)
+        _write_csv(combined, all_scored_csv(p, slug))
+
+
+def stage_prices(p: Paths, args: argparse.Namespace) -> None:
+    """Download adjusted daily prices (Yahoo Finance) for every ticker in the news file, plus QQQ."""
+    from src.market import BENCHMARK, download_prices
+
+    news = pd.read_csv(_require(p.processed / "fnspid_all_2019_2023.csv", "fetch-news --ticker ALL"),
+                       usecols=["Stock_symbol"])
+    tickers = sorted(news["Stock_symbol"].unique())
+    prices = download_prices([*tickers, BENCHMARK], "2018-11-01", "2024-02-15")
+    _write_csv(prices, p.data / "prices" / "daily.csv")
+    missing = sorted(set(tickers) - set(prices["ticker"]))
+    print(f"  prices for {prices['ticker'].nunique() - 1} of {len(tickers)} tickers; missing: {missing}")
+
+
+def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
+    """Headline sentiment vs abnormal returns and volume, all tickers (date-clustered bootstrap)."""
+    from src.event_study import (
+        bucket_returns,
+        build_event_panel,
+        daily_sentiment,
+        information_coefficients,
+        mean_car_paths,
+    )
+    from src.market import BENCHMARK, add_returns, load_prices
+    from src.visualization import plot_car_paths
+
+    returns = add_returns(load_prices(_require(p.data / "prices" / "daily.csv", "prices")))
+    ic_tables, bucket_tables, runs = [], [], []
+    for slug in SCORING_MODELS:
+        path = all_scored_csv(p, slug)
+        if not path.exists():
+            print(f"  skipping {slug}: {path.name} not found (run 'score-all')")
+            continue
+        scored = pd.read_csv(path)
+        for variant, exclude in [("all relevant headlines", False), ("excluding price-move headlines", True)]:
+            panel = build_event_panel(daily_sentiment(scored, exclude_price_moves=exclude), returns)
+            ic = information_coefficients(panel, n_boot=args.n_event_boot, seed=args.seed)
+            buckets = bucket_returns(panel, threshold=args.event_threshold, n_boot=args.n_event_boot, seed=args.seed)
+            for table in (ic, buckets):
+                table.insert(0, "model", slug)
+                table.insert(1, "headlines", variant)
+            ic_tables.append(ic)
+            bucket_tables.append(buckets)
+            runs.append({"model": slug, "headlines": variant, "events": len(panel),
+                         "tickers": int(panel["ticker"].nunique()),
+                         "first_event": str(panel["event_date"].min().date()),
+                         "last_event": str(panel["event_date"].max().date())})
+            print(f"  [{slug} | {variant}] {len(panel)} ticker-days")
+            print(ic[["outcome", "n_events", "value", "ci_low", "ci_high", "p_value"]].to_string(index=False))
+            if exclude:
+                plot_car_paths(mean_car_paths(panel, threshold=args.event_threshold),
+                               title=f"Cumulative abnormal return around headline days ({slug} model, "
+                                     f"price-move headlines excluded)",
+                               save_path=p.figures / f"event_study_car_{slug}.png")
+
+    if not runs:
+        raise SystemExit("No scored headlines - run: python -m src.pipeline score-all")
+    _write_csv(pd.concat(ic_tables, ignore_index=True), p.metrics / "event_study_information_coefficients.csv")
+    _write_csv(pd.concat(bucket_tables, ignore_index=True), p.metrics / "event_study_buckets.csv")
+    _write_json({
+        "design": {
+            "unit": "ticker x trading day with >=1 relevant headline; sentiment = mean P(pos)-P(neg)",
+            "abnormal_return": f"stock return minus {BENCHMARK} return (market-adjusted model)",
+            "abnormal_volume": "log volume minus mean log volume over the previous 20 trading days",
+            "timing": "FNSPID dates have no times; weekend/holiday news is assigned to the next trading day",
+            "inference": f"bootstrap clustered by event date, {args.n_event_boot} resamples",
+            "bucket_threshold": args.event_threshold,
+            "not_advice": "Association study on historical data; not a trading signal or investment advice.",
+        },
+        "runs": runs,
+    }, p.metrics / "event_study_summary.json")
+
+
 def stage_fetch_news(p: Paths, args: argparse.Namespace) -> None:
     """Stream one ticker's 2019-2023 headlines from FNSPID."""
     from src.data_loading import stream_fnspid_slice
@@ -584,6 +751,10 @@ STAGES: Dict[str, Callable[[Paths, argparse.Namespace], None]] = {
     "evaluate": stage_evaluate,
     "train-seeds": stage_train_seeds,
     "benchmark": stage_benchmark,
+    "adapt": stage_adapt,
+    "score-all": stage_score_all,
+    "prices": stage_prices,
+    "event-study": stage_event_study,
     "analyze": stage_analyze,
     "fetch-news": stage_fetch_news,
     "score": stage_score,
@@ -606,6 +777,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help="seeds for train-seeds (42 reuses the reported model)")
     parser.add_argument("--external-models", nargs="+", default=["ProsusAI/finbert"],
                         help="off-the-shelf HF classifiers for 'benchmark'")
+    parser.add_argument("--adapt-epochs", type=int, default=3, help="epochs for 'adapt'")
+    parser.add_argument("--n-event-boot", type=int, default=500, help="bootstrap resamples for event-study")
+    parser.add_argument("--event-threshold", type=float, default=0.3,
+                        help="|daily sentiment| above which a day counts as positive/negative")
     parser.add_argument("--n-boot", type=int, default=2000, help="bootstrap resamples for CIs")
     parser.add_argument("--n-label", type=int, default=300, help="headlines to sample for labelling")
     parser.add_argument("--max-train-samples", type=int, default=None,

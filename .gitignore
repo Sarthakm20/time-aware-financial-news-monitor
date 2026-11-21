@@ -218,3 +218,7 @@ __marimo__/
 .streamlit/secrets.toml
 
 models/
+# Large, regenerable inputs (python -m src.pipeline fetch-news --ticker ALL / prices)
+data/processed/fnspid_all_*.csv
+data/prices/
+data/cache/
