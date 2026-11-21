@@ -122,3 +122,29 @@ def main(argv: Optional[list] = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def sample_training_headlines(
+    news: pd.DataFrame,
+    n: int = 400,
+    exclude_tickers: tuple = (DEFAULT_TICKER,),
+    seed: int = RANDOM_SEED,
+) -> pd.DataFrame:
+    """Relevant headlines from *other* companies, spread evenly over tickers, for headline fine-tuning.
+
+    Excluding the evaluation ticker keeps its annotated headlines a clean, company-disjoint test set.
+    """
+    from src.relevance import add_relevance
+
+    pool = add_relevance(news)
+    pool = pool[pool["relevant"] & ~pool["Stock_symbol"].isin(exclude_tickers)]
+    held_out_titles = set(news.loc[news["Stock_symbol"].isin(exclude_tickers), "Article_title"])
+    pool = pool[~pool["Article_title"].isin(held_out_titles)]  # same headline tagged to a held-out ticker
+    pool = pool.drop_duplicates(subset="Article_title")
+    per_ticker = max(1, -(-n // pool["Stock_symbol"].nunique()))  # ceil
+    shuffled = pool.sample(frac=1.0, random_state=seed)
+    sample = shuffled.groupby("Stock_symbol").head(per_ticker).head(n).reset_index(drop=True)
+    out = sample[["Date", "Stock_symbol", "Article_title"]].copy()
+    out.insert(0, "item_id", range(1, len(out) + 1))
+    out["label"] = ""
+    return out

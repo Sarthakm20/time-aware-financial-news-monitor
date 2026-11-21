@@ -61,6 +61,10 @@ class Paths:
         return self.models / config.WEIGHTED_MODEL_DIR.name
 
     @property
+    def adapted_model(self) -> Path:
+        return self.models / config.ADAPTED_MODEL_DIR.name
+
+    @property
     def news_csv(self) -> Path:
         return self.processed / f"fnspid_{self.ticker.lower()}_2019_2023.csv"
 
@@ -308,6 +312,7 @@ TEST_SET_MODELS = {
     "Zero-shot BART-MNLI": "zero_shot_test_predictions.csv",
     "DistilBERT fine-tuned": "finetuned_test_predictions.csv",
     "DistilBERT class-weighted": "weighted_test_predictions.csv",
+    "DistilBERT headline-adapted": "adapted_test_predictions.csv",
 }
 REFERENCE_MODEL = "DistilBERT fine-tuned"
 
@@ -479,7 +484,8 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
     gold["Date"] = pd.to_datetime(gold["Date"], utc=True)
 
     sources = {"DistilBERT fine-tuned": p.scored_csv,
-               "DistilBERT class-weighted": _headline_scored_csv(p, "weighted")}
+               "DistilBERT class-weighted": _headline_scored_csv(p, "weighted"),
+               "DistilBERT headline-adapted": _headline_scored_csv(p, "adapted")}
     sources.update({f"{model_slug(m)} (off-the-shelf)": _headline_scored_csv(p, model_slug(m))
                     for m in args.external_models})
 
@@ -541,6 +547,55 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
     print(table[[c for c in cols if c in table]].to_string(index=False))
 
 
+def stage_adapt(p: Paths, args: argparse.Namespace) -> None:
+    """Continue fine-tuning DistilBERT on annotated headlines from other companies (+ PhraseBank replay)."""
+    from sklearn.model_selection import train_test_split
+
+    from src.evaluate import calculate_metrics
+    from src.inference import score_news_dataframe
+    from src.labelling import labelled_rows, load_gold
+    from src.train import train_distilbert_classifier
+
+    labels_csv = p.data / "labelled" / "headline_train_labels.csv"
+    heads = labelled_rows(load_gold(_require(labels_csv, "label headline_train_labels.csv"))).copy()
+    if (heads["Stock_symbol"].str.upper() == p.ticker.upper()).any():
+        raise ValueError(f"training headlines include the evaluation ticker {p.ticker}")
+    heads = heads.rename(columns={"Article_title": "sentence"})[["sentence", "label"]]
+    train_h, val_h = train_test_split(heads, test_size=0.2, stratify=heads["label"], random_state=args.seed)
+
+    phrasebank = pd.read_csv(_require(p.processed / "train.csv", "prepare"))
+    replay = phrasebank.sample(n=min(len(train_h), len(phrasebank)), random_state=args.seed)[["sentence", "label"]]
+    train_df = pd.concat([train_h, replay], ignore_index=True).sample(frac=1.0, random_state=args.seed)
+    print(f"  training on {len(train_h)} headlines + {len(replay)} PhraseBank sentences; "
+          f"validating on {len(val_h)} headlines")
+
+    metrics = train_distilbert_classifier(
+        train_df, val_h.reset_index(drop=True), output_dir=p.adapted_model,
+        base_model_name=str(_require(p.model, "train")), num_epochs=args.adapt_epochs,
+        seed=args.seed, keep_checkpoints=False, max_length=64,
+    )
+    metrics.update({"model": f"{config.BASE_MODEL_NAME} (PhraseBank fine-tuned, then headline-adapted)",
+                    "base_model": "DistilBERT fine-tuned on PhraseBank (continued fine-tuning)",
+                    "train_headlines": len(train_h), "replay_phrasebank_sentences": len(replay),
+                    "validation": "held-out 20% of the training headlines (other companies)",
+                    "label_source": "LLM-annotated (see data/labelled/headline_train_labels.csv)"})
+    _write_json(metrics, p.metrics / "adapted_validation_metrics.json")
+
+    test_df = pd.read_csv(p.processed / "test.csv")
+    preds = _evaluate_model(p.adapted_model, test_df)
+    _write_csv(preds, p.predictions / "adapted_test_predictions.csv")
+    test_m = calculate_metrics(preds["label"].tolist(), preds["predicted_label"].tolist())
+    _write_json({"model": "DistilBERT headline-adapted", "evaluation_split": "held-out test set",
+                 "num_examples": len(preds), **test_m}, p.metrics / "adapted_test_metrics.json")
+    print(f"  PhraseBank test after adaptation: accuracy={test_m['accuracy']} macro_f1={test_m['macro_f1']}")
+
+    if p.news_csv.exists():
+        news = pd.read_csv(p.news_csv)
+        news["Date"] = pd.to_datetime(news["Date"], utc=True)
+        news = news.sort_values("Date", kind="stable").reset_index(drop=True)
+        _write_csv(score_news_dataframe(news, model_path=p.adapted_model), _headline_scored_csv(p, "adapted"))
+
+
 def stage_fetch_news(p: Paths, args: argparse.Namespace) -> None:
     """Stream one ticker's 2019-2023 headlines from FNSPID."""
     from src.data_loading import stream_fnspid_slice
@@ -584,6 +639,7 @@ STAGES: Dict[str, Callable[[Paths, argparse.Namespace], None]] = {
     "evaluate": stage_evaluate,
     "train-seeds": stage_train_seeds,
     "benchmark": stage_benchmark,
+    "adapt": stage_adapt,
     "analyze": stage_analyze,
     "fetch-news": stage_fetch_news,
     "score": stage_score,
@@ -606,6 +662,7 @@ def build_parser() -> argparse.ArgumentParser:
                         help="seeds for train-seeds (42 reuses the reported model)")
     parser.add_argument("--external-models", nargs="+", default=["ProsusAI/finbert"],
                         help="off-the-shelf HF classifiers for 'benchmark'")
+    parser.add_argument("--adapt-epochs", type=int, default=3, help="epochs for 'adapt'")
     parser.add_argument("--n-boot", type=int, default=2000, help="bootstrap resamples for CIs")
     parser.add_argument("--n-label", type=int, default=300, help="headlines to sample for labelling")
     parser.add_argument("--max-train-samples", type=int, default=None,

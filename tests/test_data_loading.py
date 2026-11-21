@@ -44,3 +44,15 @@ def test_filter_news_records_respects_max_records_and_empty_input():
     assert empty.empty
     assert list(empty.columns) == ["Date", "Article_title", "Stock_symbol", "Url", "Publisher", "year"]
     assert isinstance(empty, pd.DataFrame)
+
+
+def test_filter_news_records_all_tickers():
+    records = [
+        {"Stock_symbol": "TSLA", "Date": "2020-01-01", "Article_title": "a"},
+        {"Stock_symbol": "aapl", "Date": "2020-01-02", "Article_title": "b"},
+        {"Stock_symbol": "", "Date": "2020-01-03", "Article_title": "no ticker"},
+        {"Stock_symbol": "AAPL", "Date": "2020-01-02", "Article_title": "b"},  # duplicate
+    ]
+    df = filter_news_records(records, ticker="ALL")
+    assert df["Stock_symbol"].tolist() == ["TSLA", "AAPL"]
+    assert len(filter_news_records(records, ticker="*")) == 2

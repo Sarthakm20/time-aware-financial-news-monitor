@@ -1,0 +1,12 @@
+{
+  "model": "DistilBERT headline-adapted",
+  "evaluation_split": "held-out test set",
+  "num_examples": 726,
+  "accuracy": 0.8526,
+  "macro_f1": 0.8472,
+  "per_class_f1": {
+    "negative": 0.8737,
+    "neutral": 0.8802,
+    "positive": 0.7876
+  }
+}

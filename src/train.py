@@ -21,6 +21,7 @@ from src.config import (
     ID_TO_LABEL,
     LABEL_TO_ID,
     LEARNING_RATE,
+    MAX_SEQUENCE_LENGTH,
     NUM_TRAIN_EPOCHS,
     RANDOM_SEED,
     TRAIN_BATCH_SIZE,
@@ -43,6 +44,7 @@ def train_distilbert_classifier(
     seed: int = RANDOM_SEED,
     class_weight_tensor: Optional[torch.Tensor] = None,
     keep_checkpoints: bool = True,
+    max_length: int = MAX_SEQUENCE_LENGTH,
 ) -> Dict[str, Any]:
     """Fine-tune a sequence classifier and save the best (by validation macro F1) model.
 
@@ -67,8 +69,8 @@ def train_distilbert_classifier(
         label2id=LABEL_TO_ID,
     )
 
-    tokenized_train = tokenize_hf_dataset(dataframe_to_hf_dataset(train_df), tokenizer)
-    tokenized_val = tokenize_hf_dataset(dataframe_to_hf_dataset(val_df), tokenizer)
+    tokenized_train = tokenize_hf_dataset(dataframe_to_hf_dataset(train_df), tokenizer, max_length=max_length)
+    tokenized_val = tokenize_hf_dataset(dataframe_to_hf_dataset(val_df), tokenizer, max_length=max_length)
 
     training_args = TrainingArguments(
         output_dir=str(output_dir / "checkpoints"),

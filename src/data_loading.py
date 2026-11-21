@@ -15,6 +15,8 @@ from src.config import (
     PROCESSED_DATA_DIR,
 )
 
+ALL_TICKERS = {"ALL", "*"}
+
 
 def parse_phrasebank_lines(lines: Iterable[str]) -> pd.DataFrame:
     """Parse ``sentence@label`` lines from the PhraseBank text files."""
@@ -60,18 +62,20 @@ def filter_news_records(
     end_date: Optional[str] = DEFAULT_END_DATE,
     max_records: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Keep one ticker's dated, non-empty headlines in ``[start_date, end_date)``.
+    """Keep one ticker's (or, with ``ticker="ALL"``, every ticker's) dated, non-empty headlines
+    in ``[start_date, end_date)``.
 
     Works on any iterable of FNSPID-style dicts, so it can be tested without a download.
     """
     start_ts = pd.Timestamp(start_date, tz="UTC") if start_date else None
     end_ts = pd.Timestamp(end_date, tz="UTC") if end_date else None
     ticker_upper = ticker.strip().upper()
+    keep_all = ticker_upper in ALL_TICKERS
 
     matched_rows: List[dict] = []
     for item in records:
         stock_symbol = str(item.get("Stock_symbol") or "").strip().upper()
-        if stock_symbol != ticker_upper:
+        if not stock_symbol or (not keep_all and stock_symbol != ticker_upper):
             continue
 
         parsed_date = pd.to_datetime(item.get("Date"), errors="coerce", utc=True)
