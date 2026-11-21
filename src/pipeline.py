@@ -243,19 +243,23 @@ def stage_train_seeds(p: Paths, args: argparse.Namespace) -> None:
         _write_csv(pd.DataFrame(rows), runs_csv)  # written after every seed so progress survives interruptions
         print(f"  seed {seed} ({source}): accuracy={m['accuracy']} macro_f1={m['macro_f1']}")
 
-    runs = pd.DataFrame(rows)
+    _write_json(summarize_seed_runs(pd.DataFrame(rows), epochs=args.epochs), p.metrics / "seed_summary.json")
+
+
+def summarize_seed_runs(runs: pd.DataFrame, epochs: int = config.NUM_TRAIN_EPOCHS) -> dict:
+    """Mean / sample std / min / max of every metric column in seed_runs.csv."""
     metric_cols = [c for c in runs.columns if c not in ("seed", "source")]
-    summary = {
+    return {
         "model": f"{config.BASE_MODEL_NAME} fine-tuned on Financial PhraseBank",
         "evaluation_split": "held-out test set",
-        "epochs": args.epochs,
+        "epochs": epochs,
+        "n_seeds": int(len(runs)),
         "seeds": [int(s) for s in runs["seed"]],
         **{col: {"mean": round(float(runs[col].mean()), 4),
                  "std": round(float(runs[col].std(ddof=1)), 4) if len(runs) > 1 else 0.0,
                  "min": round(float(runs[col].min()), 4),
                  "max": round(float(runs[col].max()), 4)} for col in metric_cols},
     }
-    _write_json(summary, p.metrics / "seed_summary.json")
 
 
 def model_slug(model_name: str) -> str:

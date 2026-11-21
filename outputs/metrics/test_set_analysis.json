@@ -219,5 +219,46 @@
       "test_label_agreement": 0.8898,
       "test_cohen_kappa": 0.8082
     }
-  ]
+  ],
+  "seed_variation": {
+    "model": "distilbert-base-uncased fine-tuned on Financial PhraseBank",
+    "evaluation_split": "held-out test set",
+    "epochs": 2,
+    "n_seeds": 3,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "accuracy": {
+      "mean": 0.854,
+      "std": 0.0014,
+      "min": 0.8526,
+      "max": 0.8554
+    },
+    "macro_f1": {
+      "mean": 0.8409,
+      "std": 0.0031,
+      "min": 0.8388,
+      "max": 0.8444
+    },
+    "negative_f1": {
+      "mean": 0.8491,
+      "std": 0.0105,
+      "min": 0.8394,
+      "max": 0.8602
+    },
+    "neutral_f1": {
+      "mean": 0.887,
+      "std": 0.0017,
+      "min": 0.8853,
+      "max": 0.8886
+    },
+    "positive_f1": {
+      "mean": 0.7866,
+      "std": 0.003,
+      "min": 0.7845,
+      "max": 0.79
+    }
+  }
 }

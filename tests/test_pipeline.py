@@ -154,3 +154,12 @@ def test_market_wide_headline_pattern(title, expected):
     from src.config import MARKET_WIDE_HEADLINE_PATTERN
 
     assert bool(re.search(MARKET_WIDE_HEADLINE_PATTERN, title, flags=re.I)) is expected
+
+
+def test_summarize_seed_runs():
+    runs = pd.DataFrame({"seed": [1, 2, 3], "source": ["trained"] * 3,
+                         "accuracy": [0.80, 0.82, 0.84], "macro_f1": [0.7, 0.7, 0.7]})
+    summary = pipeline.summarize_seed_runs(runs, epochs=2)
+    assert summary["n_seeds"] == 3 and summary["seeds"] == [1, 2, 3]
+    assert summary["accuracy"] == {"mean": 0.82, "std": 0.02, "min": 0.8, "max": 0.84}
+    assert summary["macro_f1"]["std"] == 0.0

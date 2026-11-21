@@ -158,8 +158,20 @@ PhraseBank sentences are not what the monitor actually scores. To measure perfor
 
 *Sources: `outputs/metrics/tsla_headline_evaluation.json`, `outputs/metrics/tsla_headline_model_comparison.csv`. Reproduce: `python -m src.pipeline evaluate-headlines`.*
 
-**In progress**
-- **Seed variation:** `python -m src.pipeline train-seeds` retrains DistilBERT with 5 seeds and reports mean ± std (resumable; ~31 min per seed on CPU).
+### 6. Seed Variation: The Result Is Not a Lucky Seed
+
+DistilBERT was retrained from scratch with different random seeds (same data, same 2-epoch recipe) and each run was scored on the same test split:
+
+| Seed | Accuracy | Macro F1 | Negative F1 | Neutral F1 | Positive F1 |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 42 (reported model) | 85.40% | 0.8388 | 0.8394 | 0.8871 | 0.7900 |
+| 43 | 85.54% | 0.8444 | 0.8602 | 0.8886 | 0.7845 |
+| 44 | 85.26% | 0.8394 | 0.8478 | 0.8853 | 0.7852 |
+| **Mean ± std (n = 3)** | **85.40% ± 0.14** | **0.841 ± 0.003** | 0.849 ± 0.010 | 0.887 ± 0.002 | 0.787 ± 0.003 |
+
+Run-to-run variation (±0.003 macro F1) is **an order of magnitude smaller** than the bootstrap CI width (±0.03) and two orders smaller than the PhraseBank → headline drop (−0.34), so none of the conclusions above depend on the seed. The reported model is a typical run, not a favourable one.
+
+*n = 3: two further seeds (45, 46) were planned, but the CPU runs were stopped because the machine ran low on memory. `python -m src.pipeline train-seeds` resumes from the finished seeds and adds them. Sources: `outputs/metrics/seed_runs.csv`, `outputs/metrics/seed_summary.json`.*
 
 ---
 
