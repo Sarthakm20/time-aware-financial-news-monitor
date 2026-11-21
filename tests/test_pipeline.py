@@ -137,3 +137,20 @@ def test_headline_sampling_and_evaluation_end_to_end(tmp_path):
     assert report["labelled"] == 19 and report["skipped"] == 1
     distil = next(m for m in report["models"] if m["model"] == "DistilBERT fine-tuned")
     assert distil["accuracy"] == pytest.approx(18 / 19, abs=1e-4)
+
+
+@pytest.mark.parametrize("title, expected", [
+    ("US STOCKS-Wall St closes up on hopes of abating Fed", True),
+    ("Dow Reverses Losses, Settles Modestly Higher", True),
+    ("Dow, Nasdaq Pivot Higher to Score Triple-Digit Gains", True),
+    ("Pre-Market Most Active for Oct 12, 2022 : TQQQ, SQQQ, TSLA", True),
+    ("Downgrade hits Tesla shares", False),           # word boundary: "Down..." is not "Dow"
+    ("Tesla Shares Slide After Delivery Miss", False),
+    ("Why Wall Street Loves Tesla", False),           # anchored at the start
+])
+def test_market_wide_headline_pattern(title, expected):
+    import re
+
+    from src.config import MARKET_WIDE_HEADLINE_PATTERN
+
+    assert bool(re.search(MARKET_WIDE_HEADLINE_PATTERN, title, flags=re.I)) is expected

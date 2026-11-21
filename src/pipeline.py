@@ -503,6 +503,26 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
         "label_distribution": {k: int(v) for k, v in gold["label"].value_counts().items()},
         "models": table.to_dict(orient="records"),
     }
+    market_wide = gold["Article_title"].str.contains(config.MARKET_WIDE_HEADLINE_PATTERN, case=False, regex=True)
+    if market_wide.any() and (~market_wide).sum() >= 30:
+        keep = (~market_wide).to_numpy()
+        subset = {name: df.iloc[keep] if len(df) == len(gold) else df for name, df in predictions.items()}
+        y_sub = [y for y, k in zip(y_true, keep) if k]
+        subset = {n: d for n, d in subset.items() if not n.startswith("Majority")}
+        subset.update(_majority_baseline(y_sub))
+        sens = _compare_models(y_sub, subset, REFERENCE_MODEL, args.n_boot)
+        report["sensitivity_company_specific_only"] = {
+            "excluded_market_wide_headlines": int(market_wide.sum()),
+            "pattern": config.MARKET_WIDE_HEADLINE_PATTERN,
+            "models": sens.to_dict(orient="records"),
+        }
+        print(f"  company-specific only (n={len(y_sub)}, {int(market_wide.sum())} market-wide excluded):")
+        print(sens[["model", "accuracy", "macro_f1", "macro_f1_ci_low", "macro_f1_ci_high"]].to_string(index=False))
+    if "annotator" in gold_all:
+        report["annotators"] = sorted(set(gold_all["annotator"]) - {""})
+    if "note" in gold_all:
+        notes = gold_all.loc[gold_all["label"] == "skip", "note"].replace("", "unspecified")
+        report["skip_reasons"] = {k: int(v) for k, v in notes.value_counts().items()}
     test_metrics = p.metrics / "finetuned_test_metrics.json"
     if test_metrics.exists() and REFERENCE_MODEL in predictions:
         phrasebank_f1 = json.loads(test_metrics.read_text(encoding="utf-8"))["macro_f1"]

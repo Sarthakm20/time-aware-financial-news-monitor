@@ -16,7 +16,9 @@ happened afterwards.
 | `positive` | Good news for the company: beats, upgrades, record deliveries, new contracts, price-target raises, strong demand | "Tesla Deliveries Top Estimates", "Analyst Raises Tesla Price Target To $300" |
 | `negative` | Bad news for the company: misses, downgrades, recalls, lawsuits, investigations, production problems, price-target cuts | "Tesla Recalls 120,000 Vehicles", "Tesla Shares Slide After Delivery Miss" |
 | `neutral` | Factual or mixed with no clear direction: schedules, previews, lists, market-wide moves, questions, explainers | "Tesla To Report Q2 Earnings On Wednesday", "5 Stocks Moving In Pre-Market Trading" |
-| `skip` | You genuinely can't tell (unreadable, needs context you don't have, about a different company) | |
+| `skip` | You genuinely can't tell (unreadable, needs context you don't have), or the headline is **about a different company / not about the ticker at all** | |
+
+When skipping, optionally fill the `note` column with `off-topic` (not about the company) or `unclear`, so ticker-tagging noise can be measured. Record who labelled each row in the `annotator` column (e.g. your name, or the model used if an LLM annotated it).
 
 ## Rules of thumb
 
