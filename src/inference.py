@@ -1,16 +1,17 @@
 from pathlib import Path
-from typing import List, Dict, Tuple, Optional, Union
-import torch
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pandas as pd
+import torch
 from torch.utils.data import DataLoader, Dataset
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from src.config import (
     DEFAULT_FINETUNED_MODEL_DIR,
+    EVAL_BATCH_SIZE,
     ID_TO_LABEL,
     MAX_SEQUENCE_LENGTH,
-    EVAL_BATCH_SIZE,
 )
 
 
@@ -55,8 +56,17 @@ def predict_sentiment_batch(
     tokenizer: AutoTokenizer,
     device: torch.device,
     batch_size: int = EVAL_BATCH_SIZE,
+    max_length: int = MAX_SEQUENCE_LENGTH,
 ) -> Tuple[List[str], np.ndarray, np.ndarray, np.ndarray]:
-    dataset = HeadlineDataset(texts, tokenizer)
+    """Return labels, class probabilities, confidences and P(pos) - P(neg) scores.
+
+    Probability columns follow ``ID_TO_LABEL`` order: negative, neutral, positive.
+    """
+    if len(texts) == 0:
+        empty = np.empty((0,), dtype=np.float32)
+        return [], np.empty((0, len(ID_TO_LABEL)), dtype=np.float32), empty, empty
+
+    dataset = HeadlineDataset(list(texts), tokenizer, max_length=max_length)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
     all_probs = []

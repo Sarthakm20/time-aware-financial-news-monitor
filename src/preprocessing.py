@@ -1,20 +1,24 @@
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
+
 import pandas as pd
-from datasets import Dataset
 from sklearn.model_selection import train_test_split
-from transformers import PreTrainedTokenizerBase
 
 from src.config import (
-    RANDOM_SEED,
-    TRAIN_SPLIT_RATIO,
-    VAL_SPLIT_RATIO,
-    TEST_SPLIT_RATIO,
     LABEL_TO_ID,
     MAX_SEQUENCE_LENGTH,
+    RANDOM_SEED,
+    TEST_SPLIT_RATIO,
+    TRAIN_SPLIT_RATIO,
+    VAL_SPLIT_RATIO,
 )
+
+if TYPE_CHECKING:  # heavy imports only needed for type hints
+    from datasets import Dataset
+    from transformers import PreTrainedTokenizerBase
 
 
 def clean_phrasebank_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop missing rows, normalise whitespace/label case and drop exact duplicates."""
     cleaned = df.dropna(subset=["sentence", "label"]).copy()
     cleaned["sentence"] = (
         cleaned["sentence"]
@@ -30,11 +34,30 @@ def clean_phrasebank_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 def add_label_ids(
     df: pd.DataFrame,
     label_col: str = "label",
-    id_col: str = "label_id"
+    id_col: str = "label_id",
 ) -> pd.DataFrame:
     df_copy = df.copy()
     df_copy[id_col] = df_copy[label_col].map(LABEL_TO_ID)
     return df_copy
+
+
+def prepare_model_dataframe(
+    df: pd.DataFrame,
+    text_col: str = "sentence",
+    label_col: str = "label",
+) -> pd.DataFrame:
+    """Make a cleaned PhraseBank frame model-ready.
+
+    Removes every sentence that appears with conflicting labels, keeps the first
+    copy of remaining repeated sentences (so no text can leak across splits) and
+    adds integer ``label_id``s.
+    """
+    label_counts = df.groupby(text_col)[label_col].nunique()
+    conflicting = label_counts[label_counts > 1].index
+
+    model_df = df[~df[text_col].isin(conflicting)]
+    model_df = model_df.drop_duplicates(subset=text_col, keep="first").reset_index(drop=True)
+    return add_label_ids(model_df, label_col=label_col)
 
 
 def split_data_stratified(
@@ -46,7 +69,8 @@ def split_data_stratified(
     seed: int = RANDOM_SEED,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     total = train_ratio + val_ratio + test_ratio
-    assert abs(total - 1.0) < 1e-5, f"Split ratios must sum to 1.0, got {total}"
+    if abs(total - 1.0) > 1e-5:
+        raise ValueError(f"Split ratios must sum to 1.0, got {total}")
 
     train_df, temp_df = train_test_split(
         df,
@@ -73,19 +97,21 @@ def split_data_stratified(
 def dataframe_to_hf_dataset(
     df: pd.DataFrame,
     text_col: str = "sentence",
-    label_col: str = "label_id"
-) -> Dataset:
+    label_col: str = "label_id",
+) -> "Dataset":
+    from datasets import Dataset
+
     subset = df[[text_col, label_col]].rename(columns={label_col: "labels"})
     return Dataset.from_pandas(subset, preserve_index=False)
 
 
 def tokenize_hf_dataset(
-    dataset: Dataset,
-    tokenizer: PreTrainedTokenizerBase,
+    dataset: "Dataset",
+    tokenizer: "PreTrainedTokenizerBase",
     text_col: str = "sentence",
     max_length: int = MAX_SEQUENCE_LENGTH,
     batched: bool = True,
-) -> Dataset:
+) -> "Dataset":
     def _tokenize_fn(batch):
         return tokenizer(
             batch[text_col],
@@ -94,4 +120,3 @@ def tokenize_hf_dataset(
         )
 
     return dataset.map(_tokenize_fn, batched=batched)
-

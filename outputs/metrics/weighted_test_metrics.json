@@ -1,0 +1,12 @@
+{
+  "model": "distilbert-base-uncased fine-tuned with class-weighted loss",
+  "evaluation_split": "held-out test set",
+  "num_examples": 726,
+  "accuracy": 0.8044,
+  "macro_f1": 0.8105,
+  "per_class_f1": {
+    "negative": 0.8601,
+    "neutral": 0.8282,
+    "positive": 0.7432
+  }
+}

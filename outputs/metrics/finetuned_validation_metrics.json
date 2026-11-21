@@ -2,7 +2,7 @@
   "model": "distilbert-base-uncased",
   "training_examples": 3385,
   "validation_examples": 725,
-  "epochs": 3,
+  "epochs": 2,
   "learning_rate": 2e-05,
   "validation_accuracy": 0.8331,
   "validation_macro_f1": 0.8106,

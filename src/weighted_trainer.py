@@ -1,20 +1,29 @@
+import numpy as np
+import pandas as pd
 import torch
+from sklearn.utils.class_weight import compute_class_weight
 from torch.nn import CrossEntropyLoss
 from transformers import Trainer
-from sklearn.utils.class_weight import compute_class_weight
-import numpy as np
+
+from src.config import LABELS
 
 
-def get_class_weights(df, label_col="label"):
-    labels = df[label_col].values
-    classes = np.array(["negative", "neutral", "positive"])
-    weights = compute_class_weight(class_weight="balanced", classes=classes, y=labels)
+def get_class_weights(df: pd.DataFrame, label_col: str = "label") -> torch.Tensor:
+    """Balanced class weights (n_samples / (n_classes * class_count)) in LABELS order."""
+    weights = compute_class_weight(
+        class_weight="balanced",
+        classes=np.array(LABELS),
+        y=df[label_col].values,
+    )
     return torch.tensor(weights, dtype=torch.float)
 
 
 class WeightedLossTrainer(Trainer):
+    """Hugging Face Trainer whose loss is class-weighted cross-entropy."""
 
-    def __init__(self, *args, class_weight_tensor=None, **kwargs):
+    def __init__(self, *args, class_weight_tensor: torch.Tensor = None, **kwargs):
+        if class_weight_tensor is None:
+            raise ValueError("WeightedLossTrainer needs class_weight_tensor")
         super().__init__(*args, **kwargs)
         self.class_weight_tensor = class_weight_tensor
 
