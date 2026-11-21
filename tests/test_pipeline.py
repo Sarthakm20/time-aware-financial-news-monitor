@@ -163,3 +163,41 @@ def test_summarize_seed_runs():
     assert summary["n_seeds"] == 3 and summary["seeds"] == [1, 2, 3]
     assert summary["accuracy"] == {"mean": 0.82, "std": 0.02, "min": 0.8, "max": 0.84}
     assert summary["macro_f1"]["std"] == 0.0
+
+
+def test_event_study_stage_end_to_end(tmp_path):
+    import json
+
+    import numpy as np
+
+    rng = np.random.default_rng(0)
+    dates = pd.bdate_range("2021-01-04", periods=260)
+    rows, scored = [], []
+    qqq = 100 * np.cumprod(1 + rng.normal(0, 0.01, len(dates)))
+    rows += [{"Date": d, "ticker": "QQQ", "close": c, "volume": 1e6} for d, c in zip(dates, qqq)]
+    for t in ["AAA", "BBB", "CCC"]:
+        sentiment = rng.uniform(-1, 1, len(dates))
+        ar = 0.02 * np.roll(sentiment, 1) + rng.normal(0, 0.005, len(dates))  # day+1 reacts to sentiment
+        stock_ret = np.r_[0, np.diff(qqq) / qqq[:-1]] + ar
+        close = 100 * np.cumprod(1 + stock_ret)
+        rows += [{"Date": d, "ticker": t, "close": c, "volume": 1e6} for d, c in zip(dates, close)]
+        scored += [{"Date": f"{d.date()} 00:00:00+00:00", "Stock_symbol": t, "Article_title": f"{t} news {i}",
+                    "sentiment_score": s} for i, (d, s) in enumerate(zip(dates, sentiment))]
+    (tmp_path / "data" / "prices").mkdir(parents=True)
+    pd.DataFrame(rows).to_csv(tmp_path / "data" / "prices" / "daily.csv", index=False)
+    (tmp_path / "outputs" / "predictions").mkdir(parents=True)
+    pd.DataFrame(scored).to_csv(tmp_path / "outputs" / "predictions" / "nasdaq100_scored_headlines_base.csv",
+                                index=False)
+
+    args = ["event-study", "--n-event-boot", "100", "--data-dir", str(tmp_path / "data"),
+            "--outputs-dir", str(tmp_path / "outputs"), "--models-dir", str(tmp_path / "m")]
+    assert pipeline.main(args) == 0
+
+    ic = pd.read_csv(tmp_path / "outputs" / "metrics" / "event_study_information_coefficients.csv")
+    p1 = ic[(ic.outcome == "ar_p1") & (ic.headlines == "all relevant headlines")].iloc[0]
+    assert p1["value"] > 0.5 and p1["ci_low"] > 0              # planted day+1 effect is found
+    m1 = ic[(ic.outcome == "ar_m1") & (ic.headlines == "all relevant headlines")].iloc[0]
+    assert m1["ci_low"] < 0 < m1["ci_high"]                    # no effect before the news
+    summary = json.loads((tmp_path / "outputs" / "metrics" / "event_study_summary.json").read_text())
+    assert summary["runs"][0]["tickers"] == 3
+    assert (tmp_path / "outputs" / "figures" / "event_study_car_base.png").exists()

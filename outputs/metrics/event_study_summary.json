@@ -1,0 +1,45 @@
+{
+  "design": {
+    "unit": "ticker x trading day with >=1 relevant headline; sentiment = mean P(pos)-P(neg)",
+    "abnormal_return": "stock return minus QQQ return (market-adjusted model)",
+    "abnormal_volume": "log volume minus mean log volume over the previous 20 trading days",
+    "timing": "FNSPID dates have no times; weekend/holiday news is assigned to the next trading day",
+    "inference": "bootstrap clustered by event date, 500 resamples",
+    "bucket_threshold": 0.3,
+    "not_advice": "Association study on historical data; not a trading signal or investment advice."
+  },
+  "runs": [
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "events": 24807,
+      "tickers": 85,
+      "first_event": "2019-01-02",
+      "last_event": "2024-01-02"
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "events": 22999,
+      "tickers": 85,
+      "first_event": "2019-01-02",
+      "last_event": "2024-01-02"
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "events": 24807,
+      "tickers": 85,
+      "first_event": "2019-01-02",
+      "last_event": "2024-01-02"
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "events": 22999,
+      "tickers": 85,
+      "first_event": "2019-01-02",
+      "last_event": "2024-01-02"
+    }
+  ]
+}

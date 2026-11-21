@@ -31,10 +31,12 @@
 
 3. **What did you find?**  
    *The fine‑tuned DistilBERT achieves **85.40% accuracy** (Macro F1 **0.8388**) versus **50.00% accuracy** (Macro F1 **0.5299**) for the zero‑shot BART‑MNLI baseline. In a case study on Tesla headlines (2019–2023), headlines in the most recent 30 days average **+0.1238**, against **+0.0238** across all five years (both unweighted).*  
-   *The most important finding: on 230 annotated real TSLA headlines, macro F1 falls from **0.839 to 0.496**, and no model beats always predicting "neutral" on accuracy. Sentence-level benchmark scores substantially overstate performance on headlines (see Results §5).*
+   *The most important finding: on 230 annotated real TSLA headlines, macro F1 falls from **0.839 to 0.496**, and no model beats always predicting "neutral" on accuracy. Sentence-level benchmark scores substantially overstate performance on headlines (see Results §5).*  
+   *Across **24,807 company-days for 85 Nasdaq-100 stocks**, positive-headline days outperform negative ones by **+1.2% on the same day**, but the gap is already **+0.5% the day before**, and there is no significant drift over the following week. The headlines largely *describe* price moves rather than predict them (Results §7).*
 
 4. **What would you do next with more time?**  
-   * • Fine-tune on in-domain *headline* data (the headline evaluation shows this is the biggest gap), and add a company-relevance filter. 22% of FNSPID's TSLA-tagged headlines are not about Tesla.  
+   * • Collect *timestamped* news (FNSPID has dates only), to separate after-hours news from genuine next-day predictability.  
+   * • Have a human verify the LLM-annotated headline labels, and grow the headline training set.  
    * • Expand the training data beyond the ~4.8k‑sentence Financial PhraseBank.  
    * • Explore larger transformer architectures and longer fine‑tuning schedules to test diminishing returns.  
    * • Integrate a real‑time news API and implement an online monitoring dashboard with alert thresholds.  
@@ -173,6 +175,51 @@ Run-to-run variation (±0.003 macro F1) is **an order of magnitude smaller** tha
 
 *n = 3: two further seeds (45, 46) were planned, but the CPU runs were stopped because the machine ran low on memory. `python -m src.pipeline train-seeds` resumes from the finished seeds and adds them. Sources: `outputs/metrics/seed_runs.csv`, `outputs/metrics/seed_summary.json`.*
 
+### 7. Does Headline Sentiment Line Up With the Stock? Nasdaq-100 Event Study
+
+**Scale-up.** All 61,818 FNSPID headlines for **89 Nasdaq-100 tickers (2019–2023)** were filtered for relevance (below), leaving 27,146 headlines. These were scored by both the PhraseBank model and a **headline-adapted** model, then matched to adjusted daily prices for 85 tickers (Yahoo Finance; ANSS, EA, SGEN and WBA have since been delisted).
+
+**Step 1: Relevance filter.** FNSPID's ticker tags are noisy: only **43.9%** of all headlines mention the tagged company. `src/relevance.py` is a transparent keyword rule (symbol, company name, products, executives; ambiguous symbols such as `ON` and `FAST` only as `$ON` / `(ON)`; "Musk" only when the headline is not about Twitter/X or SpaceX). On the 300 annotated TSLA headlines it reaches **precision 1.00** and keeps **93 of 97** headlines with a clear sentiment. The 67 annotated headlines it drops are almost all neutral listicles ("5 Stocks to Buy…").
+
+**Step 2: Headline-adapted model.** The PhraseBank model was fine-tuned further on 318 annotated headlines from **87 other companies** (never Tesla), mixed with 318 PhraseBank sentences so it would not forget what it had learned:
+
+| Model | PhraseBank test | Other-company headlines (val, N=80) | Tesla headlines (unseen company, N=230) |
+|:---|:---:|:---:|:---:|
+| DistilBERT (PhraseBank only) | 0.839 | – | 0.496 |
+| **DistilBERT headline-adapted** | **0.847** (no forgetting) | **0.740** | 0.523 (+0.03, *p* = 0.73) |
+
+It learns the headline style it was trained on, but the gain does not transfer significantly to Tesla's unusual coverage. Section 7's price data gives an independent check, below.
+
+**Step 3: Event study design.**
+- **Unit:** one (stock, trading day) with ≥1 relevant headline, scored as the mean P(pos) − P(neg).
+- **Returns:** market-adjusted (stock − QQQ).
+- **Volume:** log volume vs its prior 20-day average.
+- **Uncertainty:** 95% CIs from a bootstrap **clustered by date** (500 resamples).
+- **Timing:** FNSPID has **dates without times**, so day −1 and day 0 can't separate "news caused the move" from "news reported the move". Days +1…+5 are the test of whether sentiment carries information about what comes next.
+
+Results for the adapted model, excluding headlines that merely report price moves ("Why X Stock Popped Today", 7% of days). Spread = positive-sentiment days minus negative-sentiment days, with |sentiment| > 0.3:
+
+| Window | Positive days (n=6,037) | Negative days (n=2,517) | **Spread** [95% CI] | Rank IC (all days) |
+|:---|:---:|:---:|:---:|:---:|
+| Day −1 (before) | +0.28% | −0.18% | **+0.46%** [+0.34, +0.58] | 0.061* |
+| Day 0 | +0.26% | −0.58% | **+0.83%** [+0.71, +0.96] | 0.079* |
+| Day +1 | +0.09% | −0.12% | +0.21% [+0.07, +0.33] | 0.011 (n.s.) |
+| Days +1…+5 | +0.21% | +0.06% | +0.15% [−0.10, +0.41] (n.s.) | 0.008 (n.s.) |
+| Abnormal volume, day 0 | +4.3% | **+8.1%** | −3.8 pts [−5.8, −1.7] | −0.043* |
+
+<sub>*95% CI excludes zero. Rank IC = Spearman correlation between day sentiment and the outcome across all 22,999 company-days. Full tables for both models and both headline sets: `outputs/metrics/event_study_information_coefficients.csv` and `event_study_buckets.csv`.</sub>
+
+![Cumulative abnormal return around headline days](outputs/figures/event_study_car_adapted.png)
+
+**Findings**
+1. **Sentiment tracks price moves strongly, but mostly after the fact.** Positive-news days beat negative-news days by about 0.8–1.2% on the day, yet a large part of the gap (+0.46%) is already there the *day before*. The figure shows most of the move happening up to day 0. Headlines largely report and explain moves.
+2. **No evidence of a lasting signal.** The five-day cumulative spread is not significant for either model or headline set (*p* = 0.06–0.83), consistent with prices absorbing the news quickly. The +0.2% day-+1 spread is small. Without timestamps it may simply be news published after the close, and with ~40 tests it should be treated as suggestive only.
+3. **Bad news draws more trading.** Negative-sentiment days have about twice the abnormal volume of positive ones (+8–14% vs +4–6% above normal), significantly in every specification. Attention is asymmetric.
+4. **External validation of the headline adaptation.** Without using any labels, the adapted model's scores line up better with same-day market reactions than the PhraseBank model's: rank IC **0.133 vs 0.081** on all headlines, 0.079 vs 0.049 excluding price-move headlines. The model adapted to headlines measures market-relevant tone better, even though the small Tesla label set could not show a significant difference.
+5. **Price-move headlines inflate the association.** Excluding them cuts the same-day IC by about 40% (0.133 → 0.079). Any news-sentiment study should control for headlines that merely narrate returns.
+
+> This is an association study on historical data. It does not show that sentiment can be traded profitably, and it is not investment advice.
+
 ---
 
 ## Project Architecture
@@ -296,6 +343,9 @@ The pipeline is split into two logical phases that reflect the complete research
 * `src/pipeline.py`: Command-line entry point that runs the stages below end to end.
 * `src/stats.py`: Bootstrap CIs, paired bootstrap and McNemar tests, expected calibration error, temperature scaling.
 * `src/labelling.py`: Blind headline sampling and a resumable keyboard labelling tool.
+* `src/relevance.py` + `src/company_names.py`: Is a ticker-tagged headline actually about that company?
+* `src/market.py`: Price download (yfinance), market-adjusted returns, abnormal volume.
+* `src/event_study.py`: Event panel, date-clustered bootstrap, rank ICs, positive/negative spreads, CAR paths.
 
 ---
 
@@ -331,6 +381,10 @@ Each stage reads the previous stage's files from disk, so stages can be run on t
 | `train-seeds` | Retrain DistilBERT per `--seeds` and report mean ± std (resumable) | `seed_runs.csv`, `seed_summary.json` |
 | `sample-headlines` | Blind, year-stratified sample of headlines to hand-label (never overwrites) | `data/labelled/<ticker>_headlines_gold.csv` |
 | `evaluate-headlines` | Score every model against the hand labels | `<ticker>_headline_evaluation.json`, comparison CSV |
+| `adapt` | Continue fine-tuning on annotated headlines from other companies (+ PhraseBank replay) | `models/distilbert_headline_adapted`, `adapted_*` |
+| `score-all` | Relevance-filter and score every ticker's headlines with each model (resumable) | `nasdaq100_scored_headlines_<model>.csv` |
+| `prices` | Adjusted daily prices for all tickers + QQQ (Yahoo Finance; cached, not committed) | `data/prices/daily.csv` |
+| `event-study` | Sentiment vs abnormal returns/volume, date-clustered bootstrap | `event_study_*.csv/json`, CAR figures |
 
 ```bash
 python -m src.pipeline prepare                    # seconds; reproduces the committed splits exactly
@@ -343,6 +397,10 @@ python -m src.pipeline all                        # every automatic stage, in or
 python -m src.pipeline sample-headlines
 python -m src.labelling                           # n / u / p / s, b = undo, q = quit; resumable
 python -m src.pipeline evaluate-headlines
+
+# Nasdaq-100 market study (~45 min on CPU, mostly scoring)
+python -m src.pipeline fetch-news --ticker ALL
+python -m src.pipeline adapt score-all prices event-study
 ```
 
 `--data-dir`, `--outputs-dir` and `--models-dir` redirect inputs and outputs, which is useful for checking a re-run against the committed results without overwriting them.
