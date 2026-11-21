@@ -1,0 +1,30 @@
+[project]
+name = "time-aware-financial-news-monitor"
+version = "0.2.0"
+description = "Fine-tuned financial sentiment classifier with time-aware news monitoring"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+ignore = [
+    "B006", "B008",  # config constants as defaults are intentional
+    "B905",          # zip() over fixed-length label lists
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]  # readable inline fixtures
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

@@ -29,6 +29,8 @@ Financial PhraseBank exhibits natural class imbalance:
 * `positive`: 28.16% (1,363 statements)
 * `negative`: 12.48% (604 statements)
 
+Before splitting, sentences that appear with **conflicting labels** are removed entirely and remaining repeated sentences are kept once, so no text can appear in more than one split (4,840 → 4,836 statements; `src.preprocessing.prepare_model_dataframe`).
+
 To preserve identical class distributions across all subsets, a two-stage stratified split was performed with fixed seed `42`:
 * **Train Split (70%):** 3,385 statements
 * **Validation Split (15%):** 725 statements
@@ -43,7 +45,8 @@ The held-out test split remained completely untouched during model selection and
 ### Zero-Shot Baseline
 * **Model:** `facebook/bart-large-mnli` (407M parameters).
 * **Framework:** Multi-class zero-shot Natural Language Inference (NLI).
-* **Hypothesis Template:** `"This text expresses {} financial sentiment."`
+* **Hypothesis Template:** `"The financial sentiment of this statement is {}."` (`ZERO_SHOT_HYPOTHESIS_TEMPLATE` in `src/config.py`). This gives the reported 50.00% accuracy / 0.5299 macro F1.
+* **Prompt sensitivity:** the alternative template `"This text expresses {} financial sentiment."` scored 45.18% / 0.4747 on the same split. It is reported here for transparency and not used elsewhere.
 
 ### Fine-Tuned Model
 * **Base Architecture:** `distilbert-base-uncased` (66M parameters).
@@ -52,9 +55,14 @@ The held-out test split remained completely untouched during model selection and
   * Optimizer: AdamW
   * Learning Rate: $2 \times 10^{-5}$
   * Batch Size: 16
-  * Epochs: 3
+  * Epochs: 2 (212 optimizer steps per epoch; the saved model is checkpoint 424)
   * Weight Decay: 0.01
+  * Max sequence length: 256 tokens
   * Best Model Selection: Monitored on validation macro F1 at every epoch.
+
+### Class-Weighted Variant
+* Same setup with balanced cross-entropy weights `[2.67, 0.56, 1.18]` (negative, neutral, positive) via `src.weighted_trainer.WeightedLossTrainer`.
+* The reported run was scheduled for 3 epochs. Its best validation checkpoint (and the saved model) is epoch 2, so both models saw the same number of epochs, but their learning-rate schedules differ slightly. Re-running with the current config (2 epochs) gives an exactly matched comparison.
 
 ---
 
@@ -96,4 +104,9 @@ For any lookback window $W$:
 
 $$\bar{S}_{\text{weighted}} = \frac{\sum_{i \in W} w_i \cdot S_i}{\sum_{i \in W} w_i}$$
 
-Comparing $\bar{S}_{\text{weighted}}$ against the simple arithmetic mean $\bar{S}_{\text{unweighted}}$ reveals whether recent coverage is diverging from the company's long-term historical average.
+Comparing $\bar{S}_{\text{weighted}}$ against the simple arithmetic mean $\bar{S}_{\text{unweighted}}$ within a window shows whether the most recent part of that window differs from the window as a whole.
+
+**Caveat:** because $w < 0.016$ beyond 180 days, $\bar{S}_{\text{weighted}}$ is almost the same for every window longer than ~6 months. To compare recent coverage with the long-term average, compare **unweighted** means across windows (e.g. last 30 days vs all history).
+
+### Rolling Timeline
+The 30-day rolling series (`src.aggregation.compute_rolling_sentiment`) is headline-weighted: for each calendar day it divides the sum of scores in the trailing 30 days by the number of headlines in that span. Days without news are kept in the calendar but do not dilute the average.

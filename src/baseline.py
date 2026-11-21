@@ -1,16 +1,12 @@
-from typing import List, Dict, Any, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
 import pandas as pd
 import torch
 from tqdm.auto import tqdm
 from transformers import pipeline
 
-from src.config import (
-    BASELINE_MODEL_NAME,
-    LABELS,
-    METRICS_DIR,
-    PREDICTIONS_DIR,
-)
-from src.evaluate import calculate_metrics, export_error_analysis
+from src.config import BASELINE_MODEL_NAME, LABELS, ZERO_SHOT_HYPOTHESIS_TEMPLATE
+from src.evaluate import calculate_metrics
 
 
 def run_zero_shot_baseline(
@@ -19,10 +15,11 @@ def run_zero_shot_baseline(
     label_col: str = "label",
     model_name: str = BASELINE_MODEL_NAME,
     candidate_labels: List[str] = LABELS,
-    hypothesis_template: str = "This text expresses {} financial sentiment.",
+    hypothesis_template: str = ZERO_SHOT_HYPOTHESIS_TEMPLATE,
     batch_size: int = 16,
     device: Optional[int] = None,
 ) -> Tuple[Dict[str, Any], pd.DataFrame]:
+    """Score ``test_df`` with an NLI zero-shot classifier (no domain training)."""
     if device is None:
         device = 0 if torch.cuda.is_available() else -1
 
@@ -33,46 +30,37 @@ def run_zero_shot_baseline(
     )
 
     sentences = test_df[text_col].tolist()
-    all_predictions: List[str] = []
-    all_confidences: List[float] = []
-    neg_probs: List[float] = []
-    neu_probs: List[float] = []
-    pos_probs: List[float] = []
-
-    for i in tqdm(range(0, len(sentences), batch_size), desc="Zero-shot Evaluation"):
-        batch = sentences[i : i + batch_size]
-        outputs = classifier(
-            batch,
+    outputs: List[Dict[str, Any]] = []
+    for i in tqdm(range(0, len(sentences), batch_size), desc="Zero-shot evaluation"):
+        batch_outputs = classifier(
+            sentences[i : i + batch_size],
             candidate_labels=candidate_labels,
             hypothesis_template=hypothesis_template,
             multi_label=False,
+            batch_size=batch_size,
         )
-
-        for out in outputs:
-            top_label = out["labels"][0]
-            top_score = out["scores"][0]
-            all_predictions.append(top_label)
-            all_confidences.append(top_score)
-
-            score_map = dict(zip(out["labels"], out["scores"]))
-            neg_probs.append(score_map.get("negative", 0.0))
-            neu_probs.append(score_map.get("neutral", 0.0))
-            pos_probs.append(score_map.get("positive", 0.0))
+        if isinstance(batch_outputs, dict):  # a single sentence returns a dict
+            batch_outputs = [batch_outputs]
+        outputs.extend(batch_outputs)
 
     results_df = test_df.copy()
-    results_df["predicted_label"] = all_predictions
-    results_df["confidence"] = all_confidences
-    results_df["negative_probability"] = neg_probs
-    results_df["neutral_probability"] = neu_probs
-    results_df["positive_probability"] = pos_probs
+    results_df["predicted_label"] = [out["labels"][0] for out in outputs]
+    results_df["confidence"] = [out["scores"][0] for out in outputs]
+    for label in candidate_labels:
+        results_df[f"{label}_probability"] = [
+            dict(zip(out["labels"], out["scores"])).get(label, 0.0) for out in outputs
+        ]
 
-    y_true = results_df[label_col].tolist()
-    y_pred = results_df["predicted_label"].tolist()
-
-    metrics = calculate_metrics(y_true, y_pred, labels=candidate_labels)
-    metrics["model"] = model_name
-    metrics["evaluation_split"] = "held-out test set"
-    metrics["num_examples"] = len(results_df)
+    metrics = calculate_metrics(
+        results_df[label_col].tolist(),
+        results_df["predicted_label"].tolist(),
+        labels=candidate_labels,
+    )
+    metrics.update({
+        "model": model_name,
+        "hypothesis_template": hypothesis_template,
+        "evaluation_split": "held-out test set",
+        "num_examples": len(results_df),
+    })
 
     return metrics, results_df
-

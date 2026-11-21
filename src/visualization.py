@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 from src.config import LABELS
 
@@ -113,7 +114,11 @@ def plot_rolling_sentiment_timeline(
     )
     ax1.axhline(0, color="gray", linestyle="--", linewidth=1, alpha=0.7)
     ax1.set_ylabel("Sentiment Score [-1, +1]", fontsize=11)
-    ax1.set_title(f"{ticker} Historical Financial News Monitor ({window_days}-Day Rolling)", fontsize=13, fontweight="bold")
+    ax1.set_title(
+        f"{ticker} Historical Financial News Monitor ({window_days}-Day Rolling)",
+        fontsize=13,
+        fontweight="bold",
+    )
     ax1.legend(loc="upper left")
     ax1.grid(True, linestyle="--", alpha=0.4)
 

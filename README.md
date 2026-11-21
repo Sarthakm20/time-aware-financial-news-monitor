@@ -1,5 +1,7 @@
 # Time-Aware Financial News Sentiment Monitor for Company Research
 
+[![CI](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml)
+
 > **Important Limitation & Disclaimer:**  
 > This project is a research and news‑triage prototype. Its sentiment scores summarize the tone of dated financial‑news coverage; they **do not predict stock returns, provide trading signals, or constitute investment advice**. FNSPID’s historical dataset ends in 2023, demonstrating the system’s historical research workflow. Monitoring live headlines requires an external real‑time financial news API.
 
@@ -21,15 +23,17 @@
    .\.venv\Scripts\Activate.ps1
    pip install -r requirements.txt
 
-   # Run the notebook pipeline in the Notebook Execution Order given below
+   # Reproduce the pipeline from the command line (see "Command-Line Pipeline" below)
+   python -m src.pipeline --list
+   python -m src.pipeline prepare evaluate score monitor
    ```
-   *All notebooks import functions from `src/`; no manual path edits are required as long as you run them from the project root.*
+   *The notebooks (execution order below) document the research step by step; `python -m src.pipeline` is the reproducible path built on the same `src/` code.*
 
 3. **What did you find?**  
-   *The fine‑tuned DistilBERT achieves **85.40% accuracy** (Macro F1 **0.8388**) versus the zero‑shot BART‑MNLI baseline at **45.18%–50.00% accuracy** (Macro F1 **0.4747–0.5299**). In a case‑study on Tesla headlines (2019–2023), the most recent 30‑day window shows a net‑positive weighted sentiment of **+0.1474**, whereas the five‑year historical average is near neutral (**+0.0238**).*
+   *The fine‑tuned DistilBERT achieves **85.40% accuracy** (Macro F1 **0.8388**) versus **50.00% accuracy** (Macro F1 **0.5299**) for the zero‑shot BART‑MNLI baseline. In a case study on Tesla headlines (2019–2023), headlines in the most recent 30 days average **+0.1238**, against **+0.0238** across all five years (both unweighted).*
 
 4. **What would you do next with more time?**  
-   * • Expand the training data beyond the 6k‑sentence Financial PhraseBank.  
+   * • Expand the training data beyond the ~4.8k‑sentence Financial PhraseBank.  
    * • Explore larger transformer architectures and longer fine‑tuning schedules to test diminishing returns.  
    * • Integrate a real‑time news API and implement an online monitoring dashboard with alert thresholds.  
    * • Conduct a thorough statistical analysis to assess significance of sentiment shifts across windows.
@@ -38,16 +42,20 @@
 
 ## Honest Accounting of Fine‑Tuning Gains
 
-The zero‑shot BART‑MNLI baseline performed at **~45–50% accuracy**, essentially random for a three‑class financial problem (struggling severely with neutral text at 0.18–0.32 F1). Fine‑tuning DistilBERT on domain‑specific data lifted accuracy by **35–40 percentage points** and macro F1 by **over 0.30**, a massive, practically meaningful improvement. 
+The zero‑shot BART‑MNLI baseline reached **50.00% accuracy**, below the 59% a model would get by always predicting the majority class (neutral), and it struggled most with neutral text (0.325 F1). Fine‑tuning DistilBERT on domain‑specific data lifted accuracy by **35.4 percentage points** and macro F1 by **0.31**, a large, practically meaningful improvement.
 
-The compute cost was modest: a single 3‑epoch training run on a standard setup took ~5–7 minutes (or ~50 minutes on CPU). Therefore, the fine‑tuning effort was **well‑justified**; the performance uplift far exceeds the tiny compute investment.
+The zero‑shot baseline is also **prompt‑sensitive**: an alternative hypothesis template (`"This text expresses {} financial sentiment."`) scored only 45.18% accuracy / 0.4747 macro F1 on the same split. All reported baseline numbers use the single template in `src/config.py` (`ZERO_SHOT_HYPOTHESIS_TEMPLATE`).
+
+The compute cost was modest: a single 2‑epoch training run took ~5–7 minutes on a GPU (or ~50 minutes on CPU). Therefore, the fine‑tuning effort was **well‑justified**; the performance uplift far exceeds the tiny compute investment.
 
 ---
 
 ## Reported Failures, Trade-offs & Limitations
 
-- **Dataset size:** The Financial PhraseBank contains only ~6k sentences, limiting the model’s exposure to diverse financial language. This small size is a known constraint and explains why further gains may plateau without additional data.
-- **Class Imbalance & Weighted-Loss Trade-Off:** The PhraseBank is heavily skewed toward neutral sentences (59% neutral, 28% positive, 13% negative). On implementing balanced class-weighted loss training to address this skew, the **minority negative class F1 improved from 0.8394 to 0.8601**. However, this came at the expense of overall accuracy (dropping from 85.40% to 80.44%) and neutral F1 (dropping from 0.8871 to 0.8282). This honest negative trade-off confirmed that standard unweighted fine-tuning remains the superior all-round model for general news triage.
+- **Dataset size:** The Financial PhraseBank (50% agreement) contains only ~4.8k sentences, limiting the model’s exposure to diverse financial language. This small size is a known constraint and explains why further gains may plateau without additional data.
+- **Class Imbalance & Weighted-Loss Trade-Off:** The PhraseBank is heavily skewed toward neutral sentences (59% neutral, 28% positive, 13% negative). On implementing balanced class-weighted loss training to address this skew, the **minority negative class F1 improved from 0.8394 to 0.8601**. However, this came at the expense of overall accuracy (dropping from 85.40% to 80.44%) and neutral F1 (dropping from 0.8871 to 0.8282). This honest negative trade-off confirmed that standard unweighted fine-tuning remains the superior all-round model for general news triage. (Both saved models are epoch-2 checkpoints; the weighted run's learning-rate schedule spanned 3 epochs, so the comparison is close to, but not exactly, like-for-like. The config now trains both for 2 epochs.)
+- **Domain shift (not yet measured):** The classifier is trained on PhraseBank sentences but applied to news *headlines*. Its accuracy on headlines has not been measured against hand labels yet.
+- **Recency weighting on long windows:** With a 30-day half-life, headlines older than ~6 months carry under 2% weight, so the recency-weighted score is nearly identical for the 180-day, 365-day and all-history windows (~+0.10). Compare unweighted means across windows, and weighted vs unweighted within a window.
 - **Data Freshness:** The open-source FNSPID dataset covers historical news up through late 2023. Consequently, all demonstrated timelines reflect historical research rather than live real-time feeds.
 - **Scope & Non-Advisory:** It is meant to summarize tone in financial reporting. It does not predict stock prices or asset returns, and does not constitute trading signals or investment advice.
 - **Input Scope:** This implementation classifies article headlines rather than full article bodies.
@@ -60,13 +68,13 @@ The compute cost was modest: a single 3‑epoch training run on a standard setup
 
 | Metric | Zero‑Shot Baseline  | Fine‑Tuned DistilBERT | Improvement |
 |:---|:---:|:---:|:---:|
-| **Accuracy** | 45.18% – 50.00% | **85.40%** | **+35.40% to +40.22%** |
-| **Macro F1** | 0.4747 – 0.5299 | **0.8388** | **+0.3089 to +0.3641** |
-| **Negative F1** | 0.6980 | **0.8394** | +0.1414 |
-| **Neutral F1** | 0.1845 | **0.8871** | **+0.7026** |
-| **Positive F1** | 0.5417 | **0.7900** | +0.2483 |
+| **Accuracy** | 50.00% | **85.40%** | **+35.40 pp** |
+| **Macro F1** | 0.5299 | **0.8388** | **+0.3089** |
+| **Negative F1** | 0.7063 | **0.8394** | +0.1331 |
+| **Neutral F1** | 0.3250 | **0.8871** | **+0.5621** |
+| **Positive F1** | 0.5583 | **0.7900** | +0.2317 |
 
-*General-domain NLI zero-shot models heavily fail on financial neutrality (down to 0.1845 F1). Fine-tuning DistilBERT on domain text pushes neutral F1 to 0.8871.*
+*Sources: `outputs/metrics/zero_shot_test_metrics.json` and `outputs/metrics/finetuned_test_metrics.json`. The general-domain NLI zero-shot model fails most on financial neutrality (0.325 F1); fine-tuning DistilBERT on domain text pushes neutral F1 to 0.8871.*
 
 ### 2. Per-Class F1 & Class-Weighted Loss Experiment
 
@@ -74,11 +82,13 @@ To investigate the label imbalance (neutral dominance vs sparse negatives), we t
 
 | Class | Zero-Shot F1 | Fine-Tuned F1 (Standard) | Weighted-Loss Fine-Tuned F1 |
 |:---|:---:|:---:|:---:|
-| **Negative** | 0.6980 | 0.8394 | **0.8601** |
-| **Neutral** | 0.1845 | **0.8871** | 0.8282 |
-| **Positive** | 0.5417 | **0.7900** | 0.7432 |
-| **Overall Accuracy** | 0.4518 | **0.8540** | 0.8044 |
-| **Macro F1** | 0.4747 | **0.8388** | 0.8105 |
+| **Negative** | 0.7063 | 0.8394 | **0.8601** |
+| **Neutral** | 0.3250 | **0.8871** | 0.8282 |
+| **Positive** | 0.5583 | **0.7900** | 0.7432 |
+| **Overall Accuracy** | 0.5000 | **0.8540** | 0.8044 |
+| **Macro F1** | 0.5299 | **0.8388** | 0.8105 |
+
+*Weighted-loss numbers: `outputs/metrics/weighted_test_metrics.json`.*
 
 * Visualizations generated in `outputs/figures/`:
   - `per_class_f1_baseline_vs_finetuned.png`
@@ -97,6 +107,8 @@ $$\text{Recency Weight} = 2^{-\Delta t / 30} \quad (\text{Half-life} = 30 \text{
 | **Last 180 days** | 178 | +0.0655 | +0.1019 | 15.17% | 73.60% | 11.24% |
 | **Last 365 days** | 362 | +0.0400 | +0.1017 | 16.02% | 69.34% | 14.64% |
 | **All History (5 Years)** | 872 | +0.0238 | +0.1017 | 14.45% | 69.38% | 16.17% |
+
+*Source: `outputs/metrics/tsla_sentiment_window_summary.csv`. Read the unweighted column across windows: coverage in the latest 30 days (+0.12) is more positive than the five-year average (+0.02). The weighted column converges to ~+0.10 for long windows because of the 30-day half-life (see Limitations).*
 
 ---
 
@@ -218,6 +230,7 @@ The pipeline is split into two logical phases that reflect the complete research
 * `src/visualization.py`: Confusion matrices and rolling sentiment timeline plots.
 * `src/per_class_evaluation.py`: Per-class F1, precision, and recall calculators with visualization.
 * `src/weighted_trainer.py`: Custom `WeightedLossTrainer` implementing balanced class-weight CrossEntropyLoss.
+* `src/pipeline.py`: Command-line entry point that runs the stages below end to end.
 
 ---
 
@@ -231,12 +244,43 @@ cd time-aware-financial-news-monitor
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies (requirements-dev.txt adds pytest + ruff)
+pip install -r requirements-dev.txt
 ```
 
-Run the notebooks in the order listed above. All logic imports modularly from `src/`.
+### Command-Line Pipeline
 
+Each stage reads the previous stage's files from disk, so stages can be run on their own:
+
+| Stage | What it does | Writes |
+|:---|:---|:---|
+| `prepare` | Clean PhraseBank, drop conflicting/duplicate sentences, stratified 70/15/15 split | `data/processed/*.csv` |
+| `baseline` | Zero-shot BART-MNLI on the test split (**hours on CPU**) | `zero_shot_test_*` |
+| `train` | Fine-tune DistilBERT (`--weighted` also trains the class-weighted model) | `models/`, validation metrics |
+| `evaluate` | Score the untouched test split | `finetuned_test_*`, `weighted_test_metrics.json`, figures |
+| `fetch-news` | Stream one ticker's 2019–2023 headlines from FNSPID | `data/processed/fnspid_<ticker>_2019_2023.csv` |
+| `score` | Label each headline and compute P(pos) − P(neg) | `outputs/predictions/<ticker>_scored_headlines_*.csv` |
+| `monitor` | Window summaries and 30-day rolling timeline | `<ticker>_sentiment_window_summary.csv`, figure |
+
+```bash
+python -m src.pipeline prepare                    # seconds; reproduces the committed splits exactly
+python -m src.pipeline train --weighted evaluate  # retrain both models and re-score the test split
+python -m src.pipeline fetch-news score monitor --ticker AAPL
+python -m src.pipeline all                        # everything, in order
+```
+
+`--data-dir`, `--outputs-dir` and `--models-dir` redirect inputs and outputs, which is useful for checking a re-run against the committed results without overwriting them.
+
+### Tests & Linting
+
+```bash
+pytest              # unit tests + regression checks against the committed data and metrics
+ruff check src tests
+```
+
+The test suite checks the split logic, recency weights, window and rolling aggregations, metric calculations, inference post-processing (with a fake model, so no download is needed) and the pipeline CLI. It also verifies that `src/` reproduces the committed train/validation/test splits exactly and the published TSLA rolling-sentiment value. GitHub Actions runs lint and tests on every push.
+
+The models (`models/`, ~4 GB with checkpoints) are not committed; run `python -m src.pipeline train` to recreate them.
 
 ---
 

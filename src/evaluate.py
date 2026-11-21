@@ -1,12 +1,13 @@
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 import json
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
-    f1_score,
     confusion_matrix,
+    f1_score,
 )
 
 from src.config import LABELS
@@ -19,8 +20,8 @@ def calculate_metrics(
     round_digits: int = 4,
 ) -> Dict[str, Any]:
     acc = accuracy_score(y_true, y_pred)
-    macro_f1 = f1_score(y_true, y_pred, average="macro", labels=labels)
-    per_class = f1_score(y_true, y_pred, average=None, labels=labels)
+    macro_f1 = f1_score(y_true, y_pred, average="macro", labels=labels, zero_division=0)
+    per_class = f1_score(y_true, y_pred, average=None, labels=labels, zero_division=0)
 
     per_class_dict = {
         label: round(float(score), round_digits)
@@ -36,9 +37,13 @@ def calculate_metrics(
 
 def compute_trainer_metrics(eval_pred) -> Dict[str, float]:
     logits, labels = eval_pred
+    if isinstance(logits, tuple):
+        logits = logits[0]
     preds = np.argmax(logits, axis=-1)
     acc = accuracy_score(labels, preds)
-    macro = f1_score(labels, preds, average="macro")
+    macro = f1_score(
+        labels, preds, average="macro", labels=list(range(len(LABELS))), zero_division=0
+    )
     return {
         "accuracy": round(float(acc), 4),
         "macro_f1": round(float(macro), 4),
