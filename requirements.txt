@@ -13,3 +13,7 @@ yfinance>=0.2.40
 accelerate>=0.26.0
 jupyterlab>=4.0.0
 ipywidgets>=8.0.0
+# API and dashboard
+fastapi>=0.110.0
+uvicorn>=0.29.0
+streamlit>=1.40.0

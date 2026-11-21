@@ -26,6 +26,10 @@
    # Reproduce the pipeline from the command line (see "Command-Line Pipeline" below)
    python -m src.pipeline --list
    python -m src.pipeline prepare evaluate score monitor
+
+   # Interactive dashboard and REST API (see "Apps & Deployment" below)
+   streamlit run app/streamlit_app.py
+   uvicorn src.api:app --port 8000          # docs at http://localhost:8000/docs
    ```
    *The notebooks (execution order below) document the research step by step; `python -m src.pipeline` is the reproducible path built on the same `src/` code.*
 
@@ -409,12 +413,83 @@ python -m src.pipeline adapt score-all prices event-study
 
 ```bash
 pytest              # unit tests + regression checks against the committed data and metrics
-ruff check src tests
+ruff check src tests app deploy
 ```
 
-The test suite checks the split logic, recency weights, window and rolling aggregations, metric calculations, inference post-processing (with a fake model, so no download is needed) and the pipeline CLI. It also verifies that `src/` reproduces the committed train/validation/test splits exactly and the published TSLA rolling-sentiment value. GitHub Actions runs lint and tests on every push.
+The test suite covers:
+- the split logic, recency weights, window and rolling aggregations, and metric calculations;
+- inference post-processing (with a fake model, so no download is needed) and the pipeline CLI;
+- the API endpoints, a headless run of the dashboard, and the Space bundle.
+
+It also verifies that `src/` reproduces the committed train/validation/test splits exactly and the published TSLA rolling-sentiment value. GitHub Actions runs lint and tests on every push, then **builds the API Docker image and smoke-tests the running container**.
 
 The models (`models/`, ~4 GB with checkpoints) are not committed; run `python -m src.pipeline train` to recreate them.
+
+---
+
+## Apps & Deployment
+
+### Dashboard (`app/streamlit_app.py`)
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+| Tab | What it shows |
+|:---|:---|
+| 🔎 Company explorer | Any of 89 Nasdaq-100 tickers: rolling sentiment timeline (optional live share-price overlay), lookback windows with recency weighting, and the latest / most positive / most negative headlines |
+| 📈 Market reaction | Event-study results: the CAR chart and positive-minus-negative spreads with CIs |
+| 🧪 Model quality | PhraseBank vs real-headline performance, seed variation and calibration, with the domain-shift caveat always visible |
+| ✍️ Score a headline | Live scoring with the headline-adapted model, plus the relevance check |
+
+Everything except live scoring runs from the committed `outputs/` files.
+
+### REST API (`src/api.py`)
+
+```bash
+uvicorn src.api:app --port 8000      # interactive docs: http://localhost:8000/docs
+```
+
+| Endpoint | Purpose |
+|:---|:---|
+| `GET /health` | Status and model name |
+| `POST /predict` | Score up to 256 headlines: `{"headlines": [...], "ticker": "TSLA"}` → label, class probabilities, P(pos)−P(neg), relevance |
+| `GET /tickers` | Tickers with precomputed scores |
+| `GET /tickers/{symbol}/sentiment` | Lookback-window summary and latest headlines |
+| `GET /tickers/{symbol}/timeline` | Weekly rolling-sentiment series |
+
+```bash
+curl -X POST localhost:8000/predict -H "Content-Type: application/json" \
+     -d '{"headlines": ["Tesla Deliveries Top Estimates"], "ticker": "TSLA"}'
+```
+
+### Docker
+
+```bash
+docker build -t news-sentiment-api .
+# model from the Hugging Face Hub ...
+docker run -p 8000:8000 -e SENTIMENT_MODEL=<hf-user>/distilbert-financial-headline-sentiment news-sentiment-api
+# ... or a locally trained one
+docker run -p 8000:8000 -v "$PWD/models/distilbert_headline_adapted:/app/models/distilbert_headline_adapted:ro" news-sentiment-api
+```
+
+The image runs as a non-root user and has a health check. Model weights are not baked in, so the image stays small and CI can build it.
+
+### Publishing (Hugging Face Hub + Spaces)
+
+`deploy/publish.py` does a **dry run by default**: it lists exactly what would be uploaded, and nothing leaves the machine without `--push`.
+
+```bash
+huggingface-cli login                                         # write token
+python deploy/publish.py model --user <hf-user> --push        # model + model card (deploy/model_card.md)
+python deploy/publish.py space --user <hf-user> --push        # dashboard as a Docker Space
+```
+
+## Licensing
+
+- **Code:** MIT (`LICENSE`).
+- **Fine-tuned model weights:** **CC BY-NC-SA 3.0**, inherited from the Financial PhraseBank training data. That means non-commercial use only, with attribution and share-alike.
+- **News data:** from FNSPID; prices are fetched from Yahoo Finance at run time and not redistributed.
 
 ---
 
