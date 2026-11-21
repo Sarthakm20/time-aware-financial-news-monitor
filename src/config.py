@@ -71,6 +71,13 @@ MONITORING_WINDOWS: Dict[str, Optional[int]] = {
     "All available history": None,
 }
 
+# Headlines describing the whole market rather than the company (used for a sensitivity check:
+# annotators label these neutral for the company, while models score their general tone).
+MARKET_WIDE_HEADLINE_PATTERN: str = (
+    r"^(?:US STOCKS|Wall St|Dow\b|Stock Market (?:News|Today)|Pre-Market Most Active|Stock Investors|"
+    r"Fed Surprise|Position Scrimmage)"
+)
+
 FNSPID_HF_DATASET: str = "benstaf/FNSPID-nasdaq-100-post2019-1newsperrow"
 PHRASEBANK_HF_REPO: str = "takala/financial_phrasebank"
 PHRASEBANK_ZIP_FILE: str = "data/FinancialPhraseBank-v1.0.zip"

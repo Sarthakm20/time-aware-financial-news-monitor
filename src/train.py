@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -41,10 +42,12 @@ def train_distilbert_classifier(
     weight_decay: float = WEIGHT_DECAY,
     seed: int = RANDOM_SEED,
     class_weight_tensor: Optional[torch.Tensor] = None,
+    keep_checkpoints: bool = True,
 ) -> Dict[str, Any]:
     """Fine-tune a sequence classifier and save the best (by validation macro F1) model.
 
     Pass ``class_weight_tensor`` to train with class-weighted cross-entropy.
+    ``keep_checkpoints=False`` deletes the per-epoch checkpoints (~800 MB each) after saving.
     Returns validation metrics; writing them to disk is left to the caller.
     """
     set_seed(seed)
@@ -105,6 +108,8 @@ def train_distilbert_classifier(
 
     trainer.save_model(str(output_dir))
     tokenizer.save_pretrained(str(output_dir))
+    if not keep_checkpoints:
+        shutil.rmtree(output_dir / "checkpoints", ignore_errors=True)
 
     val_logits = trainer.predict(tokenized_val).predictions
     if isinstance(val_logits, tuple):

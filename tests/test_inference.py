@@ -52,3 +52,25 @@ def test_predict_sentiment_batch_empty_input():
     assert labels == []
     assert probs.shape == (0, 3)
     assert len(scores) == 0
+
+
+def test_third_party_label_order_is_mapped_to_project_order():
+    """FinBERT outputs (positive, negative, neutral); columns must come back as (negative, neutral, positive)."""
+    from src.inference import label_column_order
+
+    finbert_like = FakeModel([[5.0, 0.0, 0.0]])  # index 0 = positive for this model
+    finbert_like.config = SimpleNamespace(id2label={0: "positive", 1: "negative", 2: "Neutral"})
+    assert label_column_order(finbert_like) == [1, 2, 0]
+
+    labels, probs, _, scores = predict_sentiment_batch(["a"], finbert_like, FakeTokenizer(), torch.device("cpu"))
+    assert labels == ["positive"]
+    assert probs[0].argmax() == 2
+    assert scores[0] > 0.9
+
+
+def test_unknown_label_names_fall_back_to_identity():
+    from src.inference import label_column_order
+
+    model = FakeModel([[0.0, 0.0, 0.0]])
+    model.config = SimpleNamespace(id2label={0: "LABEL_0", 1: "LABEL_1", 2: "LABEL_2"})
+    assert label_column_order(model) == [0, 1, 2]

@@ -1,0 +1,4 @@
+seed,source,accuracy,macro_f1,negative_f1,neutral_f1,positive_f1
+42,existing reported model,0.854,0.8388,0.8394,0.8871,0.79
+43,trained,0.8554,0.8444,0.8602,0.8886,0.7845
+44,trained,0.8526,0.8394,0.8478,0.8853,0.7852

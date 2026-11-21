@@ -1,0 +1,5 @@
+model,n,accuracy,accuracy_ci_low,accuracy_ci_high,macro_f1,macro_f1_ci_low,macro_f1_ci_high,ece,reference_minus_model_macro_f1,diff_ci_low,diff_ci_high,bootstrap_p_value,mcnemar_p_value
+DistilBERT fine-tuned,230,0.5739,0.5087,0.6391,0.4957,0.4205,0.5635,0.2637,,,,,
+DistilBERT class-weighted,230,0.5826,0.5216,0.6478,0.546,0.4771,0.6129,0.2751,-0.0503,-0.1041,0.0009,0.055,0.855536
+finbert (off-the-shelf),230,0.5565,0.4913,0.6174,0.5084,0.4352,0.5762,0.2906,-0.0127,-0.0868,0.0601,0.737,0.671811
+Majority class (neutral),230,0.5783,0.513,0.6435,0.2443,0.2261,0.261,,0.2515,0.1767,0.3231,0.0,1.0
