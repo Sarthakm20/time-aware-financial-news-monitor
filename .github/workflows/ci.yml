@@ -27,7 +27,32 @@ jobs:
         run: pip install -r requirements-dev.txt
 
       - name: Lint
-        run: ruff check src tests
+        run: ruff check src tests app deploy
 
       - name: Test
         run: pytest
+
+  docker-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build API image
+        run: docker build -t news-sentiment-api .
+
+      - name: Smoke-test the running container (no model mounted)
+        run: |
+          docker run -d --name api -p 8000:8000 news-sentiment-api
+          for i in $(seq 1 30); do curl -fs localhost:8000/health && break; sleep 2; done
+          echo
+          curl -fs localhost:8000/health | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['status']=='ok', d"
+          curl -fs localhost:8000/tickers | python3 -c "import json,sys; d=json.load(sys.stdin); assert len(d['tickers'])>=80, len(d['tickers'])"
+          curl -fs "localhost:8000/tickers/NVDA/sentiment?n_headlines=1" | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['windows'], d"
+          code=$(curl -s -o /dev/null -w '%{http_code}' -X POST localhost:8000/predict -H 'Content-Type: application/json' -d '{"headlines":["x"]}')
+          echo "predict without model -> $code"; test "$code" = "503"
+          docker inspect --format '{{.Config.User}}' news-sentiment-api | grep -q appuser
+
+      - name: Container logs
+        if: always()
+        run: docker logs api || true
