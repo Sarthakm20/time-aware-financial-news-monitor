@@ -1,4 +1,4 @@
-# Time-Aware Financial News Sentiment Monitor for Company Research
+# Live Financial News Sentiment Monitor for the Nasdaq-100
 
 [![CI](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml)
 
