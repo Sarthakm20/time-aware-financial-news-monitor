@@ -44,7 +44,7 @@
    * • Have a human verify the LLM-annotated headline labels, and grow the headline training set.  
    * • Expand the training data beyond the ~4.8k‑sentence Financial PhraseBank.  
    * • Explore larger transformer architectures and longer fine‑tuning schedules to test diminishing returns.  
-   * • ~~Integrate a real-time news API and an online monitoring dashboard with alert thresholds~~ (done in Phase 5: live feed, alerts, Gemini live accuracy check).  
+   * • Integrate a real-time news API and an online monitoring dashboard with alert thresholds .  
    * • Conduct a thorough statistical analysis to assess significance of sentiment shifts across windows.
 
 ---
