@@ -24,7 +24,8 @@ MODEL_FILES = ["config.json", "model.safetensors", "tokenizer.json", "tokenizer_
 SPACE_FILES = [
     "app/streamlit_app.py",
     "src/__init__.py", "src/config.py", "src/explorer.py", "src/aggregation.py", "src/service.py",
-    "src/inference.py", "src/relevance.py", "src/company_names.py",
+    "src/inference.py", "src/relevance.py", "src/company_names.py", "src/labels.py", "src/onnx_backend.py",
+    "src/live_feed.py", "src/env.py",
     "outputs/predictions/nasdaq100_scored_headlines_adapted.csv",
     "outputs/predictions/nasdaq100_scored_headlines_base.csv",
     "outputs/metrics/event_study_summary.json", "outputs/metrics/event_study_buckets.csv",
