@@ -326,7 +326,7 @@ with tab_try:
 with tab_live:
     if not LIVE_DB.exists():
         st.info("No live feed yet. Fetch this week's headlines (no API key needed) with\n\n"
-                "`python -m src.pipeline live-update`\n\nthen reload this page. Run it daily (see README, "
+                "`python -m src.pipeline live-update`\n\nthen reload this page. Run it daily (see docs/deployment.md, "
                 "'Live news feed') to build the history the alerts need.")
     else:
         live = load_live(str(LIVE_DB), LIVE_DB.stat().st_mtime)
