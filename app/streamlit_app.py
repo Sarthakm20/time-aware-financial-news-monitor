@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
 
 from src.config import FIGURES_DIR, METRICS_DIR, PREDICTIONS_DIR  # noqa: E402
 from src.explorer import ticker_headlines, ticker_overview, ticker_timeline, ticker_windows  # noqa: E402
+from src.live_feed import LIVE_DB  # noqa: E402
 
 DISCLAIMER = ("Research prototype. Sentiment summarises the tone of dated news headlines; it does not predict "
               "returns and is not a trading signal or investment advice. Data: FNSPID (2019-2023).")
@@ -64,10 +65,27 @@ def load_price(ticker: str, start: str, end: str) -> pd.DataFrame:
         return pd.DataFrame()
 
 
+@st.cache_data(show_spinner=False)
+def load_live(db_path: str, mtime: float) -> pd.DataFrame:
+    """Scored live headlines (re-read whenever the database file changes)."""
+    from src.live_feed import LiveStore
+
+    return LiveStore(Path(db_path)).scored_frame()
+
+
+@st.cache_data(show_spinner=False)
+def load_live_runs(db_path: str, mtime: float) -> pd.DataFrame:
+    from src.live_feed import LiveStore
+
+    return LiveStore(Path(db_path)).runs()
+
+
 @st.cache_resource(show_spinner=False)
 def get_service():
+    from src.env import load_env
     from src.service import SentimentService
 
+    load_env()  # SENTIMENT_BACKEND=onnx in .env -> the int8 model, without PyTorch
     return SentimentService()
 
 
@@ -92,8 +110,8 @@ with st.sidebar:
                 f"2019–2023")
     st.markdown("[Source code on GitHub](https://github.com/Sarthakm20/time-aware-financial-news-monitor)")
 
-tab_explore, tab_market, tab_quality, tab_try = st.tabs(
-    ["🔎 Company explorer", "📈 Market reaction", "🧪 Model quality", "✍️ Score a headline"])
+tab_explore, tab_market, tab_quality, tab_try, tab_live = st.tabs(
+    ["🔎 Company explorer", "📈 Market reaction", "🧪 Model quality", "✍️ Score a headline", "📡 Live feed"])
 
 # ----------------------------------------------------------------------------- explorer
 
@@ -300,5 +318,75 @@ with tab_try:
             st.dataframe(out[cols], hide_index=True, width="stretch",
                          column_config={"sentiment_score": st.column_config.ProgressColumn(
                              "score", min_value=-1, max_value=1, format="%.2f")})
-            st.caption(f"Model: {get_service().model_name}. Known weakness: product recalls are often scored "
-                       "neutral rather than negative.")
+            st.caption(f"Model: {get_service().model_name} ({get_service().backend}). Known weakness: product "
+                       "recalls are often scored neutral rather than negative.")
+
+# ----------------------------------------------------------------------------- live feed
+
+with tab_live:
+    if not LIVE_DB.exists():
+        st.info("No live feed yet. Fetch this week's headlines (no API key needed) with\n\n"
+                "`python -m src.pipeline live-update`\n\nthen reload this page. Run it daily (see README, "
+                "'Live news feed') to build the history the alerts need.")
+    else:
+        live = load_live(str(LIVE_DB), LIVE_DB.stat().st_mtime)
+        runs = load_live_runs(str(LIVE_DB), LIVE_DB.stat().st_mtime)
+        live_ticker = ticker if ticker in set(live["Stock_symbol"]) else None
+        if runs is not None and len(runs):
+            last = runs["started_at"].iloc[0].replace("T", " ").rstrip("Z")
+            st.caption(f"Last update {last} UTC · {len(runs)} runs · "
+                       f"{len(live):,} scored relevant headlines across {live['Stock_symbol'].nunique()} tickers · "
+                       f"sources: {runs['sources'].iloc[0]}")
+        if live_ticker is None:
+            st.warning(f"No live headlines for {ticker} yet. Pick another company in the sidebar.")
+        else:
+            sub = live[live["Stock_symbol"] == live_ticker]
+            now = pd.Timestamp.now(tz="UTC")
+            last7 = sub[sub["Date"] > now - pd.Timedelta(days=7)]
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Headlines, last 7 days", f"{len(last7):,}")
+            c2.metric("Mean sentiment, last 7 days", f"{last7['sentiment_score'].mean():+.3f}" if len(last7) else "–",
+                      delta=(f"{last7['sentiment_score'].mean() - sub['sentiment_score'].mean():+.3f} vs all live"
+                             if len(last7) and len(sub) > len(last7) else None))
+            c3.metric("Positive / negative share", f"{(sub['predicted_label'] == 'positive').mean():.0%} / "
+                                                   f"{(sub['predicted_label'] == 'negative').mean():.0%}")
+            c4.metric("Live history", f"{(now - sub['Date'].min()).days} days")
+
+            daily = (sub.set_index("Date").resample("D")["sentiment_score"].agg(["mean", "count"])
+                     .reset_index().rename(columns={"Date": "day"}))
+            daily["day"] = daily["day"].dt.tz_localize(None)
+            base = alt.Chart(daily).encode(x=alt.X("day:T", title=None))
+            bars = base.mark_bar(opacity=0.35, color="#607D8B").encode(y=alt.Y("count:Q", title="headlines"))
+            line = base.mark_line(point=True, color="#1565C0").encode(
+                y=alt.Y("mean:Q", title="mean sentiment", scale=alt.Scale(domain=[-1, 1])),
+                tooltip=["day:T", alt.Tooltip("mean:Q", format="+.2f"), "count:Q"])
+            st.altair_chart(alt.layer(bars, line).resolve_scale(y="independent"), width="stretch")
+
+            show = sub.sort_values("Date", ascending=False).head(50).copy()
+            show["published (UTC)"] = show["Date"].dt.strftime("%Y-%m-%d %H:%M")
+            st.dataframe(show[["published (UTC)", "Article_title", "predicted_label", "sentiment_score",
+                               "Publisher", "Source", "Url"]], hide_index=True, width="stretch",
+                         column_config={"Article_title": "headline", "predicted_label": "label",
+                                        "Url": st.column_config.LinkColumn("link", display_text="open"),
+                                        "sentiment_score": st.column_config.ProgressColumn(
+                                            "score", min_value=-1, max_value=1, format="%.2f")})
+
+        alerts_csv = LIVE_DB.parent / "alerts_latest.csv"
+        if alerts_csv.exists():
+            fired = pd.read_csv(alerts_csv).fillna({"alerts": ""})
+            fired = fired[fired["alerts"] != ""]
+            st.markdown("**Alerts** (7-day sentiment z ≤ −2 or headline volume ≥ 3× the 90-day baseline)")
+            if len(fired):
+                for msg in fired["message"]:
+                    st.error(msg)
+            else:
+                st.caption("No alerts in the latest run (they need 30 days of daily collection first).")
+        agreement_json = LIVE_DB.parent / "live_agreement.json"
+        if agreement_json.exists():
+            agree = json.loads(agreement_json.read_text(encoding="utf-8"))
+            if "macro_f1" in agree:
+                st.markdown(f"**Live accuracy check:** on {agree['n_on_topic']} live headlines labelled blind by "
+                            f"`{agree['annotator']}`, the model agrees {agree['accuracy']['value']:.0%} of the time "
+                            f"(macro F1 {agree['macro_f1']['value']:.2f} "
+                            f"[{agree['macro_f1']['ci_low']:.2f}, {agree['macro_f1']['ci_high']:.2f}]). "
+                            "Gemini is a second LLM annotator, not ground truth.")

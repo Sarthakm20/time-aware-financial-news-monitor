@@ -1,0 +1,18 @@
+{
+ "n": 554,
+ "label_disagreement": 0.074,
+ "polarity_flips": 5,
+ "polarity_flip_rate": 0.009,
+ "softened_to_neutral": 36,
+ "score_correlation": 0.965,
+ "mean_abs_score_diff": 0.068,
+ "confusion": {
+  "rows": "fp32 label",
+  "columns": ["negative", "neutral", "positive"],
+  "negative": [71, 13, 5],
+  "neutral": [0, 315, 0],
+  "positive": [0, 23, 127]
+ },
+ "notes": ["Per-tensor int8 vs fp32 ONNX on the 554 annotated, filter-passing headlines of 6 companies.",
+           "Produced on the Plaksha HPC (Slurm job 16636) with scripts/onnx_int8_flips.py."]
+}

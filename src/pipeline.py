@@ -65,6 +65,18 @@ class Paths:
         return self.models / config.ADAPTED_MODEL_DIR.name
 
     @property
+    def adapted_onnx(self) -> Path:
+        return self.models / config.ADAPTED_ONNX_DIR.name
+
+    @property
+    def adapted_onnx_int8(self) -> Path:
+        return self.models / config.ADAPTED_ONNX_INT8_DIR.name
+
+    @property
+    def live_db(self) -> Path:
+        return self.data / "live" / "news.db"
+
+    @property
     def news_csv(self) -> Path:
         return self.processed / f"fnspid_{self.ticker.lower()}_2019_2023.csv"
 
@@ -840,6 +852,251 @@ def stage_evaluate_multi(p: Paths, args: argparse.Namespace) -> None:
     print(per_company[["ticker", "model", "n", "accuracy", "macro_f1"]].to_string(index=False))
 
 
+def stage_onnx_export(p: Paths, args: argparse.Namespace) -> None:
+    """Export the headline-adapted model to ONNX (fp32) and quantize it to int8."""
+    from src.onnx_backend import OnnxSentimentModel, export_onnx, model_size_mb, quantize_onnx, write_reference
+
+    _require(p.adapted_model / "config.json", "adapt")
+    export_onnx(p.adapted_model, p.adapted_onnx)
+    quantize_onnx(p.adapted_onnx, p.adapted_onnx_int8)
+    # fp32 labels for a fixed headline set, so every machine can check its int8 kernels (self_check)
+    heads = pd.read_csv(_require(p.predictions / "multi_company_headline_predictions.csv", "evaluate-multi"))
+    write_reference(p.adapted_onnx, heads["Article_title"].head(100).tolist(), [p.adapted_onnx, p.adapted_onnx_int8])
+    agreement = OnnxSentimentModel(p.adapted_onnx_int8).self_check()
+    for path in (p.adapted_model, p.adapted_onnx, p.adapted_onnx_int8):
+        print(f"  {path.name}: {model_size_mb(path)} MB")
+    print(f"  int8 self-check on this CPU: {agreement:.0%} label agreement with fp32 on 100 reference headlines")
+
+
+def _cpu_name() -> str:
+    import platform
+
+    cpuinfo = Path("/proc/cpuinfo")
+    if cpuinfo.exists():
+        for line in cpuinfo.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if line.startswith("model name"):
+                return line.split(":", 1)[1].strip()
+    return platform.processor() or platform.machine()
+
+
+def stage_onnx_benchmark(p: Paths, args: argparse.Namespace) -> None:
+    """PyTorch vs ONNX fp32 vs ONNX int8: latency, memory, size, and accuracy on PhraseBank + 6-company headlines."""
+    import gc
+    import os
+    import subprocess
+    import tempfile
+
+    import numpy as np
+    from sklearn.metrics import cohen_kappa_score
+
+    from src.inference import load_fine_tuned_model, predict_sentiment_batch
+    from src.onnx_backend import OnnxSentimentModel, predict_sentiment_batch_onnx
+
+    variants = {"PyTorch fp32": ("torch", p.adapted_model), "ONNX fp32": ("onnx", p.adapted_onnx),
+                "ONNX int8 (dynamic)": ("onnx", p.adapted_onnx_int8)}
+    for _, path in variants.values():
+        _require(path / "config.json", "onnx-export")
+    reference = "PyTorch fp32"
+
+    # ---- latency + memory: each variant in a fresh process so peak RSS includes only what it imports
+    pool = pd.read_csv(_require(p.predictions / "nasdaq100_scored_headlines_adapted.csv", "score-all"),
+                       usecols=["Article_title"])["Article_title"].dropna().drop_duplicates()
+    texts = pool.sample(n=min(args.bench_headlines, len(pool)), random_state=args.seed).tolist()
+    latency = {}
+    with tempfile.TemporaryDirectory() as tmp:
+        texts_file = Path(tmp) / "headlines.txt"
+        texts_file.write_text("\n".join(t.replace("\n", " ") for t in texts), encoding="utf-8")
+        for name, (backend, path) in variants.items():
+            cmd = [sys.executable, "-m", "src.onnx_backend", "bench", "--backend", backend, "--model", str(path),
+                   "--texts", str(texts_file), "--threads", str(args.threads)]
+            # cap every thread pool (BLAS/OpenMP and the Rust tokenizer) at the same count
+            env = {**os.environ, "OMP_NUM_THREADS": str(args.threads), "RAYON_NUM_THREADS": str(args.threads)}
+            out = subprocess.run(cmd, check=True, capture_output=True, text=True, env=env,
+                                 cwd=str(config.PROJECT_ROOT))
+            latency[name] = json.loads(out.stdout.strip().splitlines()[-1])
+            lat = latency[name]["latency"]
+            print(f"  {name:<20} batch1 {lat['batch_1']['ms_per_headline_median']:.2f} ms  "
+                  f"batch32 {lat['batch_32']['ms_per_headline_median']:.2f} ms  "
+                  f"peak RSS {latency[name]['peak_rss_mb']:.0f} MB  size {latency[name]['model_size_mb']} MB")
+
+    # ---- accuracy: same inputs, same max_length as the committed evaluations
+    test_df = pd.read_csv(_require(p.processed / "test.csv", "prepare"))
+    heads = pd.read_csv(_require(p.predictions / "multi_company_headline_predictions.csv", "evaluate-multi"))
+    heads = heads[heads["passes_filter"]]
+    sets = {"phrasebank_test": (test_df["sentence"].tolist(), test_df["label"].tolist(), config.MAX_SEQUENCE_LENGTH),
+            "headlines_6_companies": (heads["Article_title"].tolist(), heads["label"].tolist(), 64)}
+    preds: Dict[str, Dict[str, tuple]] = {k: {} for k in sets}
+    for name, (backend, path) in variants.items():
+        if backend == "torch":
+            model, tokenizer, device = load_fine_tuned_model(path)
+            for key, (x, _, max_len) in sets.items():
+                labels, probs, _, _ = predict_sentiment_batch(x, model, tokenizer, device, max_length=max_len)
+                preds[key][name] = (labels, probs)
+            del model, tokenizer
+        else:
+            model = OnnxSentimentModel(path)
+            for key, (x, _, max_len) in sets.items():
+                labels, probs, _, _ = predict_sentiment_batch_onnx(x, model, max_length=max_len)
+                preds[key][name] = (labels, probs)
+            del model
+        gc.collect()
+
+    accuracy_rows, agreement = [], {}
+    for key, (_, y_true, _) in sets.items():
+        frames = {n: pd.DataFrame({"predicted_label": lab, **{f"{c}_probability": pr[:, i]
+                                   for i, c in enumerate(config.LABELS)}}) for n, (lab, pr) in preds[key].items()}
+        table = _compare_models(y_true, frames, reference, args.n_boot)
+        table.insert(0, "evaluation_set", key)
+        accuracy_rows.append(table)
+        ref_labels, ref_probs = preds[key][reference]
+        agreement[key] = {
+            n: {"label_agreement_with_pytorch": round(float(np.mean(np.array(lab) == np.array(ref_labels))), 4),
+                "max_abs_probability_diff": round(float(np.abs(pr - ref_probs).max()), 6),
+                "cohen_kappa_with_pytorch": round(float(cohen_kappa_score(ref_labels, lab)), 4)}
+            for n, (lab, pr) in preds[key].items() if n != reference}
+    accuracy = pd.concat(accuracy_rows, ignore_index=True)
+    _write_csv(accuracy, p.metrics / "onnx_benchmark_accuracy.csv")
+
+    ref_lat = latency[reference]["latency"]
+    speedups = {n: {b: round(ref_lat[b]["ms_per_headline_median"] / v["latency"][b]["ms_per_headline_median"], 2)
+                    for b in v["latency"]} for n, v in latency.items() if n != reference}
+    _write_json({
+        "model": p.adapted_model.name,
+        "hardware": {"cpu": _cpu_name(), "threads": args.threads},
+        "notes": [
+            "Latency is end to end (tokenize + forward + softmax), median of 3 runs, after a warm-up.",
+            "Each variant ran in a fresh process; peak RSS includes the Python libraries it imports "
+            "(the ONNX path never imports torch).",
+            "int8 = onnxruntime dynamic quantization (int8 weights, per-tensor scales; activations quantized at "
+            "run time).",
+            "Accuracy uses max_length 256 on PhraseBank and 64 on headlines, as in the committed evaluations; "
+            "McNemar / paired bootstrap compare each variant with the PyTorch model.",
+        ],
+        "latency": latency,
+        "speedup_vs_pytorch": speedups,
+        "agreement_with_pytorch": agreement,
+        "accuracy": accuracy.to_dict(orient="records"),
+    }, p.metrics / "onnx_benchmark.json")
+    print(accuracy[["evaluation_set", "model", "n", "accuracy", "macro_f1", "mcnemar_p_value"]].to_string(index=False))
+    print(json.dumps(agreement, indent=1))
+
+
+def _live_service(p: Paths, args: argparse.Namespace):
+    """Sentiment service for the live feed: prefers the int8 ONNX model (no torch, small RAM) when it exists."""
+    import os
+
+    from src.onnx_backend import is_onnx_dir
+    from src.service import SentimentService
+
+    backend = args.backend or os.environ.get("SENTIMENT_BACKEND") or (
+        "onnx" if is_onnx_dir(p.adapted_onnx_int8) else "auto")
+    source = None
+    if not os.environ.get("SENTIMENT_MODEL"):
+        if backend in ("onnx", "auto") and is_onnx_dir(p.adapted_onnx_int8):
+            source = str(p.adapted_onnx_int8)
+        elif backend != "onnx" and (p.adapted_model / "config.json").exists():
+            source = str(p.adapted_model)
+    return SentimentService(model_source=source, backend=backend)
+
+
+def stage_live_update(p: Paths, args: argparse.Namespace) -> None:
+    """Fetch new headlines (Google News + Yahoo by default), relevance-filter, score, store in data/live/news.db."""
+    from src.live_feed import LIVE_TICKERS, LiveStore, fetch_many
+    from src.relevance import is_relevant
+
+    started = pd.Timestamp.now(tz="UTC")
+    tickers = [t.upper() for t in args.live_tickers] if args.live_tickers else LIVE_TICKERS
+    errors: List[str] = []
+    print(f"  fetching {len(tickers)} tickers from {', '.join(args.live_sources)} (last {args.live_days} days)")
+    news = fetch_many(tickers, days=args.live_days, sources=args.live_sources, errors=errors)
+    relevant = [is_relevant(t, k) for t, k in zip(news["Article_title"], news["Stock_symbol"])]
+    store = LiveStore(p.live_db)
+    inserted = store.insert_new(news, relevant)
+
+    todo = store.unscored()
+    if len(todo):
+        service = _live_service(p, args)
+        for start in range(0, len(todo), 256):
+            chunk = todo.iloc[start:start + 256]
+            preds = service.predict(chunk["title"].tolist())
+            store.save_scores(chunk["id"].tolist(), [x.label for x in preds],
+                              [[x.probabilities[c] for c in config.LABELS] for x in preds],
+                              [x.confidence for x in preds], [x.sentiment_score for x in preds],
+                              model=f"{service.model_name} ({service.backend})")
+        print(f"  scored {len(todo)} new relevant headlines with {service.model_name} ({service.backend})")
+    store.log_run(started, len(tickers), args.live_sources, len(news), inserted, len(todo), errors)
+    print(f"  fetched {len(news)} headlines, {sum(relevant)} about their company; {inserted} new rows in {p.live_db}")
+    if errors:
+        print(f"  {len(errors)} source errors (logged in the runs table), e.g. {errors[0]}")
+
+
+def stage_alerts(p: Paths, args: argparse.Namespace) -> None:
+    """Flag tickers whose 7-day live sentiment or headline volume is unusual vs their 90-day baseline."""
+    import os
+
+    from src.alerts import compute_alerts, post_alerts
+    from src.live_feed import LiveStore
+
+    store = LiveStore(_require(p.live_db, "live-update"))
+    scored, runs = store.scored_frame(), store.runs()
+    feed_start = pd.to_datetime(runs["started_at"], utc=True).min() if len(runs) else None
+    table = compute_alerts(scored, feed_start=feed_start)
+    _write_csv(table, p.live_db.parent / "alerts_latest.csv")
+    fired = table[table["alerts"] != ""]
+    now = pd.Timestamp.now(tz="UTC")
+    if feed_start is not None and (now - feed_start).days < 30:
+        print(f"  the feed has {(now - feed_start).days} days of history; alerts start after 30 days of daily runs")
+    log = p.live_db.parent / "alerts_log.csv"
+    if len(fired):
+        stamped = fired.assign(raised_at=now.isoformat())
+        stamped.to_csv(log, mode="a", header=not log.exists(), index=False)
+        for msg in fired["message"]:
+            print(f"  ALERT {msg}")
+        url = os.environ.get("ALERT_WEBHOOK_URL", "").strip()
+        if url:
+            print(f"  posted {post_alerts(fired['message'].tolist(), url)} alerts to the webhook")
+    else:
+        print(f"  no alerts across {len(table)} tickers")
+
+
+def stage_live_annotate(p: Paths, args: argparse.Namespace) -> None:
+    """Gemini labels a blind sample of live headlines; reports model-vs-Gemini agreement (needs GEMINI_API_KEY)."""
+    from src import stats
+    from src.gemini import ANNOTATOR_PREFIX, MODEL, GeminiClient, annotate_headlines
+    from src.live_feed import LiveStore, company_name
+
+    store = LiveStore(_require(p.live_db, "live-update"))
+    client = GeminiClient()
+    annotator = f"{ANNOTATOR_PREFIX}:{MODEL}"  # the one fixed model; labels from any other model are ignored
+    sample = store.unannotated(annotator, args.annotate_n, seed=args.seed)
+    if len(sample):
+        guidelines = (config.PROJECT_ROOT / "docs" / "annotation_guidelines.md").read_text(encoding="utf-8")
+        items = [{"id": int(r.id), "ticker": r.ticker, "company": company_name(r.ticker), "title": r.title}
+                 for r in sample.itertuples(index=False)]
+        labels = annotate_headlines(client, items, guidelines)
+        store.save_annotations(labels, annotator)
+        print(f"  {annotator} labelled {len(labels)} of {len(items)} sampled headlines")
+
+    ann = store.annotations()
+    ann = ann[ann["annotator"] == annotator]
+    on_topic = ann[ann["label"].isin(config.LABELS)]
+    summary = {"annotator": annotator, "labelled": int(len(ann)),
+               "skipped_by_annotator": int((ann["label"] == "skip").sum()),
+               "notes": ["Gemini is a second LLM annotator, not ground truth. Agreement measures consistency with "
+                         "an independent labeller on live headlines; a drop over time suggests drift.",
+                         "Sampling is blind: Gemini never sees the model's label."]}
+    if len(on_topic) >= 5:
+        y_true, y_pred = on_topic["label"].tolist(), on_topic["predicted_label"].tolist()
+        summary.update({"n_on_topic": int(len(on_topic)),
+                        "accuracy": stats.bootstrap_ci(y_true, y_pred, stats.accuracy, n_boot=args.n_boot),
+                        "macro_f1": stats.bootstrap_ci(y_true, y_pred, stats.macro_f1, n_boot=args.n_boot),
+                        "label_counts_annotator": on_topic["label"].value_counts().to_dict(),
+                        "label_counts_model": on_topic["predicted_label"].value_counts().to_dict()})
+        print(f"  model vs {annotator} on {len(on_topic)} live headlines: "
+              f"accuracy {summary['accuracy']['value']:.3f}, macro F1 {summary['macro_f1']['value']:.3f}")
+    _write_json(summary, p.live_db.parent / "live_agreement.json")
+
+
 def stage_fetch_news(p: Paths, args: argparse.Namespace) -> None:
     """Stream one ticker's 2019-2023 headlines from FNSPID (or slice the all-ticker file if present)."""
     from src.data_loading import ALL_TICKERS, stream_fnspid_slice
@@ -900,6 +1157,11 @@ STAGES: Dict[str, Callable[[Paths, argparse.Namespace], None]] = {
     "sample-headlines": stage_sample_headlines,
     "evaluate-headlines": stage_evaluate_headlines,
     "evaluate-multi": stage_evaluate_multi,
+    "onnx-export": stage_onnx_export,
+    "onnx-benchmark": stage_onnx_benchmark,
+    "live-update": stage_live_update,
+    "alerts": stage_alerts,
+    "live-annotate": stage_live_annotate,
 }
 
 
@@ -926,6 +1188,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--n-label", type=int, default=300, help="headlines to sample for labelling")
     parser.add_argument("--max-train-samples", type=int, default=None,
                         help="subsample the training set (smoke tests only)")
+    parser.add_argument("--threads", type=int, default=4, help="CPU threads for 'onnx-benchmark'")
+    parser.add_argument("--bench-headlines", type=int, default=1000, help="headlines timed by 'onnx-benchmark'")
+    parser.add_argument("--live-tickers", nargs="+", default=None,
+                        help="tickers for 'live-update' (default: all 89 in src/company_names.py)")
+    parser.add_argument("--live-days", type=int, default=2, help="look-back window of each 'live-update' fetch")
+    parser.add_argument("--live-sources", nargs="+", default=["google", "yahoo"],
+                        choices=["google", "yahoo", "finnhub", "gemini"], help="headline sources for 'live-update'")
+    parser.add_argument("--backend", choices=["auto", "torch", "onnx"], default=None,
+                        help="scoring backend for 'live-update' (default: SENTIMENT_BACKEND, else onnx if exported)")
+    parser.add_argument("--annotate-n", type=int, default=25, help="live headlines Gemini labels per 'live-annotate'")
     parser.add_argument("--data-dir", type=Path, default=config.DATA_DIR)
     parser.add_argument("--outputs-dir", type=Path, default=config.OUTPUTS_DIR)
     parser.add_argument("--models-dir", type=Path, default=config.MODELS_DIR)
@@ -956,6 +1228,9 @@ def main(argv: List[str] = None) -> int:
 
     import matplotlib
 
+    from src.env import load_env
+
+    load_env()  # API keys and SENTIMENT_BACKEND from a git-ignored .env, if present
     matplotlib.use("Agg")  # stages save figures to disk; never open windows
 
     paths = Paths(data=args.data_dir, outputs=args.outputs_dir, models=args.models_dir, ticker=args.ticker)

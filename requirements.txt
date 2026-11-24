@@ -10,6 +10,12 @@ matplotlib>=3.7.0
 seaborn>=0.12.0
 tqdm>=4.66.0
 yfinance>=0.2.40
+requests>=2.31
+psutil>=5.9
+# ONNX export (onnx, onnxscript) and torch-free inference (onnxruntime + tokenizers)
+onnx>=1.16
+onnxscript>=0.1
+onnxruntime>=1.18
 accelerate>=0.26.0
 jupyterlab>=4.0.0
 ipywidgets>=8.0.0

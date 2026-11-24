@@ -5,11 +5,12 @@ Docker:        docker build -t news-sentiment-api . && docker run -p 8000:8000 n
 
 Endpoints
 ---------
-GET  /health                              service status and model name
+GET  /health                              service status, model name and backend (torch / onnx)
 POST /predict                             score up to 256 headlines (optionally with relevance for a ticker)
 GET  /tickers                             tickers with precomputed scores
 GET  /tickers/{symbol}/sentiment          lookback-window summary + latest headlines
 GET  /tickers/{symbol}/timeline           rolling sentiment series (weekly points)
+GET  /live/{symbol}                       live headlines (last N days) from data/live/news.db, if the feed runs
 
 Sentiment summarises the tone of headlines. It is not a trading signal or investment advice.
 """
@@ -17,6 +18,7 @@ Sentiment summarises the tone of headlines. It is not a trading signal or invest
 from pathlib import Path
 from typing import List, Optional
 
+import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
@@ -29,6 +31,7 @@ from src.explorer import (
     ticker_timeline,
     ticker_windows,
 )
+from src.live_feed import LIVE_DB
 from src.service import MAX_HEADLINE_CHARS, MAX_HEADLINES_PER_REQUEST, SentimentService
 
 DISCLAIMER = "Summarises headline tone; not a trading signal or investment advice."
@@ -57,8 +60,13 @@ class PredictResponse(BaseModel):
     disclaimer: str = DISCLAIMER
 
 
-def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DEFAULT_SCORED_CSV) -> FastAPI:
-    service = service or SentimentService()
+def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DEFAULT_SCORED_CSV,
+               live_db: Path = LIVE_DB) -> FastAPI:
+    if service is None:
+        from src.env import load_env
+
+        load_env()  # SENTIMENT_BACKEND / SENTIMENT_MODEL from a git-ignored .env, if present
+        service = SentimentService()
     app = FastAPI(
         title="Financial News Sentiment API",
         version="1.0.0",
@@ -82,10 +90,10 @@ def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DE
     @app.get("/health")
     def health():
         try:
-            name = service.model_name
+            name, backend = service.model_name, service.backend
         except FileNotFoundError:
-            name = None
-        return {"status": "ok", "model": name, "model_loaded": service.loaded}
+            name = backend = None
+        return {"status": "ok", "model": name, "backend": backend, "model_loaded": service.loaded}
 
     @app.post("/predict", response_model=PredictResponse)
     def predict(req: PredictRequest):
@@ -122,6 +130,35 @@ def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DE
         tl["Date"] = tl["Date"].dt.date.astype(str)
         return {"ticker": symbol.upper(), "window_days": window_days,
                 "points": tl.rename(columns={"Date": "date"}).to_dict(orient="records")}
+
+    @app.get("/live/{symbol}")
+    def live_headlines(symbol: str, days: int = Query(7, ge=1, le=365), n_headlines: int = Query(20, ge=0, le=200)):
+        from src.live_feed import LiveStore
+
+        if not Path(live_db).exists():
+            raise HTTPException(503, "live feed not set up on this server (python -m src.pipeline live-update)")
+        df = LiveStore(Path(live_db)).scored_frame(symbol)
+        if df.empty:
+            raise HTTPException(404, f"no live headlines for {symbol.upper()!r}")
+        recent = df[df["Date"] > pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=days)]
+        latest = recent.sort_values("Date", ascending=False).head(n_headlines)
+
+        def share(label):
+            return round(float((recent["predicted_label"] == label).mean()), 4) if len(recent) else None
+
+        return {
+            "ticker": symbol.upper(),
+            "days": days,
+            "headlines_in_window": int(len(recent)),
+            "mean_sentiment": round(float(recent["sentiment_score"].mean()), 4) if len(recent) else None,
+            "positive_share": share("positive"),
+            "negative_share": share("negative"),
+            "headlines": [{"published_at": r.Date.isoformat(), "headline": r.Article_title, "label": r.predicted_label,
+                           "sentiment_score": r.sentiment_score, "confidence": r.confidence,
+                           "publisher": r.Publisher, "source": r.Source, "url": r.Url}
+                          for r in latest.itertuples(index=False)],
+            "disclaimer": DISCLAIMER,
+        }
 
     return app
 

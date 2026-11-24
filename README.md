@@ -3,7 +3,7 @@
 [![CI](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Sarthakm20/time-aware-financial-news-monitor/actions/workflows/ci.yml)
 
 > **Important Limitation & Disclaimer:**  
-> This project is a research and news‑triage prototype. Its sentiment scores summarize the tone of dated financial‑news coverage; they **do not predict stock returns, provide trading signals, or constitute investment advice**. FNSPID’s historical dataset ends in 2023, demonstrating the system’s historical research workflow. Monitoring live headlines requires an external real‑time financial news API.
+> This project is a research and news‑triage prototype. Its sentiment scores summarize the tone of dated financial‑news coverage; they **do not predict stock returns, provide trading signals, or constitute investment advice**. FNSPID’s historical dataset ends in 2023; the live feed (Phase 5, see *Live news feed*) adds current, timestamped headlines from free sources.
 
 ---
 
@@ -37,13 +37,14 @@
    *The fine‑tuned DistilBERT achieves **85.40% accuracy** (Macro F1 **0.8388**) versus **50.00% accuracy** (Macro F1 **0.5299**) for the zero‑shot BART‑MNLI baseline. In a case study on Tesla headlines (2019–2023), headlines in the most recent 30 days average **+0.1238**, against **+0.0238** across all five years (both unweighted).*  
    *The most important finding: on 230 annotated real TSLA headlines, macro F1 falls from **0.839 to 0.496**, and no model beats always predicting "neutral" on accuracy. Sentence-level benchmark scores substantially overstate performance on headlines (see Results §5).*  
    *Across **24,807 company-days for 85 Nasdaq-100 stocks**, positive-headline days outperform negative ones by **+1.2% on the same day**, but the gap is already **+0.5% the day before**, and there is no significant drift over the following week. The headlines largely *describe* price moves rather than predict them (Results §7).*
+   *Phase 5: an int8 ONNX export runs **6.9× faster (2.9 vs 20.2 ms per headline) in a fifth of the RAM** with unchanged accuracy, and a key-free live feed now scores this week's headlines for all 89 tickers (Results §9).*  
 
 4. **What would you do next with more time?**  
    * • Collect *timestamped* news (FNSPID has dates only), to separate after-hours news from genuine next-day predictability.  
    * • Have a human verify the LLM-annotated headline labels, and grow the headline training set.  
    * • Expand the training data beyond the ~4.8k‑sentence Financial PhraseBank.  
    * • Explore larger transformer architectures and longer fine‑tuning schedules to test diminishing returns.  
-   * • Integrate a real‑time news API and implement an online monitoring dashboard with alert thresholds.  
+   * • ~~Integrate a real-time news API and an online monitoring dashboard with alert thresholds~~ (done in Phase 5: live feed, alerts, Gemini live accuracy check).  
    * • Conduct a thorough statistical analysis to assess significance of sentiment shifts across windows.
 
 ---
@@ -285,6 +286,51 @@ The headline accuracy check (§5) and the relevance-filter check (§7) originall
 | Last 30 days | +0.124 | +0.148 | +0.149 | −0.009 | +0.084 | −0.009 |
 | All history | +0.024 | +0.056 | +0.083 | +0.082 | +0.113 | +0.082 |
 
+### 9. Phase 5: A 6.9× Faster Model and a Live News Feed
+
+**5A. ONNX Runtime export and int8 quantization** (`python -m src.pipeline onnx-export onnx-benchmark`).
+The headline-adapted model on 4 CPU threads (AMD EPYC 9335, Plaksha HPC). Latency is end to end: tokenize,
+forward pass and softmax, median of 3 runs over 1,000 headlines. Each variant ran in a fresh process.
+
+| | PyTorch fp32 | ONNX fp32 | **ONNX int8** |
+|:---|:---:|:---:|:---:|
+| ms per headline, batch 1 | 20.2 | 6.6 (3.1×) | **2.9 (6.9×)** |
+| ms per headline, batch 32 | 23.5 | 10.1 | **3.5 (6.7×)** |
+| Peak RAM (whole process) | 1,240 MB | 519 MB | **245 MB** |
+| Model file | 255 MB | 255 MB | **64 MB** |
+| Load time | 6.6 s | 0.24 s | **0.17 s** |
+| PhraseBank test macro F1 (n=726) | 0.847 | 0.847 | 0.846 (McNemar *p* = 0.74) |
+| 6-company headlines macro F1 (n=554) | 0.655 | 0.655 | 0.659 (McNemar *p* = 0.47) |
+
+- **ONNX fp32 is exact:** identical labels to PyTorch, with probabilities within 2×10⁻⁶.
+- **int8 keeps accuracy but changes some individual labels.** It agrees with fp32 on 92.6% of the real headlines.
+  Of the 41 disagreements, 36 soften a positive or negative headline to neutral. A neutral headline never changes.
+  Only **5 (0.9%) reverse the polarity**, and the sentiment scores correlate at 0.965 (`onnx_int8_vs_fp32.json`).
+  For an aggregate tone monitor this is a good trade. Use ONNX fp32 if every single label matters.
+- **The ONNX path never imports PyTorch.** That is most of the memory saving, and it is why the live feed runs
+  comfortably on an 8 GB laptop. The first full run scored 3,643 headlines with a 321 MB peak.
+- Batching does not help per-headline latency on this CPU, because headlines are short and each batch is padded
+  to its longest headline.
+- **A portability lesson.** Per-channel weight scales agreed better with fp32 on the AMD server: 97.3% vs 94.9% of
+  PhraseBank labels (`scripts/onnx_quant_sweep.py`). On an Intel laptop, though, the same file returned
+  near-uniform probabilities, labelling every headline neutral. The default is therefore per-tensor. Every export
+  also saves fp32 labels for 100 reference headlines, and `OnnxSentimentModel.self_check()` refuses to load an
+  int8 model that disagrees on more than 20% of them on the current CPU (92% on the laptop, 89% on the server).
+
+**5B. Live news feed** (see *Live news feed* below for how to run it).
+- 89 tickers, from Google News RSS and Yahoo Finance. No API key is needed, and every headline has a real
+  publish *time*, which FNSPID lacks.
+- First week: **5,608 headlines collected, 4,379 about their company and scored.** The label mix is 47% neutral,
+  31% positive and 22% negative.
+- **Live accuracy check:** `gemini-3.1-flash-lite` labelled 50 random live headlines blind, following the same
+  guidelines. The model agrees on **78% (95% CI 66–88%), macro F1 0.78 [0.66, 0.88]**.
+  - Gemini is a second LLM annotator, not ground truth; the interval narrows as daily runs add labels.
+  - This is in line with the 0.65–0.70 macro F1 measured against the Claude labels on 2019–2023 headlines (§8).
+
+*Sources: `outputs/metrics/onnx_benchmark.json`, `onnx_benchmark_accuracy.csv`, `onnx_int8_vs_fp32.json`,
+`onnx_quantization_sweep.json`; live figures from `data/live/` (not committed; regenerated by `live-update` and
+`live-annotate`).*
+
 ---
 
 ## Project Architecture
@@ -411,6 +457,12 @@ The pipeline is split into two logical phases that reflect the complete research
 * `src/relevance.py` + `src/company_names.py`: Is a ticker-tagged headline actually about that company?
 * `src/market.py`: Price download (yfinance), market-adjusted returns, abnormal volume.
 * `src/event_study.py`: Event panel, date-clustered bootstrap, rank ICs, positive/negative spreads, CAR paths.
+* `src/onnx_backend.py`: ONNX export, int8 quantization, torch-free inference (`onnxruntime` + `tokenizers`), latency benchmark.
+* `src/labels.py`: Label-order mapping and probability summaries shared by the PyTorch and ONNX backends.
+* `src/live_feed.py`: Live headline sources (Google News RSS, Yahoo, Finnhub, Gemini) and the SQLite store.
+* `src/alerts.py`: Sentiment-drop and volume-spike alerts, webhook posting.
+* `src/gemini.py`: Minimal Gemini REST client: blind headline annotation, search-grounded headline discovery.
+* `src/env.py`: Reads API keys from the environment or a git-ignored `.env` file.
 
 ---
 
@@ -450,6 +502,12 @@ Each stage reads the previous stage's files from disk, so stages can be run on t
 | `score-all` | Relevance-filter and score every ticker's headlines with each model (resumable) | `nasdaq100_scored_headlines_<model>.csv` |
 | `prices` | Adjusted daily prices for all tickers + QQQ (Yahoo Finance; cached, not committed) | `data/prices/daily.csv` |
 | `event-study` | Sentiment vs abnormal returns/volume, date-clustered bootstrap | `event_study_*.csv/json`, CAR figures |
+| `evaluate-multi` | 6-company headline accuracy + relevance-filter precision/recall | `multi_company_*.csv/json` |
+| `onnx-export` | Export the headline-adapted model to ONNX fp32 and quantize it to int8 | `models/distilbert_headline_adapted_onnx[_int8]` |
+| `onnx-benchmark` | PyTorch vs ONNX fp32 vs int8: latency, memory, size, accuracy (McNemar) | `onnx_benchmark.json`, `onnx_benchmark_accuracy.csv` |
+| `live-update` | Fetch current headlines (Google News RSS + Yahoo; optional Finnhub/Gemini), relevance-filter, score | `data/live/news.db` (not committed) |
+| `alerts` | 7-day sentiment z-score and headline-volume spikes vs a 90-day baseline; optional Slack/Discord webhook | `data/live/alerts_latest.csv`, `alerts_log.csv` |
+| `live-annotate` | Gemini labels a blind daily sample of live headlines → live model-agreement check | `data/live/live_agreement.json` |
 
 ```bash
 python -m src.pipeline prepare                    # seconds; reproduces the committed splits exactly
@@ -502,8 +560,9 @@ streamlit run app/streamlit_app.py
 | 📈 Market reaction | Event-study results: the CAR chart and positive-minus-negative spreads with CIs |
 | 🧪 Model quality | PhraseBank vs real-headline performance, seed variation and calibration, with the domain-shift caveat always visible |
 | ✍️ Score a headline | Live scoring with the headline-adapted model, plus the relevance check |
+| 📡 Live feed | This week's headlines for the selected company (publish times, links), daily sentiment, alerts and the Gemini agreement check; reads `data/live/news.db` |
 
-Everything except live scoring runs from the committed `outputs/` files.
+Everything except live scoring and the live feed runs from the committed `outputs/` files.
 
 ### REST API (`src/api.py`)
 
@@ -513,11 +572,12 @@ uvicorn src.api:app --port 8000      # interactive docs: http://localhost:8000/d
 
 | Endpoint | Purpose |
 |:---|:---|
-| `GET /health` | Status and model name |
+| `GET /health` | Status, model name and backend (`torch` / `onnx`) |
 | `POST /predict` | Score up to 256 headlines: `{"headlines": [...], "ticker": "TSLA"}` → label, class probabilities, P(pos)−P(neg), relevance |
 | `GET /tickers` | Tickers with precomputed scores |
 | `GET /tickers/{symbol}/sentiment` | Lookback-window summary and latest headlines |
 | `GET /tickers/{symbol}/timeline` | Weekly rolling-sentiment series |
+| `GET /live/{symbol}?days=7` | Live headlines and their sentiment from the live feed (503 if the feed isn't set up) |
 
 ```bash
 curl -X POST localhost:8000/predict -H "Content-Type: application/json" \
@@ -535,6 +595,61 @@ docker run -p 8000:8000 -v "$PWD/models/distilbert_headline_adapted:/app/models/
 ```
 
 The image runs as a non-root user and has a health check. Model weights are not baked in, so the image stays small and CI can build it.
+
+### Live news feed (Phase 5B)
+
+The live feed needs **no API key**: Google News RSS and Yahoo Finance are free and include publish *times*,
+which FNSPID lacks. Headlines go through the same relevance filter and model, and are stored in
+`data/live/news.db` (SQLite, de-duplicated per ticker and normalised title, git-ignored).
+
+```bash
+python -m src.pipeline live-update                 # all 89 tickers, last 2 days (~3 min); --live-days 7 for a first run
+python -m src.pipeline live-update --live-tickers AAPL NVDA --live-sources google yahoo finnhub
+python -m src.pipeline alerts                      # sentiment-drop / volume-spike alerts (after 30 days of daily runs)
+python -m src.pipeline live-annotate               # Gemini labels 25 new live headlines blind (needs GEMINI_API_KEY)
+```
+
+**API keys** go in a `.env` file in the project root (copy `.env.example`; `.env` is git-ignored):
+
+```ini
+GEMINI_API_KEY=...        # https://aistudio.google.com/apikey (free tier)
+FINNHUB_API_KEY=          # optional extra source
+ALERT_WEBHOOK_URL=        # optional Slack/Discord incoming webhook
+SENTIMENT_BACKEND=onnx    # score with the int8 ONNX model, without PyTorch
+```
+
+The Gemini model is fixed to **`gemini-3.1-flash-lite`** (`MODEL` in `src/gemini.py`). There is no setting to
+change it and no fallback to another model, so every live label comes from the same annotator. If that model is
+unavailable, the stage fails with a clear error after retrying, instead of switching models.
+
+What Gemini is used for:
+- **`live-annotate` (main use):** an independent LLM labels a random daily sample of live headlines, following
+  `docs/annotation_guidelines.md`, without seeing the model's output. Model–Gemini agreement over time is a live
+  accuracy and drift check. Gemini is a second annotator, not ground truth. The existing labels came from Claude,
+  so this also gives a two-LLM agreement figure.
+- **`--live-sources ... gemini` (opt-in):** extra headlines found with Google Search grounding. Rows without a URL
+  or outside the date window are dropped, and every row is tagged `Source=gemini`, because an LLM can paraphrase
+  a title.
+
+**Alerts** compare each ticker's last 7 days with its previous 90:
+- a *sentiment drop* is z ≤ −2, using the standard error of the 7-day mean;
+- a *volume spike* is headlines per day ≥ 3× normal. Phase 3 found bad news brings about 2× abnormal trading
+  volume, so volume spikes are the best-supported kind.
+
+Alerts start only after 30 days of daily collection, because backfilled history is a capped sample and would
+make volume look abnormal. Every message carries the "not investment advice" disclaimer.
+
+**Run it daily** with Windows Task Scheduler (uses the project's `.venv`; logs in `data/live/logs/`):
+
+```powershell
+schtasks /Create /SC DAILY /ST 08:00 /TN "NewsSentimentLiveUpdate" `
+  /TR "powershell -NoProfile -ExecutionPolicy Bypass -File \"$PWD\scripts\live_update.ps1\""
+```
+
+Limitations of the free sources:
+- Google News returns at most ~100 items per query, so very heavily covered companies saturate the volume measure.
+- Yahoo returns only the ~10 latest items per ticker.
+- Coverage starts when you start collecting.
 
 ### Publishing (Hugging Face Hub + Spaces)
 

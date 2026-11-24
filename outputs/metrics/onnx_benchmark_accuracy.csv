@@ -1,0 +1,7 @@
+evaluation_set,model,n,accuracy,accuracy_ci_low,accuracy_ci_high,macro_f1,macro_f1_ci_low,macro_f1_ci_high,ece,reference_minus_model_macro_f1,diff_ci_low,diff_ci_high,bootstrap_p_value,mcnemar_p_value
+phrasebank_test,PyTorch fp32,726,0.8526,0.8251,0.8774,0.8472,0.8162,0.8739,0.0441,,,,,
+phrasebank_test,ONNX fp32,726,0.8526,0.8251,0.8774,0.8472,0.8162,0.8739,0.0441,0.0,0.0,0.0,1.0,1.0
+phrasebank_test,ONNX int8 (dynamic),726,0.8567,0.8306,0.8815,0.8464,0.8162,0.874,0.0293,0.0007,-0.0166,0.0167,0.942,0.742829
+headlines_6_companies,PyTorch fp32,554,0.6986,0.657,0.7365,0.6546,0.6076,0.6964,0.1505,,,,,
+headlines_6_companies,ONNX fp32,554,0.6986,0.657,0.7365,0.6546,0.6076,0.6964,0.1505,0.0,0.0,0.0,1.0,1.0
+headlines_6_companies,ONNX int8 (dynamic),554,0.7076,0.6679,0.7473,0.6586,0.6106,0.7016,0.1378,-0.004,-0.0259,0.0179,0.703,0.47313

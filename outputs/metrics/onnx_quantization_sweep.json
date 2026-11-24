@@ -1,0 +1,62 @@
+{
+ "default": {
+  "size_mb": 64.3,
+  "phrasebank_agreement": 0.949,
+  "phrasebank_mean_abs_prob_diff": 0.0336,
+  "phrasebank_accuracy": 0.8567,
+  "headlines_agreement": 0.926,
+  "headlines_mean_abs_prob_diff": 0.0436,
+  "headlines_accuracy": 0.7076,
+  "ms_batch1": 3.334
+ },
+ "per_channel": {
+  "size_mb": 64.5,
+  "phrasebank_agreement": 0.9725,
+  "phrasebank_mean_abs_prob_diff": 0.02,
+  "phrasebank_accuracy": 0.8636,
+  "headlines_agreement": 0.9458,
+  "headlines_mean_abs_prob_diff": 0.0282,
+  "headlines_accuracy": 0.7004,
+  "ms_batch1": 3.608
+ },
+ "matmul_only": {
+  "size_mb": 132.4,
+  "phrasebank_agreement": 0.9518,
+  "phrasebank_mean_abs_prob_diff": 0.0344,
+  "phrasebank_accuracy": 0.8595,
+  "headlines_agreement": 0.917,
+  "headlines_mean_abs_prob_diff": 0.0459,
+  "headlines_accuracy": 0.6968,
+  "ms_batch1": 3.162
+ },
+ "per_channel_matmul_only": {
+  "size_mb": 132.6,
+  "phrasebank_agreement": 0.9683,
+  "phrasebank_mean_abs_prob_diff": 0.0199,
+  "phrasebank_accuracy": 0.865,
+  "headlines_agreement": 0.9477,
+  "headlines_mean_abs_prob_diff": 0.0292,
+  "headlines_accuracy": 0.7076,
+  "ms_batch1": 3.183
+ },
+ "per_channel_matmul_reduce_range": {
+  "size_mb": 132.6,
+  "phrasebank_agreement": 0.9601,
+  "phrasebank_mean_abs_prob_diff": 0.0248,
+  "phrasebank_accuracy": 0.8623,
+  "headlines_agreement": 0.9422,
+  "headlines_mean_abs_prob_diff": 0.0352,
+  "headlines_accuracy": 0.6949,
+  "ms_batch1": 3.203
+ },
+ "uint8_weights_matmul": {
+  "size_mb": 132.4,
+  "phrasebank_agreement": 0.9738,
+  "phrasebank_mean_abs_prob_diff": 0.0229,
+  "phrasebank_accuracy": 0.8678,
+  "headlines_agreement": 0.9314,
+  "headlines_mean_abs_prob_diff": 0.0363,
+  "headlines_accuracy": 0.6986,
+  "ms_batch1": 4.202
+ }
+}
