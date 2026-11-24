@@ -11,7 +11,7 @@ class FakeService(SentimentService):
     """Positive if the headline contains 'beat', negative if 'miss', else neutral."""
 
     def __init__(self):
-        super().__init__(model_source="fake-model")
+        super().__init__(model_source="fake-model", backend="auto")  # independent of any local .env
         self.calls = 0
 
     @property
@@ -54,7 +54,7 @@ def client(scored_csv):
 def test_health(client):
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "model": "fake-model", "model_loaded": True}
+    assert r.json() == {"status": "ok", "model": "fake-model", "backend": "torch", "model_loaded": True}
 
 
 def test_predict_returns_scores_and_relevance(client):
@@ -133,3 +133,31 @@ def test_model_display_name_never_exposes_local_paths(tmp_path):
     local.mkdir()
     assert model_display_name(str(local)) == "distilbert_headline_adapted"
     assert model_display_name("someone/finbert") == "someone/finbert"
+
+
+def test_live_endpoint(scored_csv, tmp_path):
+    from src.live_feed import LiveStore
+
+    db = tmp_path / "live" / "news.db"
+    missing = TestClient(create_app(service=FakeService(), scored_csv=scored_csv, live_db=db))
+    assert missing.get("/live/AAPL").status_code == 503
+
+    store = LiveStore(db)
+    now = pd.Timestamp.now(tz="UTC")
+    news = pd.DataFrame([
+        {"Published_at": now - pd.Timedelta(hours=2), "Article_title": "Apple beats estimates", "Stock_symbol": "AAPL",
+         "Url": "https://a", "Publisher": "Reuters", "Source": "google"},
+        {"Published_at": now - pd.Timedelta(days=30), "Article_title": "Apple old news", "Stock_symbol": "AAPL",
+         "Url": "https://b", "Publisher": "CNBC", "Source": "yahoo"},
+    ])
+    store.insert_new(news, relevant=[True, True])
+    todo = store.unscored()
+    store.save_scores(todo["id"].tolist(), ["positive", "negative"], [[0.1, 0.1, 0.8], [0.8, 0.1, 0.1]],
+                      [0.8, 0.8], [0.7, -0.7], model="m")
+
+    c = TestClient(create_app(service=FakeService(), scored_csv=scored_csv, live_db=db))
+    body = c.get("/live/aapl?days=7").json()
+    assert body["headlines_in_window"] == 1 and body["positive_share"] == 1.0
+    assert body["headlines"][0]["headline"] == "Apple beats estimates" and body["headlines"][0]["source"] == "google"
+    assert "investment advice" in body["disclaimer"]
+    assert c.get("/live/MSFT").status_code == 404

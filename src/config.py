@@ -12,6 +12,9 @@ MODELS_DIR = PROJECT_ROOT / "models"
 DEFAULT_FINETUNED_MODEL_DIR = MODELS_DIR / "distilbert_financial_sentiment"
 WEIGHTED_MODEL_DIR = MODELS_DIR / "distilbert_weighted"
 ADAPTED_MODEL_DIR = MODELS_DIR / "distilbert_headline_adapted"
+# ONNX Runtime exports of the headline-adapted model (``python -m src.pipeline onnx-export``)
+ADAPTED_ONNX_DIR = MODELS_DIR / "distilbert_headline_adapted_onnx"
+ADAPTED_ONNX_INT8_DIR = MODELS_DIR / "distilbert_headline_adapted_onnx_int8"
 
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 METRICS_DIR = OUTPUTS_DIR / "metrics"

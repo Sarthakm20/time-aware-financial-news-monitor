@@ -222,3 +222,5 @@ models/
 data/processed/fnspid_all_*.csv
 data/prices/
 data/cache/
+# Live feed database, alerts and logs (python -m src.pipeline live-update)
+data/live/

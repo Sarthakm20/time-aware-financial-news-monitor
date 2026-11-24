@@ -3,7 +3,12 @@
 Model resolution order:
 1. ``SENTIMENT_MODEL`` environment variable (local directory or Hugging Face Hub id),
 2. the headline-adapted model in ``models/`` if it exists,
-3. the PhraseBank fine-tuned model in ``models/``.
+3. the PhraseBank fine-tuned model in ``models/``,
+4. the ONNX exports of the headline-adapted model (int8 first).
+
+Backend: ``SENTIMENT_BACKEND`` = ``torch`` | ``onnx`` | ``auto`` (default). ``auto`` uses ONNX Runtime
+when the chosen directory holds a ``model.onnx``; ``onnx`` also moves the ONNX exports to the front
+of the search. The ONNX backend never imports torch (about 300 MB less RAM).
 
 The model is loaded lazily on first use, so importing this module is cheap.
 """
@@ -14,24 +19,57 @@ from pathlib import Path
 from threading import Lock
 from typing import Dict, List, Optional, Sequence
 
-from src.config import ADAPTED_MODEL_DIR, DEFAULT_FINETUNED_MODEL_DIR, LABELS
+from src.config import (
+    ADAPTED_MODEL_DIR,
+    ADAPTED_ONNX_DIR,
+    ADAPTED_ONNX_INT8_DIR,
+    DEFAULT_FINETUNED_MODEL_DIR,
+    LABELS,
+)
 from src.relevance import is_relevant
 
 MAX_HEADLINES_PER_REQUEST = 256
 MAX_HEADLINE_CHARS = 500
 
 
-def resolve_model_source() -> str:
+BACKENDS = ("auto", "torch", "onnx")
+ONNX_MODEL_DIRS = (ADAPTED_ONNX_INT8_DIR, ADAPTED_ONNX_DIR)
+TORCH_MODEL_DIRS = (ADAPTED_MODEL_DIR, DEFAULT_FINETUNED_MODEL_DIR)
+
+
+def requested_backend() -> str:
+    backend = os.environ.get("SENTIMENT_BACKEND", "auto").strip().lower() or "auto"
+    if backend not in BACKENDS:
+        raise ValueError(f"SENTIMENT_BACKEND must be one of {', '.join(BACKENDS)}, not {backend!r}")
+    return backend
+
+
+def resolve_model_source(backend: Optional[str] = None) -> str:
     env = os.environ.get("SENTIMENT_MODEL", "").strip()
     if env:
         return env
-    for candidate in (ADAPTED_MODEL_DIR, DEFAULT_FINETUNED_MODEL_DIR):
-        if (Path(candidate) / "config.json").exists():
+    backend = backend or requested_backend()
+    if backend == "onnx":
+        candidates = ONNX_MODEL_DIRS
+    elif backend == "torch":
+        candidates = TORCH_MODEL_DIRS
+    else:
+        candidates = TORCH_MODEL_DIRS + ONNX_MODEL_DIRS
+    for candidate in candidates:
+        is_onnx = (Path(candidate) / "model.onnx").exists()
+        if (Path(candidate) / "config.json").exists() and (is_onnx or candidate not in ONNX_MODEL_DIRS):
             return str(candidate)
     raise FileNotFoundError(
-        "No sentiment model found. Set SENTIMENT_MODEL to a Hugging Face Hub id or train one with "
-        "`python -m src.pipeline train adapt`."
+        "No sentiment model found. Set SENTIMENT_MODEL to a Hugging Face Hub id or a local directory, or build "
+        "one with `python -m src.pipeline train adapt` (and `onnx-export` for the ONNX backend)."
     )
+
+
+def resolve_backend(source: str, backend: Optional[str] = None) -> str:
+    backend = backend or requested_backend()
+    if backend != "auto":
+        return backend
+    return "onnx" if (Path(source) / "model.onnx").exists() else "torch"
 
 
 def model_display_name(source: str) -> str:
@@ -63,16 +101,21 @@ class Prediction:
 class SentimentService:
     """Thread-safe, lazily loaded wrapper around the fine-tuned classifier."""
 
-    def __init__(self, model_source: Optional[str] = None):
+    def __init__(self, model_source: Optional[str] = None, backend: Optional[str] = None):
         self._source = model_source
+        self._backend = backend
         self._lock = Lock()
-        self._bundle = None  # (model, tokenizer, device)
+        self._bundle = None  # torch: (model, tokenizer, device); onnx: OnnxSentimentModel
 
     @property
     def source(self) -> str:
         if self._source is None:
-            self._source = resolve_model_source()
+            self._source = resolve_model_source(self._backend)
         return self._source
+
+    @property
+    def backend(self) -> str:
+        return resolve_backend(self.source, self._backend)
 
     @property
     def model_name(self) -> str:
@@ -85,9 +128,16 @@ class SentimentService:
     def _load(self):
         with self._lock:
             if self._bundle is None:
-                from src.inference import load_fine_tuned_model
+                if self.backend == "onnx":
+                    from src.onnx_backend import OnnxSentimentModel
 
-                self._bundle = load_fine_tuned_model(self.source)
+                    model = OnnxSentimentModel(self.source)
+                    model.self_check()  # refuse to serve an int8 model whose kernels misbehave on this CPU
+                    self._bundle = model
+                else:
+                    from src.inference import load_fine_tuned_model
+
+                    self._bundle = load_fine_tuned_model(self.source)
         return self._bundle
 
     def predict(self, headlines: Sequence[str], ticker: Optional[str] = None) -> List[Prediction]:
@@ -99,10 +149,16 @@ class SentimentService:
         if any(not h for h in headlines):
             raise ValueError("headlines must be non-empty")
 
-        from src.inference import predict_sentiment_batch
+        bundle = self._load()
+        if self.backend == "onnx":
+            from src.onnx_backend import predict_sentiment_batch_onnx
 
-        model, tokenizer, device = self._load()
-        labels, probs, confs, scores = predict_sentiment_batch(headlines, model, tokenizer, device, max_length=64)
+            labels, probs, confs, scores = predict_sentiment_batch_onnx(headlines, bundle, max_length=64)
+        else:
+            from src.inference import predict_sentiment_batch
+
+            model, tokenizer, device = bundle
+            labels, probs, confs, scores = predict_sentiment_batch(headlines, model, tokenizer, device, max_length=64)
         return [
             Prediction(
                 headline=h,

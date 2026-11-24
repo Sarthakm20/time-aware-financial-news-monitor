@@ -11,9 +11,12 @@ from src.config import (
     DEFAULT_FINETUNED_MODEL_DIR,
     EVAL_BATCH_SIZE,
     ID_TO_LABEL,
-    LABELS,
     MAX_SEQUENCE_LENGTH,
 )
+from src.labels import label_column_order, summarize_probabilities
+
+__all__ = ["HeadlineDataset", "label_column_order", "load_fine_tuned_model", "predict_sentiment_batch",
+           "score_news_dataframe"]
 
 
 class HeadlineDataset(Dataset):
@@ -51,20 +54,6 @@ def load_fine_tuned_model(
     return model, tokenizer, device
 
 
-def label_column_order(model) -> List[int]:
-    """Indices that reorder a model's output columns into LABELS order.
-
-    Models trained here already use LABELS order. Third-party checkpoints (e.g.
-    ProsusAI/finbert: positive, negative, neutral) are mapped by their ``id2label``.
-    Models without a usable config are assumed to be in LABELS order.
-    """
-    id2label = getattr(getattr(model, "config", None), "id2label", None) or {}
-    names = {str(name).strip().lower(): int(idx) for idx, name in id2label.items()}
-    if set(names) == set(LABELS):
-        return [names[label] for label in LABELS]
-    return list(range(len(LABELS)))
-
-
 def predict_sentiment_batch(
     texts: List[str],
     model: AutoModelForSequenceClassification,
@@ -79,8 +68,7 @@ def predict_sentiment_batch(
     whatever order the model itself uses (see ``label_column_order``).
     """
     if len(texts) == 0:
-        empty = np.empty((0,), dtype=np.float32)
-        return [], np.empty((0, len(ID_TO_LABEL)), dtype=np.float32), empty, empty
+        return summarize_probabilities(np.empty((0, len(ID_TO_LABEL)), dtype=np.float32))
 
     dataset = HeadlineDataset(list(texts), tokenizer, max_length=max_length)
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
@@ -97,14 +85,7 @@ def predict_sentiment_batch(
             probs = torch.softmax(logits, dim=-1).cpu().numpy()
             all_probs.append(probs)
 
-    probs_matrix = np.vstack(all_probs)[:, label_column_order(model)]
-    pred_indices = np.argmax(probs_matrix, axis=1)
-
-    predicted_labels = [ID_TO_LABEL[idx] for idx in pred_indices]
-    confidences = np.max(probs_matrix, axis=1)
-    sentiment_scores = probs_matrix[:, 2] - probs_matrix[:, 0]
-
-    return predicted_labels, probs_matrix, confidences, sentiment_scores
+    return summarize_probabilities(np.vstack(all_probs)[:, label_column_order(model)])
 
 
 def score_news_dataframe(

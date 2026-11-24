@@ -16,7 +16,7 @@ def test_dashboard_renders_and_switches_ticker_and_model():
     at = AppTest.from_file(str(APP), default_timeout=180).run()
     assert not at.exception, [e.value for e in at.exception]
     assert [t.label for t in at.tabs] == ["🔎 Company explorer", "📈 Market reaction", "🧪 Model quality",
-                                         "✍️ Score a headline"]
+                                         "✍️ Score a headline", "📡 Live feed"]
     assert at.metric[0].label == "Headlines" and int(at.metric[0].value.replace(",", "")) > 0
 
     at.sidebar.selectbox[0].select("NVDA").run()

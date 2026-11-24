@@ -256,3 +256,40 @@ def test_evaluate_multi_stage_with_fake_model(tmp_path, monkeypatch):
     pooled = pd.read_csv(outputs / "metrics" / "multi_company_pooled_accuracy.csv")
     distil = pooled[(pooled.population == "pooled_5_new_companies") & (pooled.model == "DistilBERT fine-tuned")]
     assert distil["n"].iloc[0] == 10 and distil["accuracy"].iloc[0] == 1.0  # only filter-passing headlines
+
+
+def test_live_update_alerts_stages_with_fakes(tmp_path, monkeypatch):
+    """live-update stores, relevance-filters and scores new headlines once; alerts runs on the result."""
+    from src import live_feed
+    from src.live_feed import LiveStore
+    from src.service import Prediction
+
+    now = pd.Timestamp.now(tz="UTC")
+    news = pd.DataFrame([
+        {"Published_at": now - pd.Timedelta(hours=1), "Article_title": "Apple beats estimates", "Stock_symbol": "AAPL",
+         "Url": "u1", "Publisher": "Reuters", "Source": "google"},
+        {"Published_at": now - pd.Timedelta(hours=2), "Article_title": "Five stocks to watch", "Stock_symbol": "AAPL",
+         "Url": "u2", "Publisher": "Zacks", "Source": "yahoo"},
+    ])
+    monkeypatch.setattr(live_feed, "fetch_many", lambda tickers, days, sources, errors=None: news)
+
+    class FakeService:
+        model_name, backend = "fake", "onnx"
+
+        def predict(self, headlines, ticker=None):
+            return [Prediction(h, "positive", {"negative": 0.1, "neutral": 0.2, "positive": 0.7}, 0.6, 0.7)
+                    for h in headlines]
+
+    monkeypatch.setattr(pipeline, "_live_service", lambda p, args: FakeService())
+    args = ["live-update", "alerts", "--live-tickers", "AAPL", "--data-dir", str(tmp_path / "data"),
+            "--outputs-dir", str(tmp_path / "out"), "--models-dir", str(tmp_path / "models")]
+    assert pipeline.main(args) == 0
+    assert pipeline.main(args) == 0  # second run: nothing new to insert or score
+
+    store = LiveStore(tmp_path / "data" / "live" / "news.db")
+    scored = store.scored_frame()
+    assert scored["Article_title"].tolist() == ["Apple beats estimates"]  # the listicle fails the relevance filter
+    assert scored["model"].iloc[0] == "fake (onnx)"
+    runs = store.runs()
+    assert runs["inserted"].tolist() == [0, 2] and runs["scored"].tolist() == [0, 1]
+    assert (tmp_path / "data" / "live" / "alerts_latest.csv").exists()
