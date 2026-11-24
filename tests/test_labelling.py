@@ -58,3 +58,15 @@ def test_interactive_label_saves_supports_back_and_resume(tmp_path):
     keys = iter(["s", "n"])  # resume from the first unlabelled row
     interactive_label(path, input_fn=lambda _: next(keys), print_fn=lambda *_: None)
     assert load_gold(path)["label"].tolist() == ["positive", "neutral", "skip", "negative"]
+
+
+def test_relevance_stratified_sample_is_blind_and_balanced():
+    from src.labelling import sample_relevance_stratified
+    from src.relevance import is_relevant
+
+    titles = [f"Apple news {i}" for i in range(50)] + [f"Market wrap {i}" for i in range(50)]
+    news = pd.DataFrame({"Date": "2021-01-01", "Stock_symbol": "AAPL", "Article_title": titles})
+    s = sample_relevance_stratified(news, "AAPL", n_pass=10, n_fail=5, exclude_titles={"Apple news 0"}, seed=1)
+    assert len(s) == 15 and list(s.columns) == ["item_id", "Date", "Article_title", "label"]  # no filter column
+    passes = [is_relevant(t, "AAPL") for t in s["Article_title"]]
+    assert sum(passes) == 10 and "Apple news 0" not in set(s["Article_title"])

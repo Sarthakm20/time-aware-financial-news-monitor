@@ -30,6 +30,8 @@ SPACE_FILES = [
     "outputs/metrics/event_study_summary.json", "outputs/metrics/event_study_buckets.csv",
     "outputs/metrics/test_set_model_comparison.csv", "outputs/metrics/tsla_headline_model_comparison.csv",
     "outputs/metrics/seed_summary.json",
+    "outputs/metrics/multi_company_pooled_accuracy.csv", "outputs/metrics/multi_company_per_company_accuracy.csv",
+    "outputs/metrics/multi_company_relevance_filter.csv",
     "outputs/figures/event_study_car_adapted.png", "outputs/figures/event_study_car_base.png",
 ]
 

@@ -111,6 +111,29 @@ with tab_explore:
     c3.metric("All-history sentiment", f"{history['unweighted_sentiment']:+.3f}")
     c4.metric("Positive / negative share", f"{row['positive_share']:.0%} / {row['negative_share']:.0%}")
 
+    days = pd.Series(sorted(scored.loc[scored["Stock_symbol"] == ticker, "Date"].dt.normalize().unique()))
+    if len(days) > 1:
+        gaps = days.diff().dt.days
+        i = int(gaps.idxmax())
+        if gaps.max() > 90:
+            st.warning(f"**Coverage gap:** the FNSPID data has no {ticker} headlines between "
+                       f"{days[i - 1].date()} and {days[i].date()} ({int(gaps.max())} days). Treat that stretch as "
+                       "missing data, not as quiet news. FNSPID also keeps at most one headline per company per day.")
+
+    per_company_csv = METRICS_DIR / "multi_company_per_company_accuracy.csv"
+    if per_company_csv.exists():
+        acc = load_csv("multi_company_per_company_accuracy.csv")
+        mine = acc[(acc["ticker"] == ticker) & (acc["model"] == ("DistilBERT headline-adapted"
+                   if model_choice.startswith("Headline") else "DistilBERT fine-tuned"))]
+        if not mine.empty:
+            r = mine.iloc[0]
+            st.info(f"**Measured accuracy for {ticker}:** macro F1 {r['macro_f1']:.2f} "
+                    f"[{r['macro_f1_ci_low']:.2f}, {r['macro_f1_ci_high']:.2f}], accuracy {r['accuracy']:.0%} on "
+                    f"{int(r['n'])} annotated headlines (LLM-annotated). See the Model quality tab.")
+        else:
+            st.caption(f"No annotated headlines for {ticker} yet; accuracy has been measured for "
+                       f"{', '.join(sorted(acc['ticker'].unique()))}.")
+
     timeline = ticker_timeline(scored, ticker, window_days=window_days, freq="W")
     timeline["Date"] = timeline["Date"].dt.tz_localize(None)
     show_price = st.toggle("Overlay share price (Yahoo Finance)", value=False,
@@ -213,8 +236,36 @@ with tab_quality:
         st.dataframe(h[["model", "macro_f1", "macro_f1_ci_low", "macro_f1_ci_high", "accuracy"]].round(3),
                      hide_index=True, width="stretch")
         st.caption("Labels were produced by an LLM annotator and are not human-verified.")
-    st.warning("**Domain shift:** macro F1 falls from 0.84 on PhraseBank sentences to about 0.50 on real headlines. "
-               "Read the timelines as a rough indicator of tone, not a precise measurement.")
+    st.warning("**Domain shift:** macro F1 falls from 0.84 on PhraseBank sentences to about 0.55–0.70 on real "
+               "headlines across six companies. Read the timelines as a rough indicator of tone, not a precise "
+               "measurement.")
+
+    if (METRICS_DIR / "multi_company_pooled_accuracy.csv").exists():
+        st.markdown("#### Accuracy across six companies (TSLA, AAPL, NVDA, AMZN, GILD, SBUX)")
+        st.caption("Annotated headlines that pass the relevance filter, i.e. what the dashboard actually scores. "
+                   "LLM-annotated, not human-verified. 95% bootstrap CIs; McNemar test vs the PhraseBank model.")
+        pooled = load_csv("multi_company_pooled_accuracy.csv")
+        pooled = pooled[pooled["population"] == "pooled_all_6_companies"]
+        st.dataframe(pooled[["model", "n", "accuracy", "macro_f1", "macro_f1_ci_low", "macro_f1_ci_high",
+                             "mcnemar_p_value"]].round(3), hide_index=True, width="stretch")
+
+        per = load_csv("multi_company_per_company_accuracy.csv")
+        per = per[~per["model"].str.startswith("Majority")]
+        heat = alt.Chart(per).mark_rect().encode(
+            x=alt.X("model:N", title=None), y=alt.Y("ticker:N", title=None),
+            color=alt.Color("macro_f1:Q", scale=alt.Scale(scheme="blues", domain=[0.4, 0.8]), title="macro F1"),
+            tooltip=["ticker", "model", "n", alt.Tooltip("macro_f1:Q", format=".3f"),
+                     alt.Tooltip("accuracy:Q", format=".1%")])
+        labels = heat.mark_text(fontSize=12).encode(text=alt.Text("macro_f1:Q", format=".2f"),
+                                                    color=alt.value("black"))
+        st.altair_chart((heat + labels).properties(height=260), width="stretch")
+
+        rel = load_csv("multi_company_relevance_filter.csv")
+        st.markdown("**Relevance filter (is the headline really about the company?)**")
+        st.dataframe(rel[["ticker", "precision", "recall_estimate", "on_topic_share_estimate"]].round(2),
+                     hide_index=True, width="stretch")
+        st.caption("Near-perfect precision. Recall is lower, but 96% of the on-topic headlines it drops are neutral "
+                   "listicles, so it keeps about 98% of headlines that carry sentiment.")
     seeds = load_json("seed_summary.json")
     st.markdown(f"Seed variation ({seeds['n_seeds']} seeds): macro F1 **{seeds['macro_f1']['mean']:.3f} ± "
                 f"{seeds['macro_f1']['std']:.3f}**. Calibration: ECE 0.021, so probabilities are used as is.")

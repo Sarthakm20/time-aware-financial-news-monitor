@@ -288,24 +288,30 @@ def stage_benchmark(p: Paths, args: argparse.Namespace) -> None:
 
     for name in args.external_models:
         slug = model_slug(name)
-        preds = _evaluate_model(name, test_df)
-        metrics = {
-            "model": name,
-            "evaluation_split": "held-out test set",
-            "num_examples": int(len(preds)),
-            **calculate_metrics(preds["label"].tolist(), preds["predicted_label"].tolist()),
-            "caveat": ("Off-the-shelf checkpoint. If it was fine-tuned on Financial PhraseBank (FinBERT was), "
-                       "it has likely seen these test sentences, so this score is optimistic. "
-                       "Compare models on the hand-labelled headlines instead."),
-        }
-        _write_json(metrics, p.metrics / f"{slug}_test_metrics.json")
-        _write_csv(preds, p.predictions / f"{slug}_test_predictions.csv")
-        print(f"  {name}: test accuracy={metrics['accuracy']} macro_f1={metrics['macro_f1']}")
+        test_preds_csv = p.predictions / f"{slug}_test_predictions.csv"
+        if test_preds_csv.exists() and not args.rescore_test:
+            print(f"  {name}: test-split predictions already exist (use --rescore-test to redo)")
+        else:
+            preds = _evaluate_model(name, test_df)
+            metrics = {
+                "model": name,
+                "evaluation_split": "held-out test set",
+                "num_examples": int(len(preds)),
+                **calculate_metrics(preds["label"].tolist(), preds["predicted_label"].tolist()),
+                "caveat": ("Off-the-shelf checkpoint. If it was fine-tuned on Financial PhraseBank (FinBERT was), "
+                           "it has likely seen these test sentences, so this score is optimistic. "
+                           "Compare models on the hand-labelled headlines instead."),
+            }
+            _write_json(metrics, p.metrics / f"{slug}_test_metrics.json")
+            _write_csv(preds, test_preds_csv)
+            print(f"  {name}: test accuracy={metrics['accuracy']} macro_f1={metrics['macro_f1']}")
         if news is not None:
             _write_csv(score_news_dataframe(news, model_path=name), _headline_scored_csv(p, slug))
 
-    if news is not None and p.weighted_model.exists():
-        _write_csv(score_news_dataframe(news, model_path=p.weighted_model), _headline_scored_csv(p, "weighted"))
+    # our own model variants on this ticker's headlines
+    for slug, model_dir in [("weighted", p.weighted_model), ("adapted", p.adapted_model)]:
+        if news is not None and (model_dir / "config.json").exists():
+            _write_csv(score_news_dataframe(news, model_path=model_dir), _headline_scored_csv(p, slug))
 
 
 TEST_SET_MODELS = {
@@ -357,7 +363,8 @@ def _headline_agreement(p: Paths, args: argparse.Namespace) -> List[dict]:
     if not p.scored_csv.exists():
         return []
     ref = pd.read_csv(p.scored_csv)
-    others = {"DistilBERT class-weighted": _headline_scored_csv(p, "weighted")}
+    others = {"DistilBERT class-weighted": _headline_scored_csv(p, "weighted"),
+              "DistilBERT headline-adapted": _headline_scored_csv(p, "adapted")}
     others.update({f"{model_slug(m)} (off-the-shelf)": _headline_scored_csv(p, model_slug(m))
                    for m in args.external_models})
     rows = []
@@ -540,6 +547,10 @@ def stage_evaluate_headlines(p: Paths, args: argparse.Namespace) -> None:
         report["domain_shift"] = {"model": REFERENCE_MODEL, "phrasebank_test_macro_f1": phrasebank_f1,
                                   "headline_macro_f1": headline_f1, "drop": round(phrasebank_f1 - headline_f1, 4)}
 
+    agreement = _headline_agreement(p, args)  # all of this ticker's headlines, labelled or not
+    if agreement:
+        report["headline_agreement_vs_reference"] = agreement
+
     slug = p.ticker.lower()
     _write_csv(table, p.metrics / f"{slug}_headline_model_comparison.csv")
     _write_json(report, p.metrics / f"{slug}_headline_evaluation.json")
@@ -708,11 +719,138 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
     }, p.metrics / "event_study_summary.json")
 
 
-def stage_fetch_news(p: Paths, args: argparse.Namespace) -> None:
-    """Stream one ticker's 2019-2023 headlines from FNSPID."""
-    from src.data_loading import stream_fnspid_slice
+MULTI_EVAL_TICKERS = ["TSLA", "AAPL", "NVDA", "AMZN", "GILD", "SBUX"]
 
-    news = stream_fnspid_slice(ticker=args.ticker)
+
+def _multi_eval_models(p: Paths, args: argparse.Namespace) -> Dict[str, str]:
+    models = {"DistilBERT fine-tuned": str(p.model), "DistilBERT class-weighted": str(p.weighted_model),
+              "DistilBERT headline-adapted": str(p.adapted_model)}
+    models.update({f"{model_slug(m)} (off-the-shelf)": m for m in args.external_models})
+    return {name: src for name, src in models.items() if not Path(src).is_absolute() or Path(src).exists()}
+
+
+def stage_evaluate_multi(p: Paths, args: argparse.Namespace) -> None:
+    """Accuracy on annotated headlines for several companies, plus per-company relevance-filter precision/recall."""
+    import gc
+
+    from src.inference import load_fine_tuned_model, predict_sentiment_batch
+    from src.labelling import gold_path, load_gold
+    from src.relevance import is_relevant
+
+    gold_frames = []
+    for ticker in MULTI_EVAL_TICKERS:
+        path = gold_path(ticker, p.data / "labelled")
+        if not path.exists():
+            print(f"  skipping {ticker}: {path.name} not found")
+            continue
+        g = load_gold(path)
+        g["ticker"] = ticker
+        g["design"] = "random" if ticker == "TSLA" else "stratified by relevance filter"
+        gold_frames.append(g)
+    gold = pd.concat(gold_frames, ignore_index=True)
+    gold = gold[gold["label"] != ""]
+    gold["passes_filter"] = [is_relevant(t, k) for t, k in zip(gold["Article_title"], gold["ticker"])]
+    gold["on_topic"] = gold["label"].isin(config.LABELS)
+    gold["unclear"] = (gold["label"] == "skip") & (gold.get("note", "") == "unclear")
+
+    # ---- relevance filter, per company (strata re-weighted by their true sizes)
+    news = pd.read_csv(_require(p.processed / "fnspid_all_2019_2023.csv", "fetch-news --ticker ALL"),
+                       usecols=["Stock_symbol", "Article_title"]).drop_duplicates()
+    relevance_rows = []
+    for ticker, g in gold[~gold["unclear"]].groupby("ticker", sort=False):
+        pool = news.loc[news["Stock_symbol"] == ticker, "Article_title"]
+        n_pass_pool = sum(is_relevant(t, ticker) for t in pool)
+        n_fail_pool = len(pool) - n_pass_pool
+        kept, dropped = g[g["passes_filter"]], g[~g["passes_filter"]]
+        precision = kept["on_topic"].mean() if len(kept) else float("nan")
+        miss_rate = dropped["on_topic"].mean() if len(dropped) else float("nan")
+        found, missed = n_pass_pool * precision, n_fail_pool * miss_rate
+        relevance_rows.append({
+            "ticker": ticker, "design": g["design"].iloc[0], "labelled": len(g),
+            "pool_headlines": len(pool), "pool_pass_share": round(n_pass_pool / len(pool), 4),
+            "precision": round(float(precision), 4),
+            "on_topic_rate_among_dropped": round(float(miss_rate), 4),
+            "recall_estimate": round(float(found / (found + missed)), 4) if found + missed else float("nan"),
+            "on_topic_share_estimate": round(float((found + missed) / len(pool)), 4),
+        })
+    relevance = pd.DataFrame(relevance_rows)
+    _write_csv(relevance, p.metrics / "multi_company_relevance_filter.csv")
+    print(relevance[["ticker", "precision", "recall_estimate", "on_topic_share_estimate"]].to_string(index=False))
+
+    # ---- score every labelled on-topic headline with each model (one model in memory at a time)
+    scored = gold[gold["on_topic"]].copy()
+    titles = scored["Article_title"].tolist()
+    for name, source in _multi_eval_models(p, args).items():
+        model, tokenizer, device = load_fine_tuned_model(source)
+        labels, _, _, scores = predict_sentiment_batch(titles, model, tokenizer, device, max_length=64)
+        scored[f"pred::{name}"] = labels
+        del model, tokenizer
+        gc.collect()
+        print(f"  scored {len(titles)} headlines with {name}")
+    keep_cols = ["ticker", "item_id", "Date", "Article_title", "label", "passes_filter"]
+    _write_csv(scored[keep_cols + [c for c in scored.columns if c.startswith("pred::")]],
+               p.predictions / "multi_company_headline_predictions.csv")
+
+    # ---- accuracy: deployed population (passes filter) pooled and per company
+    model_names = [c.split("::", 1)[1] for c in scored.columns if c.startswith("pred::")]
+
+    def compare(frame):
+        preds = {n: pd.DataFrame({"predicted_label": frame[f"pred::{n}"].tolist()}) for n in model_names}
+        y = frame["label"].tolist()
+        preds.update(_majority_baseline(y))
+        return _compare_models(y, preds, REFERENCE_MODEL, args.n_boot)
+
+    deployed = scored[scored["passes_filter"]]
+    new_companies = deployed[deployed["ticker"] != "TSLA"]
+    tables = {
+        "pooled_5_new_companies": compare(new_companies),
+        "pooled_all_6_companies": compare(deployed),
+    }
+    per_company = []
+    for ticker, g in deployed.groupby("ticker", sort=False):
+        t = compare(g)
+        t.insert(0, "ticker", ticker)
+        per_company.append(t)
+    per_company = pd.concat(per_company, ignore_index=True)
+
+    for key, table in tables.items():
+        table.insert(0, "population", key)
+    pooled = pd.concat(tables.values(), ignore_index=True)
+    _write_csv(pooled, p.metrics / "multi_company_pooled_accuracy.csv")
+    _write_csv(per_company, p.metrics / "multi_company_per_company_accuracy.csv")
+
+    phrasebank = json.loads((p.metrics / "finetuned_test_metrics.json").read_text(encoding="utf-8"))["macro_f1"]
+    _write_json({
+        "companies": MULTI_EVAL_TICKERS,
+        "population": "annotated on-topic headlines that pass the relevance filter (what the system scores)",
+        "labelled_on_topic_passing_filter": {k: int(v) for k, v in deployed["ticker"].value_counts().items()},
+        "phrasebank_test_macro_f1": phrasebank,
+        "annotators": sorted(set(gold.get("annotator", pd.Series(dtype=str))) - {""}),
+        "notes": [
+            "Labels are LLM-annotated (Claude) following docs/annotation_guidelines.md; not human-verified.",
+            "TSLA was sampled at random; the other companies 80 filter-kept + 30 filter-dropped headlines each.",
+            "The headline-adapted model saw ~5 other headlines per non-TSLA company in training (none of these).",
+        ],
+        "pooled": pooled.to_dict(orient="records"),
+    }, p.metrics / "multi_company_evaluation.json")
+
+    cols = ["population", "model", "n", "accuracy", "macro_f1", "macro_f1_ci_low", "macro_f1_ci_high",
+            "mcnemar_p_value"]
+    print(pooled[cols].to_string(index=False))
+    print(per_company[["ticker", "model", "n", "accuracy", "macro_f1"]].to_string(index=False))
+
+
+def stage_fetch_news(p: Paths, args: argparse.Namespace) -> None:
+    """Stream one ticker's 2019-2023 headlines from FNSPID (or slice the all-ticker file if present)."""
+    from src.data_loading import ALL_TICKERS, stream_fnspid_slice
+
+    all_csv = p.processed / "fnspid_all_2019_2023.csv"
+    if args.ticker.upper() not in ALL_TICKERS and all_csv.exists():
+        news = pd.read_csv(all_csv)
+        news = news[news["Stock_symbol"].str.upper() == args.ticker.upper()].reset_index(drop=True)
+        print(f"  sliced {len(news)} {args.ticker.upper()} headlines from {all_csv.name} (no re-download)")
+    else:
+        news = stream_fnspid_slice(ticker=args.ticker)
     _write_csv(news, p.news_csv)
 
 
@@ -761,6 +899,7 @@ STAGES: Dict[str, Callable[[Paths, argparse.Namespace], None]] = {
     "monitor": stage_monitor,
     "sample-headlines": stage_sample_headlines,
     "evaluate-headlines": stage_evaluate_headlines,
+    "evaluate-multi": stage_evaluate_multi,
 }
 
 
@@ -778,6 +917,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--external-models", nargs="+", default=["ProsusAI/finbert"],
                         help="off-the-shelf HF classifiers for 'benchmark'")
     parser.add_argument("--adapt-epochs", type=int, default=3, help="epochs for 'adapt'")
+    parser.add_argument("--rescore-test", action="store_true",
+                        help="benchmark: re-score the PhraseBank test split even if predictions exist")
     parser.add_argument("--n-event-boot", type=int, default=500, help="bootstrap resamples for event-study")
     parser.add_argument("--event-threshold", type=float, default=0.3,
                         help="|daily sentiment| above which a day counts as positive/negative")

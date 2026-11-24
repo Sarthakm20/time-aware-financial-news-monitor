@@ -1,0 +1,710 @@
+ticker,item_id,Date,Article_title,label,passes_filter,pred::DistilBERT fine-tuned,pred::DistilBERT class-weighted,pred::DistilBERT headline-adapted,pred::finbert (off-the-shelf)
+TSLA,1,2019-07-28 00:00:00+00:00,Dan Nathan Gives An Update On His Tesla Trade,neutral,True,neutral,neutral,neutral,neutral
+TSLA,3,2022-07-01 00:00:00+00:00,US STOCKS-Wall Street kicks off second-half with losses on slowdown worries,neutral,False,negative,negative,positive,negative
+TSLA,4,2023-06-03 00:00:00+00:00,Tesla Investors Can Slowly Get More Excited About This,positive,True,positive,positive,positive,neutral
+TSLA,5,2019-11-09 00:00:00+00:00,"Bulls And Bears Of The Week: Roku, Tesla, Twitter, Uber And More",neutral,True,neutral,neutral,neutral,neutral
+TSLA,6,2019-09-13 00:00:00+00:00,"'Tesla Model S prototype shows new fascia, strange rear spoiler, and more ' -Electrek",neutral,True,neutral,neutral,neutral,neutral
+TSLA,7,2022-05-07 00:00:00+00:00,5 Stocks That Moved the Market in April,neutral,False,neutral,neutral,neutral,neutral
+TSLA,8,2023-04-16 00:00:00+00:00,"President Biden Wants to Ban Cars, Here are 23 Stocks to Buy",neutral,False,neutral,neutral,neutral,neutral
+TSLA,9,2023-05-06 00:00:00+00:00,2 Reasons to Buy Tesla Stock Before it Skyrockets,positive,True,neutral,negative,negative,neutral
+TSLA,10,2022-10-12 00:00:00+00:00,"Pre-Market Most Active for Oct 12, 2022 : TQQQ, SQQQ, KNBE, NOG, TSLA, QQQ, PG, NIO, IMUX, CCJ, CCL, XPEV",neutral,True,neutral,neutral,neutral,neutral
+TSLA,11,2019-11-04 00:00:00+00:00,Tesla Shares Unaffected Following Earlier Bloomberg Article 'Hedge Fund Scraps Tesla Short in New Letter After Surprise Rally',neutral,True,neutral,negative,negative,negative
+TSLA,12,2023-12-07 00:00:00+00:00,Tata Motors lobbies India not to lower EV import taxes as Tesla looms-sources,negative,True,neutral,neutral,positive,neutral
+TSLA,13,2019-08-06 00:00:00+00:00,'China Doubles Size Of Shanghai Free-Trade Zone To Include Tesla Town In Drive To Open Markets' South China Morning Post,positive,True,positive,positive,positive,positive
+TSLA,14,2023-05-01 00:00:00+00:00,"Noteworthy ETF Outflows: ACWI, TSLA, JNJ, VZ",neutral,True,neutral,neutral,neutral,positive
+TSLA,15,2022-11-10 00:00:00+00:00,"Why Tesla, Lucid, and Fisker Shares All Jumped Today",positive,True,positive,positive,positive,neutral
+TSLA,17,2020-04-26 00:00:00+00:00,Fremont Tesla Employees Asked To Go Back To Work Despite Coronavirus Health Orders In Place,negative,True,neutral,neutral,neutral,negative
+TSLA,18,2019-07-27 00:00:00+00:00,Tesla Analyst: Q2 Print Was Disastrous,negative,True,negative,negative,negative,neutral
+TSLA,19,2022-10-05 00:00:00+00:00,Musk’s messy Twitter deal could have an X-factor,neutral,False,neutral,neutral,neutral,neutral
+TSLA,21,2023-12-14 00:00:00+00:00,Tesla Stock Can Soar in 2024 if It Does These 3 Things,positive,True,neutral,neutral,neutral,positive
+TSLA,22,2023-06-06 00:00:00+00:00,This Billionaire Just Sold Out of Tesla Stock. Should You Follow?,negative,True,neutral,neutral,neutral,neutral
+TSLA,23,2019-08-02 00:00:00+00:00,Hearing Tesla's Energy Unit Has Reshuffled Executive Ranks,neutral,True,positive,positive,positive,neutral
+TSLA,25,2023-05-25 00:00:00+00:00,German authorities looking into possible data protection violations by Tesla -newspaper,negative,True,neutral,negative,neutral,negative
+TSLA,26,2023-04-20 00:00:00+00:00,Tesla’s Earnings Recap,neutral,True,neutral,neutral,neutral,neutral
+TSLA,27,2020-01-21 00:00:00+00:00,Tesla And Michigan Reach Settlement For Direct Delivery To Customers,positive,True,neutral,positive,positive,neutral
+TSLA,28,2020-01-30 00:00:00+00:00,"Cramer Compares Tesla Investors To Amazon, Netflix: If You Love The Product, You Love The Stock",positive,True,neutral,positive,positive,neutral
+TSLA,30,2019-11-24 00:00:00+00:00,"Tesla Received Another 41,000 Cybertruck Orders Since Yesterday, Bringing Total to 187,000",positive,True,positive,positive,positive,positive
+TSLA,31,2023-03-20 00:00:00+00:00,The 3 Best Electric Vehicle ETFs to Buy for the Future of Transportation,neutral,False,positive,positive,positive,neutral
+TSLA,32,2022-07-08 00:00:00+00:00,Elon Musk Terminates $44 Bln Twitter Deal,neutral,False,neutral,neutral,neutral,negative
+TSLA,34,2023-03-25 00:00:00+00:00,What Happened to Tesla This Week,neutral,True,neutral,neutral,neutral,neutral
+TSLA,35,2019-12-20 00:00:00+00:00,A Tesla Short Squeeze Years In The Making May Have Finally Arrived,positive,True,positive,positive,positive,neutral
+TSLA,40,2023-01-17 00:00:00+00:00,"Tesla video promoting self-driving was staged, engineer testifies",negative,True,neutral,neutral,neutral,neutral
+TSLA,41,2023-11-04 00:00:00+00:00,"RIVN, NIO, or TSLA: Which EV Stock is the Most Attractive Pick?",neutral,True,neutral,neutral,neutral,neutral
+TSLA,42,2023-01-08 00:00:00+00:00,Electric Vehicle Stocks Plunged in 2022. Here's Why It Could Worsen in 2023,negative,False,negative,negative,negative,negative
+TSLA,43,2020-03-12 00:00:00+00:00,UPDATE: Morgan Stanley On Tesla Notes 'Cutting Tesla FY20 Deliveries to 452k'; 'Our previous 500k delivery estimate is a bull case while 400k units is a bear case',negative,True,neutral,neutral,neutral,negative
+TSLA,45,2023-08-09 00:00:00+00:00,Opinion: These Will Be the 5 Biggest Stocks by 2030,neutral,False,neutral,neutral,neutral,neutral
+TSLA,46,2023-12-12 00:00:00+00:00,TSLA Factor-Based Stock Analysis,neutral,True,neutral,neutral,neutral,neutral
+TSLA,47,2019-08-20 00:00:00+00:00,"'Price increase for Tesla FSD postponed until version 10 with smart summon is in wide release, which is about 4 to 8 weeks away, depending on how early access goes' -Elon Musk",neutral,True,neutral,neutral,negative,neutral
+TSLA,49,2023-02-01 00:00:00+00:00,EXCLUSIVE-Tesla to raise Shanghai output after price cuts stoke demand -memo,positive,True,positive,positive,positive,positive
+TSLA,50,2019-12-11 00:00:00+00:00,How TD Ameritrade Clients Positioned Themselves In Disney And Tesla After November's Disney+ And Cybertruck Events,neutral,True,neutral,neutral,neutral,neutral
+TSLA,51,2022-08-08 00:00:00+00:00,Here's Why Tesla Stock Popped Today,positive,True,neutral,neutral,positive,neutral
+TSLA,52,2022-10-21 00:00:00+00:00,Tesla Revenues Miss in Q3 Earnings Put These ETFs in Focus,negative,True,positive,negative,negative,negative
+TSLA,53,2019-08-28 00:00:00+00:00,Tesla Rolls Out Car Insurance Unit For Drivers of Its Cars In California,positive,True,neutral,neutral,neutral,neutral
+TSLA,55,2020-05-19 00:00:00+00:00,Panasonic To Resume Production At Tesla's New York Factory On Wednesday: Report,positive,True,neutral,neutral,neutral,neutral
+TSLA,57,2023-12-13 00:00:00+00:00,Why Tesla's Cheap (2024 Outlook),positive,True,neutral,neutral,neutral,neutral
+TSLA,58,2023-01-25 00:00:00+00:00,"Dow Reverses Losses, Settles Modestly Higher",neutral,False,negative,positive,positive,positive
+TSLA,59,2022-05-31 00:00:00+00:00,Tesla (TSLA) Stock Moves -0.18%: What You Should Know,neutral,True,neutral,neutral,neutral,neutral
+TSLA,60,2023-01-26 00:00:00+00:00,"Dow, Nasdaq Pivot Higher to Score Triple-Digit Gains",neutral,False,positive,positive,positive,positive
+TSLA,61,2019-08-12 00:00:00+00:00,'Tesla Autopilot applied brakes in Model 3 crash that resulted in explosions' -Electrek,neutral,True,negative,negative,negative,negative
+TSLA,62,2023-04-25 00:00:00+00:00,The U.S. Government Just Picked 4 Electric Vehicle Stocks to Win,neutral,False,positive,positive,positive,neutral
+TSLA,63,2023-07-23 00:00:00+00:00,Another Huge Week of Earnings Plus Other Can't Miss Items This Week,neutral,False,neutral,neutral,neutral,neutral
+TSLA,64,2022-07-11 00:00:00+00:00,Stock Market Today: Nasdaq Snaps Win Streak as Twitter Drags on Tech,neutral,False,negative,negative,negative,negative
+TSLA,65,2022-06-26 00:00:00+00:00,Validea's Top Five Consumer Cyclical Stocks Based On Motley Fool - 6/26/2022,neutral,False,neutral,neutral,neutral,neutral
+TSLA,66,2023-04-21 00:00:00+00:00,"1 Unstoppable Stock With 1,127% Upside, According to Cathie Wood's Ark Invest",positive,False,neutral,neutral,positive,neutral
+TSLA,67,2023-10-29 00:00:00+00:00,Tesla's Competition Are Feeling the Heat,positive,True,neutral,neutral,neutral,neutral
+TSLA,69,2023-02-16 00:00:00+00:00,Tesla says it laid off 4% New York employees before union campaign,negative,True,negative,negative,negative,negative
+TSLA,71,2023-09-18 00:00:00+00:00,Stock Investors Remain Cautious Ahead of FOMC Meeting,neutral,False,neutral,neutral,negative,negative
+TSLA,73,2019-08-05 00:00:00+00:00,'Tesla loses head of 'manufacturing quality' in production leadership shake-up' -Electrek,negative,True,negative,negative,negative,negative
+TSLA,74,2022-08-31 00:00:00+00:00,"Is Trending Stock Tesla, Inc. (TSLA) a Buy Now?",neutral,True,neutral,neutral,positive,neutral
+TSLA,75,2022-06-16 00:00:00+00:00,"VOO, AMZN, TSLA, GOOGL: Large Inflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+TSLA,76,2020-01-23 00:00:00+00:00,Want To Ask Elon Musk A Question On An Earnings Call? Here's How,neutral,True,neutral,neutral,neutral,neutral
+TSLA,77,2023-06-28 00:00:00+00:00,Tesla Just Announced Its Next Multi-Hundred-Billion-Dollar Business,positive,True,neutral,neutral,neutral,neutral
+TSLA,78,2023-09-22 00:00:00+00:00,Is Tesla Stock Overvalued? Here's What Experts Are Saying,neutral,True,neutral,negative,negative,neutral
+TSLA,79,2023-06-30 00:00:00+00:00,Validea Detailed Fundamental Analysis - TSLA,neutral,True,neutral,neutral,neutral,neutral
+TSLA,80,2020-04-02 00:00:00+00:00,"Tesla Is 'Crushing The Auto Industry', Munster Says, As Company Posts Q1 Delivery Figures",positive,True,negative,negative,negative,negative
+TSLA,81,2022-11-13 00:00:00+00:00,Tesla says it will assist police probe into fatal crash in China,negative,True,neutral,positive,positive,positive
+TSLA,82,2022-09-06 00:00:00+00:00,US STOCKS-Wall St set for gains after recent selloff,neutral,False,positive,positive,positive,positive
+TSLA,84,2022-10-24 00:00:00+00:00,US STOCKS-Wall St closes up on hopes of abating Fed,neutral,False,neutral,positive,positive,negative
+TSLA,85,2023-12-01 00:00:00+00:00,"1 Cathie Wood Stock With Over 100% Upside, According to Analysts",positive,False,neutral,neutral,positive,positive
+TSLA,86,2023-09-21 00:00:00+00:00,EXCLUSIVE-Tesla proposes building battery storage factory in India -sources,positive,True,neutral,neutral,neutral,neutral
+TSLA,87,2023-10-17 00:00:00+00:00,Is Tesla (TSLA) A Buy Ahead of Q3 Earnings Announcement?,neutral,True,neutral,neutral,neutral,neutral
+TSLA,88,2023-04-02 00:00:00+00:00,Tesla misses delivery estimates as price cuts fail to lure buyers,negative,True,negative,negative,negative,negative
+TSLA,89,2023-02-09 00:00:00+00:00,"US STOCKS-Wall St rises on robust earnings, Disney hits five-month high",neutral,False,positive,positive,positive,positive
+TSLA,90,2023-03-18 00:00:00+00:00,Tesla Continues to Dominate and It's Not Even Close,positive,True,neutral,neutral,neutral,neutral
+TSLA,91,2022-08-25 00:00:00+00:00,"Noteworthy ETF Inflows: IVV, AMZN, TSLA, GOOGL",neutral,True,neutral,neutral,neutral,positive
+TSLA,92,2023-06-09 00:00:00+00:00,"Technology Sector Update for 06/09/2023: TSLA, ADBE, KC",neutral,True,neutral,neutral,neutral,neutral
+TSLA,93,2023-07-17 00:00:00+00:00,Tesla directors settle lawsuit over compensation for $735 mln,neutral,True,neutral,negative,negative,negative
+TSLA,94,2019-11-23 00:00:00+00:00,"Elon Musk Tweet: 146k Cybertruck orders so far, with 42% choosing dual, 41% tri & 17% single motor",positive,True,neutral,neutral,neutral,neutral
+TSLA,95,2023-01-31 00:00:00+00:00,Why Tesla Stock Trounced the Market on Tuesday,positive,True,neutral,negative,negative,neutral
+TSLA,96,2023-10-25 00:00:00+00:00,"Tesla Stock: Elon Musk’s Warnings Are a Red Flag for the Entire EV Industry, Says Morgan Stanley",negative,True,neutral,negative,positive,negative
+TSLA,99,2020-05-01 00:00:00+00:00,"Amazon, Exxon Mobil Earnings Weigh On Market To Start New Month As Caution Steers The Wheel",neutral,False,neutral,neutral,neutral,negative
+TSLA,100,2023-07-03 00:00:00+00:00,Goldman Sachs Maintains Tesla (TSLA) Neutral Recommendation,neutral,True,neutral,neutral,neutral,neutral
+TSLA,102,2023-11-24 00:00:00+00:00,Validea Detailed Fundamental Analysis - TSLA,neutral,True,neutral,neutral,neutral,neutral
+TSLA,103,2023-04-28 00:00:00+00:00,The Bears Are Right About Tesla,negative,True,neutral,neutral,neutral,neutral
+TSLA,105,2020-05-03 00:00:00+00:00,Tesla Teases Battery Module And Pack Production Line At Giga Shanghai,positive,True,neutral,neutral,neutral,positive
+TSLA,106,2019-11-26 00:00:00+00:00,Tesla shares are trading lower after China Renaissance downgraded the company's stock from Buy to Hold and announced a $346 price target.,negative,True,negative,negative,negative,negative
+TSLA,108,2023-02-27 00:00:00+00:00,US STOCKS-Wall Street bounces modestly after prior week's selloff,neutral,False,negative,negative,negative,positive
+TSLA,109,2022-09-20 00:00:00+00:00,PG&E's Tesla battery facility catches fire in California,negative,True,negative,negative,negative,negative
+TSLA,110,2023-10-13 00:00:00+00:00,Looking for the Next Tesla? Here Are the Top 2 EV Stock Contenders,neutral,True,neutral,neutral,neutral,neutral
+TSLA,111,2022-11-30 00:00:00+00:00,"Despite Twitter Distraction, Keep on Buying Tesla Stock, Says Morgan Stanley",positive,True,neutral,neutral,neutral,neutral
+TSLA,112,2020-02-20 00:00:00+00:00,German Court Dismisses Environmental Challenge To Halt Preparations For Tesla Plant Near Berlin,positive,True,neutral,negative,negative,negative
+TSLA,113,2023-10-22 00:00:00+00:00,"Earnings, Geopolitics and Other Key Items to Watch This Week",neutral,False,neutral,neutral,neutral,neutral
+TSLA,114,2019-10-24 00:00:00+00:00,Tesla Shares Unaffected Following Sun Article About Lawsuit Alleging Driver Died After Crash Due To Inability To Open Doors,neutral,True,neutral,negative,neutral,negative
+TSLA,115,2019-10-22 00:00:00+00:00,Zoox CEO Reportedly Says Believes Tesla Will Need 50 More Years Of Progress To Make Fully Self-Driving Vehicles That Require No Human Input,negative,True,neutral,positive,neutral,positive
+TSLA,116,2023-08-28 00:00:00+00:00,US STOCKS-Wall St gains on boost from megacaps ahead of key economic data,neutral,False,positive,positive,positive,positive
+TSLA,117,2022-07-15 00:00:00+00:00,"Investors Heavily Search Tesla, Inc. (TSLA): Here is What You Need to Know",neutral,True,neutral,neutral,neutral,neutral
+TSLA,118,2020-03-03 00:00:00+00:00,Fed Surprise: 50 Basis Point Cut Does Little To Support Wobbly Markets,neutral,False,neutral,negative,negative,negative
+TSLA,119,2022-06-27 00:00:00+00:00,Still Think Tesla Is Expensive? This Stat Will Change Your Mind,positive,True,neutral,neutral,neutral,neutral
+TSLA,120,2019-09-16 00:00:00+00:00,Today's Pick-Up: Musk Invokes Amazon's Name Not In Vain; Using A Customer To Rake XPO,neutral,True,neutral,neutral,neutral,neutral
+TSLA,121,2023-08-01 00:00:00+00:00,"US STOCKS-S&P 500, Nasdaq end lower on first day of August in busy earnings week",neutral,False,negative,negative,negative,negative
+TSLA,122,2022-07-26 00:00:00+00:00,"Tesla, Inc. (TSLA) Is a Trending Stock: Facts to Know Before Betting on It",neutral,True,neutral,neutral,neutral,neutral
+TSLA,123,2022-08-30 00:00:00+00:00,"Tesla Ban On Employees Wearing Union Shirts Unlawful, Labor Board Rules",negative,True,neutral,negative,neutral,negative
+TSLA,125,2022-06-04 00:00:00+00:00,Why Tesla Stock Dropped 13% in May and Didn't Stop There,negative,True,negative,negative,negative,negative
+TSLA,126,2020-02-06 00:00:00+00:00,Tesla Remotely Removed Autopilot From A User's Car Without Telling Them: Report,negative,True,neutral,negative,neutral,neutral
+TSLA,127,2023-08-30 00:00:00+00:00,"Unusual Put Option Trade in Tesla (TSLA) Worth $190,606.00K",neutral,True,neutral,neutral,neutral,neutral
+TSLA,129,2022-10-28 00:00:00+00:00,"US STOCKS-S&P 500, Nasdaq set to open lower after Amazon, Apple warnings",neutral,False,negative,negative,negative,negative
+TSLA,131,2022-07-07 00:00:00+00:00,Better Buy: Tesla or Rivian?,neutral,True,neutral,neutral,neutral,neutral
+TSLA,134,2023-11-26 00:00:00+00:00,Exciting News for Tesla Stock Investors,positive,True,neutral,positive,positive,neutral
+TSLA,136,2020-03-17 00:00:00+00:00,California's Alameda County Says Tesla Factory Cannot Continue Usual Operation Due to Coronavirus Measures,negative,True,negative,negative,negative,negative
+TSLA,138,2022-10-27 00:00:00+00:00,Good Stocks To Invest In Today? 2 S&P 500 Stocks To Watch,neutral,False,neutral,neutral,neutral,neutral
+TSLA,139,2022-12-19 00:00:00+00:00,US STOCKS-Wall Street falls fourth straight day as recession worries nag,neutral,False,negative,negative,negative,negative
+TSLA,145,2019-09-27 00:00:00+00:00,"'Tesla To Set Model 3 Sales Record In The Netherlands: 6,500 In Q3' -Inside EVs",positive,True,positive,positive,positive,neutral
+TSLA,146,2020-01-16 00:00:00+00:00,"'Tesla Autopilot crash rate increases, but still lower than without Autopilot' -Electrek",neutral,True,positive,positive,negative,positive
+TSLA,148,2023-03-09 00:00:00+00:00,US STOCKS-Futures slip on rate-hike worries ahead of payrolls data,neutral,False,negative,negative,negative,negative
+TSLA,149,2023-11-12 00:00:00+00:00,The Future of Electric Vehicles: 3 Stocks to Buy Now,neutral,False,neutral,neutral,neutral,neutral
+TSLA,152,2023-01-19 00:00:00+00:00,US STOCKS-Wall Street set for lower open amid recession worries,neutral,False,negative,negative,negative,negative
+TSLA,153,2019-12-05 00:00:00+00:00,Tesla Shares Up 1% After Hours As Hearing Morgan Stanley Raised Bull-Case Target From $440 To $500,positive,True,positive,positive,positive,positive
+TSLA,154,2022-12-29 00:00:00+00:00,US STOCKS-Wall St gains as jobless claims data eases rate-hike worries,neutral,False,positive,positive,positive,positive
+TSLA,155,2020-05-05 00:00:00+00:00,Elon Musk Qualifies For $700M In Stock Options As Tesla Tops $100B Market Cap Average,positive,True,neutral,positive,positive,positive
+TSLA,156,2019-08-07 00:00:00+00:00,From $420 To $230: Where Tesla Stands One Year After Elon Musk's 'Funding Secured' Tweet,negative,True,neutral,neutral,neutral,positive
+TSLA,157,2019-07-16 00:00:00+00:00,'Cost of Tesla full self-driving option increasing by ~$1000 on August 16' -Elon Musk,neutral,True,positive,positive,positive,positive
+TSLA,159,2022-09-04 00:00:00+00:00,Prediction: These Could Be the Best Growth Stocks in 2030,neutral,False,neutral,positive,positive,positive
+TSLA,160,2023-03-03 00:00:00+00:00,"Pre-Market Most Active for Mar 3, 2023 : TQQQ, SQQQ, TSLA, ARDX, HLN, CSCO, SOUN, BABA, AI, SI, HPE, HD",neutral,True,neutral,neutral,neutral,neutral
+TSLA,161,2019-10-14 00:00:00+00:00,"Tesla shares are trading higher after Elon Musk gave hints about the company's pickup truck design, and called it the 'Cybertruck'. NOTE: Musk said that the company plans to unveil its electric pickup truck in November.",positive,True,neutral,positive,positive,positive
+TSLA,162,2022-07-17 00:00:00+00:00,Wall St Week Ahead-Recession fears loom over U.S. value stocks,neutral,False,negative,negative,negative,negative
+TSLA,163,2023-06-04 00:00:00+00:00,Guru Fundamental Report for TSLA,neutral,True,neutral,neutral,neutral,neutral
+TSLA,164,2023-02-26 00:00:00+00:00,Beyond Tesla: 3 EV Stocks with Strong Growth Potential,neutral,True,positive,positive,positive,positive
+TSLA,165,2023-05-21 00:00:00+00:00,These 2 High-Growth Stocks Could Power the Bull Market's Next Record Run,neutral,False,positive,positive,positive,positive
+TSLA,166,2022-06-01 00:00:00+00:00,Elon Musk tells Tesla staff: return to office or leave,neutral,True,neutral,neutral,neutral,neutral
+TSLA,167,2020-02-11 00:00:00+00:00,"'Tesla Gigafactory 3 Is Back Online: February 10, 2020 Video' -InsideEVs",positive,True,neutral,neutral,neutral,neutral
+TSLA,169,2022-12-07 00:00:00+00:00,My Top 3 Stocks to Buy for 2023,neutral,False,neutral,neutral,neutral,neutral
+TSLA,170,2023-01-04 00:00:00+00:00,US STOCKS-Wall St eyes higher open with focus on Fed minutes,neutral,False,neutral,neutral,neutral,positive
+TSLA,171,2023-05-30 00:00:00+00:00,"Top Research Reports for Tesla, TotalEnergies & Intuitive Surgical",neutral,True,neutral,neutral,neutral,neutral
+TSLA,172,2019-12-19 00:00:00+00:00,'Tesla partners with EVgo to deploy Tesla connectors on their nationwide charging network' -Electrek,positive,True,neutral,positive,positive,positive
+TSLA,173,2019-08-26 00:00:00+00:00,'Tesla Gigafactory 3 leaked images show Model 3 production setup tests' -electrek,neutral,True,neutral,neutral,neutral,neutral
+TSLA,175,2023-10-09 00:00:00+00:00,"Technology Sector Update for 10/09/2023: DRS, CMTL, TSLA",neutral,True,neutral,neutral,neutral,neutral
+TSLA,176,2019-07-01 00:00:00+00:00,Tesla's Q2 Delivery Number Could Cause A Big Move,neutral,True,negative,negative,negative,negative
+TSLA,178,2023-05-22 00:00:00+00:00,3 Stock Market Predictions for the Second Half of 2023,neutral,False,neutral,neutral,neutral,neutral
+TSLA,179,2020-02-03 00:00:00+00:00,Elon Musk Getting Richer Faster Than Any Other Billionaire This Year,positive,True,positive,positive,positive,neutral
+TSLA,182,2023-11-22 00:00:00+00:00,"2 Growth Stocks Wall Street Might Be Sleeping On, but I'm Not",neutral,False,neutral,neutral,neutral,neutral
+TSLA,184,2020-04-14 00:00:00+00:00,Zoox and Tesla Settle Lawsuit; Zoox to Make Payment to Tesla,positive,True,neutral,neutral,neutral,neutral
+TSLA,185,2023-09-16 00:00:00+00:00,3 EV Stocks Still Poised for Monster Growth,neutral,False,positive,positive,positive,positive
+TSLA,186,2020-05-28 00:00:00+00:00,Tesla To Give Musk $700M In Incentives Payment,neutral,True,neutral,positive,positive,positive
+TSLA,189,2023-07-15 00:00:00+00:00,2 Ways Tesla Can Grow in the Next 5 Years Beyond the Robotaxi,positive,True,positive,positive,positive,neutral
+TSLA,190,2023-02-12 00:00:00+00:00,The Best Industrial Stocks to Buy Right Now With $500,neutral,False,neutral,positive,positive,neutral
+TSLA,191,2023-02-03 00:00:00+00:00,Why Tesla Stock Keeps Racing Higher,positive,True,neutral,positive,positive,neutral
+TSLA,193,2019-07-15 00:00:00+00:00,Tesla Option Alert: Aug 16 $180 Puts Sweep (21) above Ask!: 9874 @ $1.218 vs 16653 OI; Earnings 7/24 After Close Ref=$246.93,neutral,True,neutral,neutral,positive,positive
+TSLA,194,2019-12-03 00:00:00+00:00,"'Thought He Was Just Some Random Creepy Guy,' Musk Testifies In Defamation Case",neutral,True,neutral,neutral,neutral,neutral
+TSLA,195,2019-11-07 00:00:00+00:00,"3 Reasons Why Tesla Will Hit $6,000, According To Ark Invest's Catherine Wood",positive,True,neutral,negative,positive,neutral
+TSLA,196,2023-07-04 00:00:00+00:00,Prediction: 10 Stocks That Will Have Trillion-Dollar Valuations by 2035,neutral,False,neutral,neutral,neutral,neutral
+TSLA,197,2020-01-31 00:00:00+00:00,"Position Scrimmage: Coronavirus, End-Of-Month Profit Taking Influencing Markets",neutral,False,neutral,neutral,neutral,negative
+TSLA,198,2020-02-01 00:00:00+00:00,"Bulls And Bears Of The Week: Amazon, Tesla, GE And More",neutral,True,neutral,neutral,neutral,neutral
+TSLA,199,2023-01-10 00:00:00+00:00,Protesting Tesla China buyers vow more pressure over price cuts they missed,negative,True,negative,negative,negative,negative
+TSLA,200,2019-10-01 00:00:00+00:00,'Tesla Gigafactory 3 has major ongoing expansion and new Supercharger station' -Recent Electrek Article,positive,True,positive,positive,positive,neutral
+TSLA,201,2023-11-06 00:00:00+00:00,"Tesla Approaches a New Milestone, but This Rival EV Stock Is Climbing Higher Monday",positive,True,positive,positive,positive,positive
+TSLA,203,2023-01-23 00:00:00+00:00,"US STOCKS-Wall Street surges, powered by tech rebound",neutral,False,positive,positive,positive,positive
+TSLA,205,2022-05-18 00:00:00+00:00,Tesla Removed From S&P 500 ESG Index,negative,True,negative,negative,negative,negative
+TSLA,206,2019-09-26 00:00:00+00:00,"Tesla To LAunch Tesla Theater With IQIYI And Tencent Video Access For China-Based Customers; Latest Update Will Enable Streaming Media Access To Spotify, Tunein, Slacker While Parked & Connected To Wifi For Selected Model Cars",neutral,True,neutral,positive,neutral,neutral
+TSLA,208,2022-09-07 00:00:00+00:00,Elon Musk $258 billion Dogecoin lawsuit expands,negative,True,neutral,positive,positive,negative
+TSLA,209,2023-03-06 00:00:00+00:00,"Tesla Cuts Prices Again, but This Nasdaq Energy Stock Is Monday's Winner",negative,True,neutral,positive,positive,neutral
+TSLA,211,2022-08-24 00:00:00+00:00,Stock Splits: 7 Companies That Should Follow Tesla’s Lead,neutral,True,neutral,neutral,neutral,neutral
+TSLA,213,2023-09-14 00:00:00+00:00,Largest Auto Strike in History Looms: Potential Winners & Losers,neutral,False,neutral,neutral,neutral,negative
+TSLA,214,2023-06-27 00:00:00+00:00,US STOCKS-Wall Street rebounds as upbeat economic data allays slowdown fears,neutral,False,positive,positive,positive,negative
+TSLA,215,2020-04-27 00:00:00+00:00,Tesla Reverses Gear On Reopening Fremont Facility As Stay-At-Home Orders Likely To Be Extended,negative,True,neutral,positive,positive,negative
+TSLA,216,2023-03-19 00:00:00+00:00,2 Red Flags Facing Tesla and EV Stocks Right Now,negative,True,neutral,neutral,neutral,neutral
+TSLA,217,2023-10-05 00:00:00+00:00,"Hyundai, Kia to adopt Tesla EV-charging standard from 2024 in US",positive,True,neutral,neutral,neutral,neutral
+TSLA,218,2020-04-13 00:00:00+00:00,Why Tesla's Stock Traded 17% Higher On Monday,positive,True,neutral,positive,positive,positive
+TSLA,220,2023-04-30 00:00:00+00:00,Investors May Not Have Seen the Worst of Tesla Stock. Here's Why.,negative,True,neutral,neutral,neutral,neutral
+TSLA,221,2022-12-27 00:00:00+00:00,"US STOCKS-Wall Street dips as growth stocks drag on S&P 500, Nasdaq",neutral,False,negative,negative,negative,negative
+TSLA,222,2020-03-16 00:00:00+00:00,Tesla's Model Y Is Out For Delivery,positive,True,neutral,neutral,neutral,neutral
+TSLA,223,2019-11-12 00:00:00+00:00,Tesla To Open A Gigafactory In Berlin,positive,True,neutral,positive,neutral,neutral
+TSLA,224,2022-05-20 00:00:00+00:00,"US STOCKS-Wall Street ends mixed, Tesla falls",negative,True,neutral,neutral,neutral,negative
+TSLA,226,2020-02-02 00:00:00+00:00,CATL Confirms Battery Supply Agreement With Tesla In China,positive,True,positive,positive,positive,positive
+TSLA,227,2023-10-15 00:00:00+00:00,"Geopolitics, Earnings and Other Key Themes to Watch this Week",neutral,False,neutral,neutral,neutral,neutral
+TSLA,228,2023-04-06 00:00:00+00:00,Consumer Discretionary ETFs: Luxury Leisurely Takes Lead,neutral,False,neutral,neutral,neutral,neutral
+TSLA,229,2019-07-17 00:00:00+00:00,"'Tesla Model 3 production at Gigafactory 3 to start in November, says Morgan Stanley' -electrek",positive,True,neutral,neutral,neutral,neutral
+TSLA,231,2023-12-05 00:00:00+00:00,"Pre-Market Most Active for Dec 5, 2023 : NIO, SQQQ, ERIC, NOK, TQQQ, PLTR, TSLA, REPL, SOFI, BUD, BABA, AMC",neutral,True,neutral,neutral,neutral,neutral
+TSLA,232,2019-12-04 00:00:00+00:00,"Roku, Tesla And More 'Fast Money Halftime Report' Picks From Dec. 4",neutral,True,neutral,neutral,neutral,neutral
+TSLA,233,2020-01-02 00:00:00+00:00,"Tesla Cuts Price for China-made Model 3 Vehicles to 299,050 Yuan",negative,True,negative,negative,negative,neutral
+TSLA,234,2020-05-06 00:00:00+00:00,Tesla Prepares To Restart Production At Fremont Factory This Week: Report,positive,True,neutral,neutral,neutral,neutral
+TSLA,236,2023-08-14 00:00:00+00:00,"Monday's ETF Movers: SMH, LIT",neutral,False,neutral,neutral,neutral,neutral
+TSLA,237,2023-07-19 00:00:00+00:00,Why Is Tesla Stock Down After Earnings? Is TSLA Stock a Buy Now?,negative,True,negative,negative,negative,neutral
+TSLA,238,2023-07-18 00:00:00+00:00,"Tesla Directors Settle Lawsuit, Will Return $735 Mln To Company",positive,True,neutral,neutral,neutral,neutral
+TSLA,239,2020-01-24 00:00:00+00:00,CFRA Analyst To Tesla Investors: Sell Your Stock,negative,True,neutral,neutral,neutral,neutral
+TSLA,240,2019-09-02 00:00:00+00:00,Electric Cars Represented 39% of All New Car Sales in Norway in August,neutral,False,neutral,neutral,neutral,neutral
+TSLA,241,2020-05-11 00:00:00+00:00,"Tesla Restarts Production, Musk Tweets 'If Anyone Is Arrested, I Ask That It Only Be Me'",neutral,True,neutral,neutral,neutral,neutral
+TSLA,242,2022-07-06 00:00:00+00:00,This Is My Favorite EV Stock Right Now,neutral,False,neutral,neutral,neutral,neutral
+TSLA,244,2023-01-06 00:00:00+00:00,"Company News for Jan 6, 2023",neutral,False,neutral,neutral,neutral,neutral
+TSLA,245,2019-09-25 00:00:00+00:00,"'Tesla is accelerating Supercharger deployment, 10 more V3 stations confirmed' -Electrek",positive,True,positive,positive,positive,positive
+TSLA,246,2022-05-12 00:00:00+00:00,US STOCKS-Wall Street set to extend declines on rate hike concerns,neutral,False,negative,positive,positive,negative
+TSLA,247,2022-12-25 00:00:00+00:00,3 EV Stocks That Could Run Hot as Tesla Falls to 52-Week Low,negative,True,negative,negative,negative,negative
+TSLA,248,2019-12-12 00:00:00+00:00,'Is Nio's Third Mass-Production Vehicle A Tesla Model 3 Competitor?' -InsideEVs,neutral,True,neutral,neutral,neutral,neutral
+TSLA,249,2020-03-18 00:00:00+00:00,Munster Says Tesla Can 'Survive' Multiple Quarters Of Fremont Factory Shutdown,neutral,True,negative,negative,negative,negative
+TSLA,250,2023-09-27 00:00:00+00:00,Tesla Shares Major Updates About Its AI Robot -- Time to Buy Tesla Stock?,positive,True,neutral,neutral,neutral,neutral
+TSLA,251,2023-03-22 00:00:00+00:00,"7 Hot Stocks To Turn $1,000 Into $10,000 By 2030",neutral,False,neutral,positive,positive,neutral
+TSLA,252,2023-12-02 00:00:00+00:00,Tap Into the Same Investment that Made Elon Musk Rich,neutral,True,neutral,positive,positive,neutral
+TSLA,253,2022-07-24 00:00:00+00:00,Tesla Q2 Earnings Call: 3 Must-See Quotes From Elon Musk,neutral,True,neutral,neutral,neutral,neutral
+TSLA,254,2023-04-26 00:00:00+00:00,GM vs. TSLA: Which Stock Is the Better Value Option?,neutral,True,neutral,neutral,neutral,neutral
+TSLA,255,2022-12-16 00:00:00+00:00,Tesla plans to announce Mexico EV plant as soon as next week -Bloomberg News,positive,True,neutral,neutral,neutral,neutral
+TSLA,257,2023-11-21 00:00:00+00:00,Electric Vehicle Stocks Are Crashing -- Here's Why,negative,False,negative,negative,negative,negative
+TSLA,258,2023-11-03 00:00:00+00:00,Why It's Time to Buy These 2 Growth Stocks on the Dip,neutral,False,neutral,neutral,positive,neutral
+TSLA,259,2019-11-08 00:00:00+00:00,Musk Vs. Einhorn: Tesla CEO Offers Hedge Fund Manager A Pair Of Short Shorts,neutral,True,neutral,neutral,neutral,neutral
+TSLA,261,2023-01-18 00:00:00+00:00,"Stock Market News for Jan 18, 2023",neutral,False,neutral,neutral,neutral,neutral
+TSLA,262,2023-07-20 00:00:00+00:00,"Dow Outperforms on Valuation Pullback; CSX, COF Report",neutral,False,negative,negative,negative,negative
+TSLA,263,2019-12-14 00:00:00+00:00,"Bulls And Bears Of The Week: Disney, Macy's, Netflix, Tesla And More",neutral,True,neutral,neutral,neutral,neutral
+TSLA,264,2023-04-22 00:00:00+00:00,This Stock Could 10x in a Decade,neutral,False,neutral,neutral,neutral,neutral
+TSLA,265,2023-04-13 00:00:00+00:00,"2 Stocks That Turned $40,000 Into $1 Million in 10 Years",neutral,False,neutral,positive,positive,neutral
+TSLA,267,2020-02-15 00:00:00+00:00,Elon Musk Tweets Looking Forward to International Expansion of Solar Roof Business Later this Year,positive,True,neutral,positive,positive,positive
+TSLA,268,2022-09-25 00:00:00+00:00,Validea's Top Five Consumer Cyclical Stocks Based On Motley Fool - 9/25/2022,neutral,False,neutral,neutral,neutral,neutral
+TSLA,270,2019-09-20 00:00:00+00:00,'Tesla loses head of energy division and North American sales' -Electrek,negative,True,negative,negative,negative,negative
+TSLA,271,2023-10-08 00:00:00+00:00,Tesla Just Missed on Its Delivery Target. Here's Why I Think the Stock Is Still a Buy.,neutral,True,neutral,neutral,positive,neutral
+TSLA,272,2023-12-06 00:00:00+00:00,Norway union joins Tesla blockade in support for Swedish workers,negative,True,neutral,positive,positive,negative
+TSLA,273,2022-07-28 00:00:00+00:00,Is Ford Finally Ready to Take On Tesla?,neutral,True,neutral,neutral,neutral,neutral
+TSLA,275,2020-03-26 00:00:00+00:00,Tesla shares are trading lower despite overall market strength. Not currently seeing company-specific news from the session.,negative,True,negative,negative,negative,negative
+TSLA,277,2022-11-25 00:00:00+00:00,"Pre-Market Most Active for Nov 25, 2022 : TQQQ, CSCO, TSLA, SQQQ, JNJ, CS, DDOG, META, NIO, MANU, PBR, XPEV",neutral,True,neutral,neutral,neutral,neutral
+TSLA,278,2023-03-15 00:00:00+00:00,"Pre-Market Most Active for Mar 15, 2023 : TQQQ, SQQQ, MVLA, FRC, UBER, OTLY, TSLA, PACW, BAC, WAL, SCHW, DASH",neutral,True,neutral,neutral,neutral,neutral
+TSLA,279,2023-03-16 00:00:00+00:00,Guru Fundamental Report for TSLA,neutral,True,neutral,neutral,neutral,neutral
+TSLA,280,2019-07-25 00:00:00+00:00,"Trader Idea Feed: 'Tesla needs to generate at least $1.4B in automotive gross margin to break even on a GAAP basis. They generated $1.0B on 95,200 deliveries. Do the math. It is a structurally bankrupt company that will shrink in Q3...' -Tweet",negative,True,negative,negative,negative,negative
+TSLA,281,2020-04-30 00:00:00+00:00,7 Times Elon Musk Wasn't Afraid To Speak His Mind,neutral,True,neutral,neutral,neutral,neutral
+TSLA,283,2022-08-28 00:00:00+00:00,Validea's Top Five Consumer Cyclical Stocks Based On Motley Fool - 8/28/2022,neutral,False,neutral,neutral,neutral,neutral
+TSLA,284,2020-01-07 00:00:00+00:00,3 Tesla Pros On The Automaker's China Milestone,positive,True,neutral,positive,positive,positive
+TSLA,285,2022-07-21 00:00:00+00:00,Are Tesla Shares Worth a Look Pre-Split?,neutral,True,neutral,neutral,neutral,neutral
+TSLA,286,2020-04-01 00:00:00+00:00,Tesla shares are trading lower. Weakness potentially related to concerns of lower deliveries. NOTE: Many stocks across sectors are trading lower amid the continued growth in coronavirus cases.,negative,True,negative,negative,negative,negative
+TSLA,288,2022-11-28 00:00:00+00:00,"US STOCKS-Apple, energy shares drag Wall St lower amid China COVID protests",neutral,False,negative,negative,negative,negative
+TSLA,292,2019-11-05 00:00:00+00:00,Tesla Reaches Preliminary Battery-Supply Deal With CATL,positive,True,positive,positive,positive,positive
+TSLA,293,2022-12-13 00:00:00+00:00,"Pre-Market Most Active for Dec 13, 2022 : TQQQ, SQQQ, USER, YI, TSLA, DQ, PCG, QQQ, UBER, AMD, LU, AMAM",neutral,True,neutral,neutral,neutral,neutral
+TSLA,294,2020-03-13 00:00:00+00:00,Elon Musk Trial Schedule For Monday Over Tesla-Solarcity Deal Has Been Postponed Due To Coronavirus,neutral,True,negative,negative,negative,negative
+TSLA,295,2023-08-19 00:00:00+00:00,EXCLUSIVE-US imports of auto parts face scrutiny under law on Chinese forced labor,neutral,False,negative,negative,negative,negative
+TSLA,297,2023-03-21 00:00:00+00:00,Why Tesla Stock Stepped on the Accelerator Tuesday Morning,positive,True,neutral,neutral,neutral,neutral
+TSLA,298,2023-12-09 00:00:00+00:00,3 Stocks Transforming the Electric Vehicle Charging Landscape,neutral,False,positive,positive,positive,neutral
+TSLA,299,2020-05-12 00:00:00+00:00,Musk Reopens Tesla Plant Despite County Orders,neutral,True,neutral,positive,positive,neutral
+TSLA,300,2023-05-29 00:00:00+00:00,Guru Fundamental Report for TSLA,neutral,True,neutral,neutral,neutral,neutral
+AAPL,1,2023-07-18 00:00:00+00:00,"Spain antitrust watchdog fines Amazon, Apple $218 million",negative,True,neutral,negative,neutral,negative
+AAPL,2,2023-04-11 00:00:00+00:00,Apple To Open First Store In India Next Week,positive,True,neutral,positive,neutral,neutral
+AAPL,3,2022-09-23 00:00:00+00:00,"Technology Sector Update for 09/23/2022: QCOM, AAPL, AVLR, XLK, SOXX",neutral,True,neutral,neutral,neutral,neutral
+AAPL,5,2023-11-04 00:00:00+00:00,AAPL and GOOGL’s Post-Earnings Slump: Time to Buy?,neutral,True,negative,negative,negative,neutral
+AAPL,6,2020-05-31 00:00:00+00:00,"Amazon, Apple, Walmart, Other Retailers Shutter Stores, Scale Back Operations In Areas Worst Hit With Protests",negative,True,negative,negative,negative,negative
+AAPL,7,2023-04-03 00:00:00+00:00,"Top Research Reports for Apple, Meta Platforms & Visa",neutral,True,neutral,neutral,neutral,neutral
+AAPL,8,2022-10-18 00:00:00+00:00,"Notable ETF Inflow Detected - VOO, AAPL, MSFT, GOOG",neutral,True,neutral,neutral,neutral,neutral
+AAPL,9,2022-12-09 00:00:00+00:00,4 Dividend Stocks to Hold Forever,neutral,False,neutral,neutral,positive,neutral
+AAPL,10,2023-11-21 00:00:00+00:00,AAPL Quantitative Stock Analysis,neutral,True,neutral,neutral,neutral,neutral
+AAPL,11,2022-11-02 00:00:00+00:00,Is Apple Stock a Buy Now?,neutral,True,neutral,neutral,neutral,neutral
+AAPL,13,2020-05-27 00:00:00+00:00,Leidos Awarded $84.6M Payment from VirnetX Lawsuit vs Apple,negative,True,positive,positive,positive,positive
+AAPL,15,2023-12-11 00:00:00+00:00,Here’s What to Expect From Apple Stock in 2024,neutral,True,neutral,neutral,neutral,neutral
+AAPL,16,2022-06-07 00:00:00+00:00,"Buy now, pay later stocks roiled by Apple's entry",positive,True,negative,negative,negative,negative
+AAPL,17,2023-01-04 00:00:00+00:00,Apple to sign Luxshare for iPhone production in China - FT,neutral,True,neutral,neutral,neutral,neutral
+AAPL,18,2022-07-13 00:00:00+00:00,"Apple's (AAPL) TV+, Led by Ted Lasso, Gets 52 Emmy Nominations",positive,True,positive,positive,positive,positive
+AAPL,19,2022-12-03 00:00:00+00:00,Stocks to Be Thankful for and Stocks to Avoid,neutral,False,neutral,neutral,neutral,neutral
+AAPL,20,2023-10-28 00:00:00+00:00,Can Apple Stock Double in 5 Years? Here's What It Would Take.,neutral,True,neutral,positive,positive,neutral
+AAPL,21,2023-06-06 00:00:00+00:00,Where Apple (AAPL) Stock Will Probably Go From Here,neutral,True,neutral,neutral,neutral,neutral
+AAPL,22,2023-08-22 00:00:00+00:00,Apple’s Buyback Blunder: 3 Reasons It’s Not a Win for AAPL Shareholders,negative,True,negative,negative,negative,neutral
+AAPL,24,2020-05-15 00:00:00+00:00,13F From Buffett's Berkshire Shows Maintained Stake In Apple,neutral,True,neutral,neutral,neutral,neutral
+AAPL,25,2023-05-13 00:00:00+00:00,One of the Single Most Important Metrics for Apple Investors Just Got Better,positive,True,positive,positive,positive,positive
+AAPL,26,2023-03-10 00:00:00+00:00,"Apple argues UK competition watchdog had ""no power"" to launch probe",negative,True,neutral,neutral,neutral,neutral
+AAPL,27,2023-01-09 00:00:00+00:00,"Technology Sector Update for 01/09/2023: AAPL,PL,META",neutral,True,neutral,neutral,neutral,neutral
+AAPL,28,2022-08-19 00:00:00+00:00,"Apple Warns Of Security Flaws In IPhones, IPads, Macs",negative,True,negative,negative,negative,negative
+AAPL,29,2023-11-09 00:00:00+00:00,Is Apple's Magic Fading?,negative,True,neutral,negative,neutral,neutral
+AAPL,30,2023-02-02 00:00:00+00:00,Apple (AAPL) Misses Q1 Earnings and Revenue Estimates,negative,True,negative,negative,negative,negative
+AAPL,31,2023-05-21 00:00:00+00:00,7 Promising Growth Stocks to Buy Hand Over Fist,neutral,False,positive,positive,positive,positive
+AAPL,32,2023-10-15 00:00:00+00:00,The ‘Millionaire Playbook’ for Easy Profits in the AI Boom,neutral,False,positive,positive,positive,neutral
+AAPL,33,2023-01-13 00:00:00+00:00,Tim Cook’s pay re-enters earth’s atmosphere,neutral,True,neutral,neutral,neutral,neutral
+AAPL,35,2023-09-05 00:00:00+00:00,Apple execs lose bid to block testimony at Google antitrust trial,negative,True,negative,negative,negative,negative
+AAPL,36,2020-04-17 00:00:00+00:00,"Gene Munster Dismisses Goldman's Apple Downgrade, Says Cupertino Has Long-Term Earnings Power",positive,True,negative,negative,negative,positive
+AAPL,37,2020-04-27 00:00:00+00:00,How Large Apple Option Traders Are Positioning Ahead Of Earnings,neutral,True,neutral,neutral,neutral,neutral
+AAPL,38,2023-02-15 00:00:00+00:00,Time to Take a Bite Out of Apple ETFs Following Warren Buffett?,positive,True,neutral,neutral,neutral,neutral
+AAPL,40,2020-05-25 00:00:00+00:00,Apple Expected to Incorporate Ambient Light Sensors in Next-generation Airpods Devices,neutral,True,neutral,positive,neutral,neutral
+AAPL,41,2023-01-10 00:00:00+00:00,1 Green Flag and 1 Red Flag for Apple Stock in 2023,neutral,True,neutral,neutral,neutral,neutral
+AAPL,42,2023-01-01 00:00:00+00:00,"Down 28% in 2022, Is Apple Stock a Buy for 2023?",neutral,True,negative,negative,negative,negative
+AAPL,43,2023-05-08 00:00:00+00:00,Is Apple Stock a Buy Right Now?,neutral,True,neutral,neutral,neutral,neutral
+AAPL,44,2023-07-02 00:00:00+00:00,You'll Be Shocked at How Much Apple Stock Warren Buffett Owns,neutral,True,neutral,negative,neutral,neutral
+AAPL,45,2023-06-09 00:00:00+00:00,"US STOCKS-S&P, Nasdaq hit fresh 2023 highs as Tesla rallies",neutral,False,positive,positive,positive,positive
+AAPL,46,2022-10-30 00:00:00+00:00,EXCLUSIVE-Foxconn COVID woes may hit up to 30% of iPhone Nov shipments from Zhengzhou plant - source,negative,True,negative,positive,positive,negative
+AAPL,47,2023-08-17 00:00:00+00:00,"Noteworthy ETF Inflows: IVV, AAPL, MSFT, AMZN",neutral,True,neutral,neutral,neutral,neutral
+AAPL,48,2023-08-28 00:00:00+00:00,What's Going On With Apple Stock?,neutral,True,neutral,neutral,neutral,negative
+AAPL,49,2023-03-13 00:00:00+00:00,Apple's (AAPL) Animation Film Emerges Winner at 2023 Oscars,positive,True,positive,positive,positive,positive
+AAPL,50,2023-02-27 00:00:00+00:00,Apple pays $12.1 mln fine for alleged app market abuse in Russia - Antimonopoly Service,negative,True,neutral,negative,negative,negative
+AAPL,51,2023-04-04 00:00:00+00:00,Wall Street Analysts Think Apple (AAPL) Is a Good Investment: Is It?,positive,True,neutral,positive,positive,positive
+AAPL,52,2023-01-25 00:00:00+00:00,Zacks Investment Ideas feature highlights: Amazon and Apple,neutral,True,neutral,neutral,neutral,neutral
+AAPL,53,2022-12-11 00:00:00+00:00,India's Tata Group to open 100 exclusive Apple stores -report,positive,True,neutral,positive,positive,positive
+AAPL,54,2023-04-16 00:00:00+00:00,Get In Now. 3 Stocks That Are Set to Soar.,neutral,False,neutral,neutral,neutral,neutral
+AAPL,55,2023-11-19 00:00:00+00:00,"A Bull Market Is Coming: 2 ""Magnificent Seven"" Stocks to Buy Hand Over Fist Before They Rally 58% and 122%, According to Select Wall Street Analysts",neutral,False,neutral,neutral,neutral,positive
+AAPL,56,2023-05-01 00:00:00+00:00,B of A Securities Maintains Apple (AAPL) Neutral Recommendation,neutral,True,neutral,neutral,neutral,neutral
+AAPL,57,2020-04-11 00:00:00+00:00,"Benzinga's Bulls And Bears Of The Week: Apple, Disney, Intel And More",neutral,True,neutral,neutral,neutral,neutral
+AAPL,58,2023-12-09 00:00:00+00:00,3 Growth Stocks Primed for a 2024 Breakout,neutral,False,positive,positive,positive,positive
+AAPL,59,2022-06-14 00:00:00+00:00,Apple (AAPL) Likely to Launch Its VR Headset in Early 2023,neutral,True,neutral,neutral,neutral,neutral
+AAPL,60,2022-11-28 00:00:00+00:00,"US STOCKS-Wall Street ends down sharply, hit by Apple and China worries",negative,True,negative,negative,negative,negative
+AAPL,61,2023-02-20 00:00:00+00:00,Foxconn chairman to visit COVID-hit iPhone plant in China -source,negative,True,neutral,neutral,neutral,neutral
+AAPL,62,2023-05-17 00:00:00+00:00,"QQQM, MSFT, AAPL, AMZN: Large Inflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+AAPL,63,2022-11-01 00:00:00+00:00,"Apple, Bank of America, and Chevron Earnings Show the Warren Buffett Way Still Works",positive,True,neutral,positive,positive,neutral
+AAPL,64,2020-05-02 00:00:00+00:00,Tim Cook On Warren Buffett: 'I Don't Think There's A Better Teacher',neutral,True,neutral,neutral,neutral,neutral
+AAPL,65,2023-09-11 00:00:00+00:00,"Notable Monday Option Activity: AAPL, GS, SJM",neutral,True,neutral,neutral,neutral,neutral
+AAPL,66,2022-07-15 00:00:00+00:00,"SPY, PLRG: Big ETF Outflows",neutral,False,neutral,neutral,neutral,positive
+AAPL,67,2022-07-26 00:00:00+00:00,Prepare for Apple Stock to Hit $200 or More,positive,True,neutral,neutral,neutral,neutral
+AAPL,68,2023-07-26 00:00:00+00:00,Machine Learning Megatrends: 3 AI Stocks Set to Dominate,neutral,False,positive,positive,positive,neutral
+AAPL,69,2022-12-20 00:00:00+00:00,1 Top Stock to Buy for 2023 and Beyond,neutral,False,neutral,neutral,neutral,neutral
+AAPL,71,2020-05-04 00:00:00+00:00,Apple And Google Say No To Location Tracking In Coronavirus Contact Tracing Apps,neutral,True,neutral,neutral,neutral,neutral
+AAPL,72,2020-05-14 00:00:00+00:00,Taiwanese Apple Supplier TSMC To Build $12B US Chip Factory After Months Of Pressure From Trump Administration,neutral,True,neutral,positive,positive,positive
+AAPL,73,2020-03-21 00:00:00+00:00,"Barron's Picks And Pans: Big Tech Picks, Bank Stocks Large and Small And More",neutral,False,neutral,neutral,neutral,neutral
+AAPL,74,2022-12-02 00:00:00+00:00,Apple (AAPL) Dips More Than Broader Markets: What You Should Know,negative,True,neutral,neutral,negative,neutral
+AAPL,75,2020-05-06 00:00:00+00:00,"A Low-Cost, FAAMNG-Heavy ETF For May",neutral,False,neutral,neutral,neutral,neutral
+AAPL,76,2022-09-07 00:00:00+00:00,Apple Launches Premium Apple Watch Ultra,positive,True,neutral,neutral,neutral,neutral
+AAPL,77,2022-07-25 00:00:00+00:00,2 Warren Buffett Stocks That Everyone Should Own,neutral,False,neutral,neutral,neutral,neutral
+AAPL,79,2023-06-26 00:00:00+00:00,Is Trending Stock Apple Inc. (AAPL) a Buy Now?,neutral,True,neutral,neutral,positive,neutral
+AAPL,80,2022-10-08 00:00:00+00:00,"Apple's CEO Bashes the Metaverse, and Nvidia's CEO Embraces It: What It Means for Investors",neutral,True,neutral,positive,positive,neutral
+AAPL,81,2023-01-18 00:00:00+00:00,AAPL September 2024 Options Begin Trading,neutral,True,neutral,neutral,neutral,neutral
+AAPL,83,2022-10-15 00:00:00+00:00,Apple Workers In Oklahoma City Win Union Election To Join CWA,negative,True,neutral,positive,positive,neutral
+AAPL,84,2023-05-03 00:00:00+00:00,Apple Stock (NASDAQ:AAPL): Fintech Push Comes at an Opportune Time,positive,True,neutral,neutral,positive,positive
+AAPL,85,2023-02-03 00:00:00+00:00,"Apple Earnings Miss, But the Stock Rallies Anyway",neutral,True,neutral,neutral,neutral,negative
+AAPL,86,2023-03-29 00:00:00+00:00,"Stock Market News for Mar 29, 2023",neutral,False,neutral,neutral,neutral,neutral
+AAPL,87,2020-03-27 00:00:00+00:00,Loup Ventures Says Believes Demand For 5G iPhone Will Be Initially Muted 'as it will reflect overall consumer demand in the fall which we expect to be soft'; Says Believes Apple Is 'One Of The Best Ways' To Invest In 5G Transformation,neutral,True,negative,neutral,negative,neutral
+AAPL,88,2023-06-11 00:00:00+00:00,Guru Fundamental Report for AAPL,neutral,True,neutral,neutral,neutral,neutral
+AAPL,89,2023-02-08 00:00:00+00:00,3 Blue Chip Stocks To Watch In February 2023,neutral,False,neutral,neutral,neutral,neutral
+AAPL,90,2023-01-07 00:00:00+00:00,3 Apple Stock Predictions for 2023,neutral,True,neutral,neutral,neutral,neutral
+AAPL,91,2023-08-04 00:00:00+00:00,Did Apple and Amazon Report “Magnificent” Earnings?,neutral,True,positive,positive,positive,neutral
+AAPL,92,2023-03-25 00:00:00+00:00,3 Warren Buffett Stocks That Are Crushing the S&P 500 This Year. Are They Still Smart Picks?,neutral,False,neutral,neutral,positive,neutral
+AAPL,93,2023-07-24 00:00:00+00:00,Wells Fargo Maintains Apple (AAPL) Overweight Recommendation,positive,True,neutral,neutral,negative,neutral
+AAPL,94,2023-02-19 00:00:00+00:00,Validea Daily Guru Fundamental Report for AAPL - 2/19/2023,neutral,True,neutral,neutral,neutral,neutral
+AAPL,95,2022-09-06 00:00:00+00:00,"After Hours Most Active for Sep 6, 2022 : MMM, BAC, INTC, AAPL, CSX, XOM, INFY, UBER, TLT, VST, GOOGL, AMZN",neutral,True,neutral,neutral,neutral,neutral
+AAPL,96,2023-04-17 00:00:00+00:00,"Technology Sector Update for 04/17/2023: GOOG, AAPL, MSFT, GOOGL",neutral,True,neutral,neutral,neutral,neutral
+AAPL,97,2023-11-30 00:00:00+00:00,UK antitrust regulator wins appeal over Apple probe,negative,True,positive,positive,positive,negative
+AAPL,99,2023-01-08 00:00:00+00:00,2 Top Stocks in Warren Buffett's Secret Portfolio to Buy Now and Hold Forever,neutral,False,neutral,neutral,positive,neutral
+AAPL,100,2023-11-03 00:00:00+00:00,Why Did Apple (AAPL) Drop on an Earnings Beat?,negative,True,negative,negative,negative,negative
+AAPL,101,2022-10-07 00:00:00+00:00,US STOCKS-Wall Street slips as jobs growth boosts rate hike bets,neutral,False,negative,negative,negative,negative
+AAPL,102,2023-05-07 00:00:00+00:00,"GLOBAL MARKETS-Asia shares mostly higher, focus on US bank data",neutral,False,neutral,neutral,positive,positive
+AAPL,104,2022-11-10 00:00:00+00:00,"Why Big Tech Stocks Apple, Microsoft, and Intel Ripped Higher Today",positive,True,positive,positive,positive,negative
+AAPL,105,2023-07-12 00:00:00+00:00,Better Buy: AMD vs. Apple,neutral,True,neutral,neutral,neutral,positive
+AAPL,106,2020-05-21 00:00:00+00:00,"Apple Is Seeking An Executive To Lead Original Podcast Effort, Is Buying Original Podcasts That Would Be Exclusive; New Podcasts Will Help Promote TV+ Video Service",neutral,True,neutral,neutral,neutral,neutral
+AAPL,107,2020-04-24 00:00:00+00:00,"Nvidia Reportedly Eyeing 5nm Chips Even As Apple, AMD Ramp Up Orders",neutral,True,positive,positive,positive,positive
+AAPL,108,2023-06-16 00:00:00+00:00,"3 Stocks to Buy for Long-Term, Life-Changing Returns",neutral,False,neutral,neutral,positive,neutral
+AAPL,109,2023-09-01 00:00:00+00:00,Should You Buy the Dow Stock Outperforming Apple?,neutral,True,neutral,neutral,neutral,neutral
+AAPL,110,2023-06-17 00:00:00+00:00,Tech Investors: Pay Attention to Hype Cycles and Adoption Life Cycles,neutral,False,neutral,neutral,neutral,neutral
+NVDA,1,2023-10-20 00:00:00+00:00,ANALYSIS-US chip curbs give Huawei a chance to fill the Nvidia void in China,negative,True,positive,positive,positive,positive
+NVDA,2,2022-09-21 00:00:00+00:00,Nvidia CEO sees 'large space' for China sales despite U.S. restrictions,positive,True,positive,positive,positive,positive
+NVDA,3,2019-11-26 00:00:00+00:00,"Bank Of America Likes AMD, Nvidia Ahead Of 2020 Gaming Market Recovery",positive,True,positive,positive,positive,neutral
+NVDA,4,2022-03-09 00:00:00+00:00,Technically Constructive: Higher Lows on Ukraine Talks,neutral,False,negative,negative,negative,positive
+NVDA,5,2023-03-27 00:00:00+00:00,"Noteworthy Monday Option Activity: NVDA, DEN, META",neutral,True,neutral,neutral,neutral,neutral
+NVDA,6,2022-07-11 00:00:00+00:00,New Metaverse Angle Should Spur Investor Interest in Nvidia,positive,True,positive,positive,positive,positive
+NVDA,7,2019-05-16 00:00:00+00:00,"From NVIDIA Q1 Earnings Conference Call: Sales To Gaming Unit $1.05B, Down 39% Year Over Year, Sales To Data Center Unit $634M, Down 10% YoY",negative,True,negative,negative,negative,negative
+NVDA,8,2022-09-29 00:00:00+00:00,Relative Strength Alert For NVIDIA,positive,True,neutral,neutral,neutral,neutral
+NVDA,9,2022-11-03 00:00:00+00:00,What Are Retail Investors Buying And Selling This Week Amidst Q3 Earnings Season?,neutral,False,neutral,neutral,neutral,neutral
+NVDA,10,2019-08-30 00:00:00+00:00,AMD Desktop GPU Shipments Overtake Nvidia's For First Time In 5 Years,negative,True,positive,positive,positive,positive
+NVDA,11,2019-03-31 00:00:00+00:00,NVIDIA's Director of Technical Marketing Tom 'TAP' Petersen Departs for Intel,negative,True,neutral,neutral,neutral,negative
+NVDA,13,2022-06-23 00:00:00+00:00,Nvidia (NVDA) Stock Sinks As Market Gains: What You Should Know,negative,True,neutral,neutral,negative,neutral
+NVDA,14,2023-11-10 00:00:00+00:00,US STOCKS-Wall St rebounds as traders digest Powell comments,neutral,False,neutral,neutral,positive,negative
+NVDA,15,2023-06-25 00:00:00+00:00,4 Red Flags for Nvidia's Future,negative,True,neutral,neutral,neutral,neutral
+NVDA,16,2020-05-18 00:00:00+00:00,"BMO Turns Bullish On Nvidia, Says It's Uniquely Positioned For Computing Shift",positive,True,neutral,positive,positive,positive
+NVDA,17,2020-05-15 00:00:00+00:00,"Nvidia Analyst Says New, Ampere-Based Data Center GPU Makes Chipmaker 'Unassailable'",positive,True,neutral,positive,negative,negative
+NVDA,18,2023-04-12 00:00:00+00:00,Is Meta Dominating the AI Landscape Over Nvidia and Microsoft?,neutral,True,neutral,neutral,neutral,neutral
+NVDA,19,2022-12-12 00:00:00+00:00,3 Semiconductor Stocks To Check Out This Week,neutral,False,neutral,neutral,neutral,neutral
+NVDA,20,2019-07-11 00:00:00+00:00,"Boutique Research Firm Upgrades Nvidia, Says AI, Ray Tracing Will Drive Demand For Chipmaker",positive,True,positive,positive,positive,neutral
+NVDA,21,2023-04-09 00:00:00+00:00,"Tech Stocks AI, NVDA, BABA Dominate Unusual Options Activity",neutral,True,neutral,neutral,neutral,neutral
+NVDA,22,2020-01-07 00:00:00+00:00,"Sony, Nvidia, Uber Introduce Electric, Autonomous Auto Concepts At CES",neutral,True,neutral,neutral,neutral,neutral
+NVDA,23,2020-02-25 00:00:00+00:00,"UPDATE: Nomura Downgrades NVIDIA to Reduce, Lowers Price Target to $230 As Firm Notes 'In our view, the risks to the global semiconductor industry posed by the COVID-19 outbreak have grown over the last few weeks.'",negative,True,negative,negative,negative,negative
+NVDA,24,2022-08-29 00:00:00+00:00,Why Nvidia Didn't Really Have a Bad Quarter,positive,True,neutral,neutral,negative,neutral
+NVDA,25,2020-02-19 00:00:00+00:00,"Why AMD's Coronavirus Impact Could Be Worse Than Intel, Nvidia",neutral,True,negative,negative,negative,neutral
+NVDA,26,2021-08-28 00:00:00+00:00,Tesla's Musk signals concerns over Nvidia deal for UK chip maker -The Telegraph,negative,True,neutral,negative,negative,negative
+NVDA,27,2019-11-25 00:00:00+00:00,"Cascend Maintains Buy on NVIDIA, Raises Price Target to $250",positive,True,neutral,positive,positive,positive
+NVDA,28,2020-02-28 00:00:00+00:00,"NVIDIA shares are trading higher despite broader market downturn. Mizuho analyst today noted that online gaming and ecommerce cloud remain strong amid the coronavirus outbreak, which the firm said is an advantage for NVIDIA.",positive,True,positive,positive,positive,positive
+NVDA,29,2023-03-31 00:00:00+00:00,"The Future of Data Center CPUs: AMD, Intel, Nvidia, and Surprising Contenders",neutral,True,neutral,positive,positive,neutral
+NVDA,30,2021-08-31 00:00:00+00:00,Why Nvidia Stock Short-Circuited This Morning,negative,True,negative,negative,negative,negative
+NVDA,32,2022-03-04 00:00:00+00:00,Wall St Week Ahead-Rate-hike fears abate but Ukraine muddies stock market outlook,neutral,False,negative,negative,negative,negative
+NVDA,33,2021-11-17 00:00:00+00:00,"4 Top Stock Trades for Thursday: NVDA, F, V, TJX",neutral,True,neutral,neutral,neutral,neutral
+NVDA,34,2023-10-16 00:00:00+00:00,"Top Analyst Reports for NVIDIA, Procter & Gamble & NextEra Energy",neutral,True,neutral,neutral,neutral,neutral
+NVDA,35,2023-07-27 00:00:00+00:00,"META, MSFT, NVDA: 3 Buzzing Reddit Stocks Analysts Love",positive,True,neutral,neutral,neutral,neutral
+NVDA,36,2020-04-17 00:00:00+00:00,"UBS Maintains Buy on NVIDIA, Raises Price Target to $330",positive,True,neutral,positive,positive,positive
+NVDA,37,2023-12-14 00:00:00+00:00,"Up 230%, 3 Reasons Nvidia Stock Can Still Make You Richer",positive,True,positive,positive,positive,positive
+NVDA,38,2023-05-09 00:00:00+00:00,"Notable ETF Outflow Detected - SPY, NVDA, GOOGL, BRK.B",neutral,True,neutral,neutral,neutral,neutral
+NVDA,39,2022-05-27 00:00:00+00:00,Better Buy: Nvidia Stock or Every Nasdaq Stock?,neutral,True,neutral,neutral,neutral,neutral
+NVDA,40,2023-09-14 00:00:00+00:00,"What TSMC, ARM, AMD, Apple, and Nvidia Stock Investors Should Know About Recent Chip Updates",neutral,True,neutral,neutral,neutral,neutral
+NVDA,41,2020-03-24 00:00:00+00:00,Nvidia Analyst Says Pandemic Creates More Data Center Demand,positive,True,positive,positive,positive,neutral
+NVDA,42,2023-10-30 00:00:00+00:00,"Apple, Intel, AMD, Qualcomm, and NVIDIA: Is the CPU Market Overcrowded or Just Heating Up?",neutral,True,negative,negative,negative,negative
+NVDA,43,2021-09-23 00:00:00+00:00,America’s Most Influential CEO Is Nvidia’s Jensen Huang,positive,True,neutral,neutral,neutral,neutral
+NVDA,44,2019-01-07 00:00:00+00:00,NVIDIA Introduces DRIVE AutoPilot Automated Driving System,positive,True,neutral,neutral,positive,neutral
+NVDA,45,2023-09-16 00:00:00+00:00,The 3 Most Undervalued AI Stocks to Buy in September 2023,neutral,False,neutral,negative,positive,neutral
+NVDA,46,2022-06-28 00:00:00+00:00,Why Nvidia Stock Fell More Than 4% Today,negative,True,negative,negative,negative,negative
+NVDA,47,2021-11-11 00:00:00+00:00,Why Nvidia Stock Bounced Back Today,positive,True,negative,positive,positive,positive
+NVDA,48,2021-10-12 00:00:00+00:00,EU to investigate Nvidia's $54 bln ARM bid after remedies fall short - sources,negative,True,neutral,neutral,negative,neutral
+NVDA,49,2022-12-28 00:00:00+00:00,NVIDIA Corporation (NVDA) is Attracting Investor Attention: Here is What You Should Know,neutral,True,positive,positive,positive,neutral
+NVDA,50,2022-09-08 00:00:00+00:00,"ANALYSIS-U.S. ban on Nvidia, AMD chips seen boosting Chinese rivals",negative,True,positive,positive,positive,positive
+NVDA,51,2022-08-07 00:00:00+00:00,Why Nvidia Stock Rose More Than 19% in July,positive,True,positive,positive,positive,positive
+NVDA,52,2022-08-31 00:00:00+00:00,U.S. officials order Nvidia to halt sales of top AI chips to China,negative,True,negative,negative,negative,negative
+NVDA,53,2021-08-18 00:00:00+00:00,Last Minute Thought: Buy or Sell Nvidia Before Earnings?,neutral,True,neutral,neutral,neutral,neutral
+NVDA,55,2019-08-16 00:00:00+00:00,41 Stocks Moving In Friday's Mid-Day Session,neutral,False,neutral,neutral,neutral,neutral
+NVDA,56,2022-06-27 00:00:00+00:00,"Notable Monday Option Activity: NVDA, RAPT, COST",neutral,True,neutral,neutral,neutral,neutral
+NVDA,57,2022-03-18 00:00:00+00:00,"The Zacks Analyst Blog Highlights Apple, Marriott International, NVIDIA, Analog Devices, and Micron Technology",neutral,True,neutral,neutral,neutral,neutral
+NVDA,58,2022-04-13 00:00:00+00:00,US STOCKS-Wall St ticks higher as recovery in growth stocks offsets mixed earnings,neutral,False,positive,positive,positive,positive
+NVDA,59,2019-10-15 00:00:00+00:00,"UPDATE: Cascend Maintains Buy On NVIDIA, Raises Tgt To $220 Notes 'We see hyperscale AI development work continuing to grow off this summers' strong AI pus'; Believes 'this is a prime opportunity to take advantage of bad news already being in this name'",positive,True,positive,positive,positive,positive
+NVDA,60,2019-11-20 00:00:00+00:00,"NVIDIA shares are trading higher. Analysts have reacted positively to Tuesday's investor Q&A session, including with regards to the company's 7nm Ampere development.",positive,True,positive,positive,positive,positive
+NVDA,61,2020-04-27 00:00:00+00:00,"'I've Been Dreaming About This,' Nvidia CEO Says After $7B Mellanox Acquisition Deal Finally Closed",positive,True,neutral,positive,positive,neutral
+NVDA,62,2022-11-14 00:00:00+00:00,Evaluating NVIDIA (NVDA) Stock Down 50% Before Q3 Earnings,neutral,True,negative,negative,negative,negative
+NVDA,63,2023-10-02 00:00:00+00:00,Goldman Sachs Maintains NVIDIA (NVDA) Buy Recommendation,positive,True,neutral,neutral,neutral,neutral
+NVDA,64,2022-09-19 00:00:00+00:00,Why Nvidia Attempted a Recovery Today,neutral,True,positive,positive,positive,neutral
+NVDA,65,2023-08-26 00:00:00+00:00,"1 Green Flag for Nvidia in 2023, and 1 Red Flag",neutral,True,neutral,neutral,neutral,neutral
+NVDA,66,2021-10-13 00:00:00+00:00,3 Strong Tier 1 Companies to Keep an Eye On,neutral,False,neutral,positive,positive,neutral
+NVDA,67,2020-03-18 00:00:00+00:00,"Morgan Stanley Maintains Overweight on NVIDIA, Lowers Price Target to $268",negative,True,negative,negative,negative,negative
+NVDA,68,2022-03-27 00:00:00+00:00,3 Metaverse Stocks For Your Late March 2022 Watchlist,neutral,False,neutral,neutral,neutral,neutral
+NVDA,69,2022-09-03 00:00:00+00:00,The Fed Chief Speaks; Wall Street Reacts,neutral,False,neutral,neutral,neutral,neutral
+NVDA,70,2020-04-09 00:00:00+00:00,Will FANG Lead The Market Rebound?,neutral,False,positive,positive,positive,neutral
+NVDA,71,2022-05-12 00:00:00+00:00,Buying Power of Cardano vs. NVIDIA at New 52-Week Low,negative,True,negative,negative,negative,negative
+NVDA,72,2022-09-25 00:00:00+00:00,Is Nvidia Blunting Intuitive Surgical's Edge in Robotic Surgery?,neutral,True,neutral,neutral,positive,neutral
+NVDA,73,2023-10-17 00:00:00+00:00,"Tuesday Sector Laggards: Utilities, Technology & Communications",neutral,False,neutral,neutral,neutral,neutral
+NVDA,74,2020-05-12 00:00:00+00:00,"""Stay at Home"" Stocks Still Rule the Roost as Nvidia, Microsoft, Apple Start Week Firmly",positive,True,neutral,neutral,positive,neutral
+NVDA,75,2022-04-15 00:00:00+00:00,2 Top Bargain Stocks Ready for Bull Runs,neutral,False,neutral,neutral,positive,neutral
+NVDA,76,2022-12-04 00:00:00+00:00,Why Nvidia Stock Surged 25% in November,positive,True,positive,positive,positive,positive
+NVDA,77,2021-12-06 00:00:00+00:00,US STOCKS-Dow leads Wall Street higher with 2% gain; cyclicals in vanguard,neutral,False,positive,positive,positive,positive
+NVDA,78,2023-05-15 00:00:00+00:00,"PC Market on the Mend, Benefits Abound for Tech ETFs",neutral,False,neutral,positive,positive,positive
+NVDA,79,2022-11-16 00:00:00+00:00,Why Nvidia Shares Fell Ahead of Earnings Today,negative,True,negative,negative,negative,negative
+NVDA,80,2023-11-18 00:00:00+00:00,"AMD, NVDA, or INTC: Which Chip Stock Could Generate the Best Returns?",neutral,True,neutral,neutral,neutral,neutral
+NVDA,81,2019-02-08 00:00:00+00:00,"Hearing CalPERS Reduced Holdings In Apple, Amazon, Microsoft, Exxon Mobil, JP Morgan, Facebook And NVIDIA In Q4",neutral,True,negative,negative,negative,negative
+NVDA,82,2022-06-26 00:00:00+00:00,Market Plunge: 2 Discounted Growth Stocks to Buy Before the Rebound,neutral,False,neutral,positive,positive,negative
+NVDA,83,2019-01-29 00:00:00+00:00,Analysts React To Nvidia's Guidance Cut,negative,True,neutral,neutral,positive,neutral
+NVDA,84,2023-04-01 00:00:00+00:00,Nvidia Stock: Is Trouble on the Horizon?,negative,True,neutral,negative,neutral,negative
+NVDA,85,2019-09-23 00:00:00+00:00,"SunTrust Robinson Humphrey Maintains Buy on NVIDIA, Raises Price Target to $216",positive,True,neutral,positive,positive,positive
+NVDA,86,2022-09-04 00:00:00+00:00,Top Stocks To Invest In Now? 3 Tech Stocks To Watch This Week,neutral,False,neutral,neutral,neutral,neutral
+NVDA,87,2020-03-20 00:00:00+00:00,"Why BofA Says AMD, Nvidia Are High-Quality, High-Beta Stocks In A Volatile Market",positive,True,neutral,neutral,positive,neutral
+NVDA,88,2019-10-21 00:00:00+00:00,NVIDIA with Microsoft Announces Technology Collaboration for Era of Intelligent Edge,positive,True,positive,positive,positive,neutral
+NVDA,89,2019-06-12 00:00:00+00:00,Shares of several semiconductor stocks are trading lower after the FTC opposed Qualcomm's antitrust request.,negative,False,negative,negative,negative,negative
+NVDA,90,2019-05-02 00:00:00+00:00,"NVIDIA To Report Q1 Earnings On Thurs., May 16, 2019 After Market Close",neutral,True,neutral,neutral,neutral,neutral
+NVDA,91,2023-11-28 00:00:00+00:00,2 Key Things From Nvidia's Earnings Call That Investors Should Know,neutral,True,neutral,neutral,neutral,neutral
+NVDA,92,2023-12-06 00:00:00+00:00,Tech Set to Roar in 2024 After an Astounding 2023: 5 Top Picks,neutral,False,positive,positive,positive,positive
+NVDA,93,2019-07-25 00:00:00+00:00,NVIDIA shares trading lower despite no company news. Note that shares of NVIDIA have rallied about 8% over the last 2 weeks and over 32% since the beginning of June.,negative,True,negative,positive,negative,negative
+NVDA,94,2023-02-23 00:00:00+00:00,Why AMD and Taiwan Semiconductor Stocks Followed Nvidia Higher Today,positive,True,neutral,positive,positive,positive
+NVDA,95,2022-04-06 00:00:00+00:00,NVDA Makes Notable Cross Below Critical Moving Average,negative,True,positive,positive,negative,positive
+NVDA,96,2019-03-26 00:00:00+00:00,Nvidia Gets Boost From Bullish Piper Jaffray Initiation,positive,True,positive,positive,positive,positive
+NVDA,97,2023-08-18 00:00:00+00:00,Wedbush Reiterates NVIDIA (NVDA) Outperform Recommendation,positive,True,neutral,neutral,neutral,negative
+NVDA,98,2020-05-26 00:00:00+00:00,Stocks That Hit 52-Week Highs On Tuesday,neutral,False,positive,positive,positive,neutral
+NVDA,100,2023-08-19 00:00:00+00:00,"Nvidia Stock (NASDAQ:NVDA): The Stakes Seem Too High, Heading Into Earnings",negative,True,negative,negative,negative,negative
+NVDA,101,2022-06-08 00:00:00+00:00,These 2 Meme Stocks Have Legitimate Long-Term Upsides,neutral,False,neutral,positive,positive,positive
+NVDA,102,2021-12-15 00:00:00+00:00,Markets Get a Fed Bounce -- and These Mega-Stocks Were Big Winners,neutral,False,positive,positive,positive,neutral
+NVDA,103,2022-09-17 00:00:00+00:00,Checking In on 10 Stock Picks,neutral,False,neutral,neutral,neutral,neutral
+NVDA,104,2019-02-23 00:00:00+00:00,"Barron's Picks And Pans: Apple, Altria, Micron Technology, Nvidia And More",neutral,True,neutral,neutral,neutral,neutral
+NVDA,105,2023-03-13 00:00:00+00:00,1 Massive Reason to Avoid Nvidia Stock Right Now,negative,True,neutral,negative,negative,neutral
+NVDA,106,2022-06-20 00:00:00+00:00,"Top Stock Reports for Apple, NVIDIA & McDonald's",neutral,True,neutral,neutral,neutral,neutral
+NVDA,107,2022-01-14 00:00:00+00:00,Why Nvidia Stock Blipped Higher Today,positive,True,positive,positive,positive,negative
+NVDA,109,2023-02-04 00:00:00+00:00,Popular AI Like ChatGPT Could Be Just the Beginning for Data Center Stocks Like Nvidia,positive,True,neutral,neutral,neutral,neutral
+NVDA,110,2022-01-31 00:00:00+00:00,Markets Close a Lousy Month on a Big Upswing,neutral,False,negative,negative,positive,negative
+AMZN,1,2023-04-19 00:00:00+00:00,Better Buy: Amazon vs. Nvidia,neutral,True,neutral,neutral,neutral,neutral
+AMZN,2,2023-11-22 00:00:00+00:00,Why Amazon Stock Bounced Back This Morning,positive,True,neutral,negative,positive,positive
+AMZN,3,2020-05-02 00:00:00+00:00,How Amazon Web Services Stacked Up Against Microsoft's Azure,neutral,True,neutral,positive,positive,positive
+AMZN,4,2023-10-04 00:00:00+00:00,US STOCKS-Wall St ends up after recent weakness; consumer discretionary gains,neutral,False,negative,negative,positive,negative
+AMZN,5,2023-08-17 00:00:00+00:00,"Health Care Sector Update for 08/17/2023: AHCO, CVS, CHEK, MODD, AMZN",neutral,True,neutral,neutral,neutral,neutral
+AMZN,6,2023-08-08 00:00:00+00:00,Amazon Stock Surpassed The Street Expectations In Q2,positive,True,positive,positive,positive,positive
+AMZN,7,2020-05-30 00:00:00+00:00,"Benzinga's Bulls And Bears Of The Week: Amazon, Disney, Netflix And More",neutral,True,neutral,neutral,neutral,neutral
+AMZN,8,2023-03-16 00:00:00+00:00,Amazon's Next Pillar Could Be Generating Billions,positive,True,neutral,positive,positive,neutral
+AMZN,10,2023-05-19 00:00:00+00:00,"After Hours Most Active for May 19, 2023 : SWN, BAC, INTC, QQQ, NYCB, AMZN, FOLD, MSFT, PFE, AAPL, T, TEVA",neutral,True,neutral,neutral,neutral,neutral
+AMZN,11,2020-05-10 00:00:00+00:00,"Amazon Worker Claims At Least 600 Employees Struck By COVID-19, Six Dead",negative,True,negative,negative,negative,negative
+AMZN,12,2023-09-11 00:00:00+00:00,US STOCKS-Nasdaq ends sharply higher as Tesla soars on AI optimism,neutral,False,positive,positive,positive,positive
+AMZN,13,2023-06-14 00:00:00+00:00,"Technology Sector Update for 06/14/2023: GOOG, LOGI, AMZN",neutral,True,neutral,neutral,neutral,neutral
+AMZN,14,2023-08-06 00:00:00+00:00,7 Top Stocks Billionaires Are Loading Up On,neutral,False,neutral,positive,positive,neutral
+AMZN,15,2023-07-12 00:00:00+00:00,"After Hours Most Active for Jul 12, 2023 : AAPL, QQQ, PCG, AMZN, GOOGL, INTC, CMCSA, BP, TFC, KO, T, HBI",neutral,True,neutral,neutral,neutral,neutral
+AMZN,16,2023-11-06 00:00:00+00:00,"After Hours Most Active for Nov 6, 2023 : SHV, BAC, ENV, AAPL, BURL, IXUS, IONQ, ADMA, AMZN, WFC, TVTX, OUT",neutral,True,neutral,neutral,neutral,neutral
+AMZN,17,2023-08-03 00:00:00+00:00,"US STOCKS-Wall Street closes near flat as Treasury yields surge; Apple, Amazon to report",neutral,True,negative,negative,negative,negative
+AMZN,18,2023-04-28 00:00:00+00:00,Wedbush Maintains Amazon.com (AMZN) Outperform Recommendation,positive,True,neutral,neutral,neutral,negative
+AMZN,21,2023-12-14 00:00:00+00:00,Will Amazon Become SpaceX's Biggest Customer?,neutral,True,neutral,neutral,neutral,neutral
+AMZN,22,2023-06-26 00:00:00+00:00,Amazon (AMZN) to Invest $15 Billion in India to Boost Presence,positive,True,positive,positive,positive,positive
+AMZN,23,2023-12-15 00:00:00+00:00,Amazon Set a New 52-Week High: Is the Stock a Buy Now?,positive,True,positive,positive,positive,neutral
+AMZN,24,2023-09-04 00:00:00+00:00,Great News for Amazon Stock Investors,positive,True,neutral,positive,positive,neutral
+AMZN,25,2023-10-30 00:00:00+00:00,Time to Buy Amazon's Stock on Upbeat AI Commentary and Strong Q3 Results?,positive,True,neutral,positive,positive,neutral
+AMZN,26,2023-09-21 00:00:00+00:00,Wells Fargo Reiterates Amazon.com (AMZN) Overweight Recommendation,positive,True,neutral,neutral,negative,neutral
+AMZN,27,2020-05-14 00:00:00+00:00,Today's Pickup: COVID-19 Gives Smaller e-Commerce Firms A Chance Against Amazon,negative,True,positive,positive,positive,positive
+AMZN,28,2023-10-31 00:00:00+00:00,"Technology Sector Update for 10/31/2023: ATGL, NOK, AMZN, HPE, PRFT, SWI",neutral,True,neutral,neutral,neutral,neutral
+AMZN,29,2020-05-15 00:00:00+00:00,13F For Buffett's Berkshire Shows Cut Stake In Amazon From 537.3K To ~533.3K Shares,neutral,True,neutral,positive,negative,neutral
+AMZN,30,2023-07-26 00:00:00+00:00,"Consumer Sector Update for 07/26/2023: ALLE, AMZN, GPS, MAT, KO",neutral,True,neutral,neutral,neutral,neutral
+AMZN,31,2023-11-01 00:00:00+00:00,US STOCKS-Wall St gains as yields slip in run-up to Fed decision,neutral,False,negative,negative,negative,negative
+AMZN,32,2023-10-06 00:00:00+00:00,"US STOCKS-Wall Street drops after jobs data, eyes weekly losses",neutral,False,negative,negative,negative,negative
+AMZN,33,2023-06-22 00:00:00+00:00,Russia tells Amazon Web Services to set up local representation or face restrictions,negative,True,neutral,neutral,neutral,neutral
+AMZN,34,2023-06-18 00:00:00+00:00,5 Ways Amazon Is Using AI to Revolutionize Its Business,positive,True,positive,positive,positive,neutral
+AMZN,35,2023-11-29 00:00:00+00:00,Love Amazon Stock? This Is the Most Important Thing to Watch This Holiday Season,neutral,True,neutral,neutral,neutral,neutral
+AMZN,36,2023-07-11 00:00:00+00:00,Amazon dangles deeper 'Prime Day' discounts for stressed US shoppers,neutral,True,neutral,neutral,positive,neutral
+AMZN,37,2023-04-25 00:00:00+00:00,Everything You Need to Know About Amazon's Upcoming Earnings,neutral,True,neutral,neutral,neutral,neutral
+AMZN,38,2023-04-14 00:00:00+00:00,AWS Unveils Bedrock Service For Generative AI,positive,True,neutral,neutral,neutral,neutral
+AMZN,39,2023-04-13 00:00:00+00:00,How Amazon Stock Could Skyrocket 50% (or More) in the Next 12 Months,positive,True,negative,negative,negative,neutral
+AMZN,40,2023-12-08 00:00:00+00:00,Amazon Sues An International Ring For Stealing Millions Of Dollars In Refund Scams,neutral,True,neutral,negative,negative,negative
+AMZN,41,2023-07-01 00:00:00+00:00,Is It Too Late to Buy Amazon Stock?,neutral,True,neutral,neutral,neutral,neutral
+AMZN,42,2023-11-02 00:00:00+00:00,FTC says Amazon made $1 billion with price-raising algorithms,negative,True,positive,positive,positive,neutral
+AMZN,44,2023-03-28 00:00:00+00:00,Amazon AWS Joins the AI Party and Announces New Nvidia Infrastructure Is Coming,positive,True,neutral,positive,positive,neutral
+AMZN,46,2023-07-10 00:00:00+00:00,AMZN April 2024 Options Begin Trading,neutral,True,neutral,neutral,neutral,neutral
+AMZN,47,2023-06-16 00:00:00+00:00,"Technology Sector Update for 06/16/2023: AMZN, IRBT, MU, META",neutral,True,neutral,neutral,neutral,neutral
+AMZN,48,2023-09-14 00:00:00+00:00,Amazon opens its biggest last-mile delivery center in Latin America,positive,True,positive,positive,positive,positive
+AMZN,49,2023-04-11 00:00:00+00:00,"Why Apple, Warner Bros. Discovery, and Amazon Are No-Brainer Buys Right Now",positive,True,neutral,neutral,neutral,neutral
+AMZN,50,2023-11-23 00:00:00+00:00,German union Verdi calls for strikes at Amazon on Black Friday,negative,True,neutral,negative,negative,negative
+AMZN,51,2023-12-06 00:00:00+00:00,Has Amazon.com (AMZN) Outpaced Other Retail-Wholesale Stocks This Year?,neutral,True,negative,negative,neutral,positive
+AMZN,52,2023-09-20 00:00:00+00:00,"Safilo, Amazon Launch New Carrera Smart Glasses With Alexa",positive,True,neutral,positive,positive,neutral
+AMZN,53,2023-09-03 00:00:00+00:00,Where Will Amazon Stock Be in 5 Years?,neutral,True,neutral,neutral,neutral,neutral
+AMZN,55,2023-05-13 00:00:00+00:00,"Got $1,000? Here Are 3 Remarkable Stocks to Buy.",neutral,False,neutral,neutral,neutral,neutral
+AMZN,57,2020-06-01 00:00:00+00:00,Amazon Looks To Establish Supply Chain Trust With New Blockchain Patent,neutral,True,positive,positive,positive,positive
+AMZN,59,2023-06-05 00:00:00+00:00,Validea Detailed Fundamental Analysis - AMZN,neutral,True,neutral,neutral,neutral,neutral
+AMZN,60,2023-08-19 00:00:00+00:00,"Unusual Call Option Trade in Amazon.com (AMZN) Worth $1,635.00K",neutral,True,neutral,neutral,neutral,neutral
+AMZN,62,2023-05-05 00:00:00+00:00,See Which Of The Latest 13F Filers Holds Amazon.com,neutral,True,neutral,neutral,neutral,neutral
+AMZN,63,2023-09-29 00:00:00+00:00,Alphabet and Meta Platforms Better Watch Out for Amazon,positive,True,neutral,positive,neutral,neutral
+AMZN,64,2023-04-17 00:00:00+00:00,Guru Fundamental Report for AMZN,neutral,True,neutral,neutral,neutral,neutral
+AMZN,65,2020-05-26 00:00:00+00:00,Amazon in Advanced Talks to Buy Self-Driving-Car Tech Company Zoox; Deal Expected to Value Zoox at Less Than Its Private Valuation,neutral,True,neutral,positive,neutral,neutral
+AMZN,67,2023-06-09 00:00:00+00:00,Amazon Is One Stock You'll Regret not Buying Before the Next Bull Market,positive,True,neutral,neutral,neutral,neutral
+AMZN,68,2023-05-21 00:00:00+00:00,3 Bargain Stocks You Can Buy Today and Hold Forever,neutral,False,neutral,neutral,neutral,neutral
+AMZN,69,2023-08-07 00:00:00+00:00,The 10 Stocks MarketBeat Readers Like Best,neutral,False,neutral,neutral,positive,neutral
+AMZN,71,2023-05-25 00:00:00+00:00,"Noteworthy Thursday Option Activity: BA, GS, AMZN",neutral,True,neutral,neutral,neutral,neutral
+AMZN,72,2020-05-28 00:00:00+00:00,"'Amazon's website is down for many users across the US' -Tweet From Business Insider; BZ NOTE: Benzinga Reporters In NYC, Detroit Not Experiencing Issues",negative,True,negative,negative,negative,negative
+AMZN,74,2023-04-10 00:00:00+00:00,Amazon's (AMZN) AWS Clientele Expands With Experian's Pick,positive,True,positive,positive,positive,positive
+AMZN,76,2023-10-10 00:00:00+00:00,"Amazon Stock: Buy, Sell, or Hold?",neutral,True,neutral,neutral,neutral,neutral
+AMZN,77,2023-08-27 00:00:00+00:00,Is It Too Late to Buy These 2 Stock-Split Stocks?,neutral,False,neutral,neutral,neutral,neutral
+AMZN,79,2023-04-01 00:00:00+00:00,Best Stock to Buy: Amazon vs. Mercado Libre vs. Costco,neutral,True,neutral,neutral,neutral,neutral
+AMZN,80,2023-07-31 00:00:00+00:00,Amazon (AMZN) to Report Q2 Earnings: What's in the Offing?,neutral,True,neutral,neutral,neutral,neutral
+AMZN,81,2023-03-26 00:00:00+00:00,"Amazon Layoffs: The Good, The Bad, and The Ugly",neutral,True,neutral,negative,negative,negative
+AMZN,83,2023-12-16 23:00:00+00:00,What Are the Best Stocks to Buy for 2024? 1 Wall Street Analyst Thinks Amazon Tops the List -- and He's Not Alone,positive,True,neutral,positive,positive,neutral
+AMZN,84,2023-08-21 00:00:00+00:00,"Amazon.com, Inc. (AMZN) is Attracting Investor Attention: Here is What You Should Know",neutral,True,neutral,positive,positive,neutral
+AMZN,85,2020-05-19 00:00:00+00:00,Opinion: Is Amazon Really A Winner Of The Pandemic?,neutral,True,neutral,neutral,neutral,neutral
+AMZN,87,2023-06-21 00:00:00+00:00,Hewlett Packard (HPE) Expands Alliance With Amazon Web Services,positive,True,positive,positive,positive,positive
+AMZN,88,2023-09-02 00:00:00+00:00,3 Things About Amazon That Smart Investors Know,neutral,True,neutral,neutral,neutral,neutral
+AMZN,89,2023-11-08 00:00:00+00:00,The S&P 500 Soared 5.9% Last Week -- But These 2 Stocks Absolutely Crushed It,neutral,False,negative,negative,positive,negative
+AMZN,90,2023-05-10 00:00:00+00:00,"Notable Wednesday Option Activity: COST, AMZN, AAPL",neutral,True,neutral,neutral,neutral,neutral
+AMZN,91,2023-10-14 00:00:00+00:00,The FTC Is Suing Amazon: Here's What Investors Need to Know,negative,True,neutral,neutral,neutral,neutral
+AMZN,93,2023-04-06 00:00:00+00:00,Better Cloud Stock: Amazon vs. DigitalOcean,neutral,True,neutral,positive,neutral,positive
+AMZN,94,2020-05-20 00:00:00+00:00,"Amazon Issues Press Release Highlighting 'Crucible,' Its Free-To-Play Shooter Game",neutral,True,neutral,positive,positive,neutral
+AMZN,95,2023-09-16 00:00:00+00:00,Better Buy: Amazon vs. Costco,neutral,True,neutral,neutral,neutral,neutral
+AMZN,96,2023-08-02 00:00:00+00:00,S&P 500 Analyst Moves: AMZN,neutral,True,neutral,neutral,neutral,neutral
+AMZN,97,2023-04-20 00:00:00+00:00,Amazon to expand in business supplies after pandemic boosts sales in Europe,positive,True,positive,positive,positive,positive
+AMZN,100,2023-08-10 00:00:00+00:00,"After Hours Most Active for Aug 10, 2023 : JNJ, AMZN, KVUE, PFE, MSFT, BMY, PR, DIS, SABR, WBD, AAPL, QQQ",neutral,True,neutral,neutral,neutral,neutral
+AMZN,104,2023-03-21 00:00:00+00:00,"Why Amazon, Microsoft, and Disney Are No-Brainer Buys Right Now",positive,True,neutral,neutral,neutral,neutral
+AMZN,105,2023-07-13 00:00:00+00:00,"Consumer Sector Update for 07/13/2023: AMZN, DAL, FAST",neutral,True,neutral,neutral,neutral,neutral
+AMZN,106,2023-08-05 00:00:00+00:00,Canaccord Genuity Maintains Amazon.com (AMZN) Buy Recommendation,positive,True,neutral,neutral,neutral,neutral
+AMZN,107,2023-03-13 00:00:00+00:00,Rivian Automotive Reportedly In Talks With Amazon To End Exclusivity,neutral,True,negative,negative,negative,neutral
+AMZN,109,2023-10-01 00:00:00+00:00,This Segment You Didn't Know About Is Amazon's Secret Weapon,positive,True,neutral,neutral,neutral,neutral
+AMZN,110,2023-09-10 00:00:00+00:00,2 AI Stocks to Transform Your Portfolio,neutral,False,positive,positive,positive,neutral
+GILD,1,2022-04-08 00:00:00+00:00,"The Zacks Analyst Blog Highlights Bristol Myers, Vir Biotechnology, Gilead Sciences, and Vertex Pharmaceuticals",neutral,True,neutral,neutral,neutral,neutral
+GILD,2,2019-01-23 00:00:00+00:00,3 Upcoming Readouts for Gilead Sciences You Don't Want to Miss,neutral,True,neutral,neutral,neutral,neutral
+GILD,3,2023-02-07 00:00:00+00:00,Gilead Sciences Reaches Analyst Target Price,positive,True,neutral,neutral,positive,positive
+GILD,4,2019-07-18 00:00:00+00:00,3 Top Healthcare Stocks to Buy Right Now,neutral,False,neutral,positive,positive,neutral
+GILD,5,2019-06-24 00:00:00+00:00,"Gilead, Carna Biosciences Announce Research and Development Collaboration to Develop Novel Immuno-Oncology Therapies",positive,True,neutral,positive,positive,positive
+GILD,6,2020-07-30 00:00:00+00:00,"Gilead Sciences Posts Q2 Loss, Lifts FY Outlook",neutral,True,negative,negative,negative,negative
+GILD,7,2019-10-22 00:00:00+00:00,"Noteworthy Tuesday Option Activity: GILD, APLS, MAT",neutral,True,neutral,neutral,neutral,neutral
+GILD,8,2019-07-14 00:00:00+00:00,"Gilead, Galapagos Announce 10-year Global R&D Collaboration",positive,True,neutral,positive,positive,neutral
+GILD,9,2019-04-23 00:00:00+00:00,2 Best Biotech Buyout Plays,neutral,False,neutral,positive,positive,positive
+GILD,10,2020-11-19 00:00:00+00:00,WHO advises against Gilead's remdesivir for all hospitalised COVID-19 patients,negative,True,neutral,neutral,neutral,neutral
+GILD,11,2019-07-26 00:00:00+00:00,"BTC Capital Management, Inc. Buys Gilead Sciences Inc, PacWest Bancorp, Teledyne Technologies ...",neutral,True,neutral,neutral,neutral,neutral
+GILD,12,2023-07-29 00:00:00+00:00,3 Stocks Retirees Should Absolutely Love,neutral,False,neutral,neutral,positive,neutral
+GILD,13,2023-05-16 00:00:00+00:00,BMO Capital Upgrades Gilead Sciences (GILD),positive,True,neutral,neutral,neutral,neutral
+GILD,15,2022-10-11 00:00:00+00:00,Gilead Sciences: FDA Accepts For Priority Review SBLA For Trodelvy - Quick Facts,positive,True,neutral,positive,positive,positive
+GILD,16,2019-07-11 00:00:00+00:00,"IBB, GILD, CELG, ILMN: Large Outflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+GILD,17,2019-09-17 00:00:00+00:00,"PBE, GILD, ALXN, INCY: Large Outflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+GILD,18,2020-08-18 00:00:00+00:00,Gilead Gets CRL For Filgotinib For Moderately To Severely Active Rheumatoid Arthritis Treatment,negative,True,neutral,positive,positive,positive
+GILD,20,2022-09-08 00:00:00+00:00,GILD October 28th Options Begin Trading,neutral,True,neutral,neutral,neutral,neutral
+GILD,21,2022-08-17 00:00:00+00:00,"Biotech Stock Roundup: GILD's Drug News, NVAX & MRNA COVID-19 Vaccine Updates",neutral,True,neutral,neutral,neutral,neutral
+GILD,22,2021-05-14 00:00:00+00:00,"Notable Friday Option Activity: ELY, GILD, OLED",neutral,True,neutral,neutral,neutral,neutral
+GILD,23,2023-05-04 00:00:00+00:00,GILD June 23rd Options Begin Trading,neutral,True,neutral,neutral,neutral,neutral
+GILD,24,2022-01-12 00:00:00+00:00,"Notable Wednesday Option Activity: AMAT, DIS, GILD",neutral,True,neutral,neutral,neutral,neutral
+GILD,25,2022-04-04 00:00:00+00:00,COVID SCIENCE-Gilead's remdesivir fails to show benefit in European trial; no fetus risk seen with first trimester vaccination,negative,True,negative,negative,negative,positive
+GILD,26,2023-06-30 00:00:00+00:00,"Noteworthy ETF Inflows: QQQM, BKNG, ADI, GILD",neutral,True,neutral,neutral,neutral,neutral
+GILD,27,2021-08-16 00:00:00+00:00,"After Hours Most Active for Aug 16, 2021 : CVE, CL, AMAT, AAPL, INTC, GNW, F, IBN, CMCSA, GILD, CNHI, MDLZ",neutral,True,neutral,neutral,neutral,neutral
+GILD,28,2019-06-12 00:00:00+00:00,"Notable Wednesday Option Activity: EXAS, GILD, PSTG",neutral,True,neutral,neutral,neutral,neutral
+GILD,29,2023-11-06 00:00:00+00:00,"Biotech/Drug Stocks Q3 Earnings Due Nov 7: GILD, PRGO, VTRS & More",neutral,True,neutral,neutral,neutral,neutral
+GILD,30,2020-10-28 00:00:00+00:00,Gilead Sciences Q3 20 Earnings Conference Call At 4:30 PM ET,neutral,True,neutral,neutral,neutral,neutral
+GILD,31,2023-05-31 00:00:00+00:00,2 Large Cap Biotech Stocks To Watch Right Now,neutral,False,neutral,neutral,neutral,neutral
+GILD,32,2020-01-10 00:00:00+00:00,7 Healthcare Stocks to Buy or Sell As Pricing Pressures Mount,neutral,False,neutral,neutral,negative,negative
+GILD,33,2022-10-20 00:00:00+00:00,"Noteworthy Thursday Option Activity: T, GILD, ALL",neutral,True,neutral,neutral,neutral,neutral
+GILD,34,2021-04-26 00:00:00+00:00,"Gilead to help India boost remdesivir production, to give at least 450,000 vials",positive,True,positive,positive,positive,positive
+GILD,35,2020-04-11 00:00:00+00:00,Early Look at Gilead Sciences' Experimental Coronavirus Treatment Disappoints,negative,True,neutral,neutral,negative,neutral
+GILD,36,2022-06-24 00:00:00+00:00,Gilead (GILD) Announces Positive Data on Hepcludex for HDV,positive,True,positive,positive,positive,positive
+GILD,37,2019-02-05 00:00:00+00:00,"Gilead (GILD) Q4 Earnings Miss Estimates, Revenues Beat",neutral,True,neutral,positive,positive,negative
+GILD,38,2020-01-27 00:00:00+00:00,Gilead Sciences Option Alert: Mar 20 $62.5 Calls Sweep (50) near the Ask: 984 @ $3.051 vs 1043 OI; Earnings 2/4 After Close Ref=$63.61,neutral,True,neutral,neutral,neutral,positive
+GILD,39,2019-07-09 00:00:00+00:00,"Gilead, Lyndra Therapeutics Partner On Ultra-Long-Acting HIV Drugs",positive,True,neutral,neutral,neutral,neutral
+GILD,40,2019-02-04 00:00:00+00:00,"Midday Stock Market News: Alphabet, Gilead Earnings on Tap",neutral,True,neutral,neutral,neutral,neutral
+GILD,41,2019-07-05 00:00:00+00:00,Gilead Sciences Option Alert: Jul 26 $71.5 Calls Sweep (28) near the Ask: 596 @ $0.339 vs 1144 OI; Earnings 7/24 After Close [est] Ref=$68.65,neutral,True,neutral,neutral,neutral,positive
+GILD,42,2021-04-13 00:00:00+00:00,FDA Grants Accelerated Approval To Gilead Sciences' Trodelvy For Treatment Of Urothelial Cancer,positive,True,positive,positive,positive,positive
+GILD,43,2023-04-27 00:00:00+00:00,"Gilead Q1 Profit Misses View, But Revenues Top; Cuts FY EPS Outlook",negative,True,negative,negative,negative,negative
+GILD,44,2023-05-01 00:00:00+00:00,Morgan Stanley Maintains Gilead Sciences (GILD) Equal-Weight Recommendation,neutral,True,neutral,neutral,neutral,neutral
+GILD,46,2023-11-24 00:00:00+00:00,"Zacks Industry Outlook Highlights Gilead Sciences, CRISPR Therapeutics, ACADIA Pharmaceuticals, Dynavax and Ligand Pharmaceuticals",neutral,True,neutral,positive,neutral,neutral
+GILD,47,2023-12-11 00:00:00+00:00,"QQQM, ISRG, GILD, PANW: Large Outflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+GILD,48,2022-04-29 00:00:00+00:00,Gilead (GILD) Q1 Earnings Beat on Solid COVID Treatment Sales,positive,True,positive,positive,positive,positive
+GILD,49,2020-08-15 00:00:00+00:00,Should You Buy Gilead Sciences Stock on the Dip?,neutral,True,neutral,neutral,neutral,neutral
+GILD,50,2022-01-25 00:00:00+00:00,Gilead: FDA Places Partial Clinical Hold On Studies Evaluating Magrolimab - Azacitidine Combination,negative,True,neutral,neutral,neutral,negative
+GILD,51,2020-03-23 00:00:00+00:00,Gilead Stock Flies High With a Potential Coronavirus Treatment,positive,True,positive,positive,positive,negative
+GILD,52,2022-02-14 00:00:00+00:00,Gilead (GILD) Veklury Retains Activity Against Omicron Variant,positive,True,neutral,neutral,neutral,positive
+GILD,53,2019-05-21 00:00:00+00:00,"Credit Suisse Initiates Coverage On Gilead Sciences, Inc. - Common Stock with Neutral Rating, Announces $70 Price Target",neutral,True,neutral,neutral,positive,neutral
+GILD,56,2019-01-10 00:00:00+00:00,Will Investors Find A Nektar Balm In Gilead?,neutral,True,neutral,neutral,neutral,neutral
+GILD,57,2019-08-07 00:00:00+00:00,Gilead Sciences Statement on FDA Advisory Committee's Recommendation on Descovy for PrEP,neutral,True,neutral,positive,neutral,neutral
+GILD,59,2019-04-01 00:00:00+00:00,"IBB, GILD, CELG, VRTX: Large Outflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+GILD,60,2019-07-03 00:00:00+00:00,"VTI, C, GE, GILD: ETF Inflow Alert",neutral,True,neutral,neutral,neutral,neutral
+GILD,61,2020-05-18 00:00:00+00:00,"Nasdaq 100 Movers: GILD, EXPE",neutral,True,neutral,neutral,neutral,neutral
+GILD,62,2020-06-12 00:00:00+00:00,India's Zydus Cadila signs pact with Gilead to make remdesivir,positive,True,neutral,positive,positive,positive
+GILD,63,2019-07-31 00:00:00+00:00,Gilead Sciences Reports Improving Revenue in the 2nd Quarter,positive,True,positive,positive,positive,positive
+GILD,64,2019-09-10 00:00:00+00:00,"Ex-Dividend Reminder: Gilead Sciences, Conmed and Crown Castle International",neutral,True,neutral,neutral,neutral,neutral
+GILD,65,2022-07-26 00:00:00+00:00,Gilead Sciences (GILD) Stock Moves -0.21%: What You Should Know,neutral,True,neutral,neutral,neutral,neutral
+GILD,67,2023-09-09 00:00:00+00:00,B of A Securities Upgrades Gilead Sciences (GILD),positive,True,neutral,neutral,neutral,neutral
+GILD,70,2019-06-29 00:00:00+00:00,The Week Ahead In Biotech: Pending Clinical Readouts In Focus,neutral,False,neutral,neutral,neutral,neutral
+GILD,71,2023-11-08 00:00:00+00:00,GILD Crosses Below Key Moving Average Level,negative,True,neutral,neutral,negative,positive
+GILD,72,2022-10-25 00:00:00+00:00,What's in Store for Gilead (GILD) This Earnings Season?,neutral,True,neutral,neutral,neutral,neutral
+GILD,73,2020-03-22 00:00:00+00:00,Coronavirus Crisis: 3 Biotech Stocks to Buy Right Now,neutral,False,neutral,neutral,positive,neutral
+GILD,74,2019-12-12 00:00:00+00:00,Gilead Sciences Option Alert: Jan 17 $70 Calls Sweep (41) above Ask!: 864 @ $1.087 vs 44382 OI; Earnings 2/3 After Close [est] Ref=$67.575,neutral,True,neutral,neutral,neutral,positive
+GILD,75,2020-11-01 00:00:00+00:00,2 Rock-Solid Coronavirus Treatment Stocks to Buy Right Now,neutral,False,neutral,neutral,positive,neutral
+GILD,76,2022-08-04 00:00:00+00:00,Gilead Sciences To Buy Clinical-stage Private Biotechnology Firm MiroBio For $405 Mln In Cash,neutral,True,neutral,neutral,neutral,neutral
+GILD,77,2022-07-31 00:00:00+00:00,2 Cheap Dividend Stocks Yielding More Than 4%,neutral,False,neutral,positive,positive,neutral
+GILD,78,2021-01-18 00:00:00+00:00,3 Biotech Stocks To Watch This Week,neutral,False,neutral,neutral,neutral,neutral
+GILD,79,2022-02-15 00:00:00+00:00,Tracking Gilead's 4 Big Stories and a Lawsuit in 2022,neutral,True,neutral,neutral,neutral,neutral
+GILD,80,2020-01-01 00:00:00+00:00,"Bristol-Myers Squibb, Gilead Sciences, Biogen Raised U.S. List Prices on 50+ Drugs on Wednesday an Average of 5%",neutral,True,positive,positive,positive,positive
+GILD,81,2020-08-16 00:00:00+00:00,Is Gilead Sciences Stock a Buy?,neutral,True,neutral,neutral,neutral,neutral
+GILD,82,2022-10-04 00:00:00+00:00,Validea Joel Greenblatt Strategy Daily Upgrade Report - 10/4/2022,neutral,False,neutral,neutral,neutral,neutral
+GILD,83,2022-11-29 00:00:00+00:00,"Gilead (GILD), RCUS Announce Positive Data From NSCLC Study",positive,True,positive,positive,positive,positive
+GILD,84,2020-06-25 00:00:00+00:00,Gilead's remdesivir endorsed as first COVID-19 treatment in Europe,positive,True,positive,positive,positive,neutral
+GILD,85,2022-03-03 00:00:00+00:00,April 22nd Options Now Available For Gilead Sciences (GILD),neutral,True,neutral,neutral,neutral,neutral
+GILD,87,2020-01-24 00:00:00+00:00,An Emboldened Bristol-Myers Squibb Wants $1.5 Billion From Gilead Sciences,negative,True,neutral,positive,positive,neutral
+GILD,88,2023-12-01 00:00:00+00:00,"SSO, MMC, AXP, GILD: Large Inflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+GILD,89,2020-02-01 00:00:00+00:00,Stocks That Fell to '-Year Lows in the Week of Jan. '–,neutral,False,negative,negative,negative,negative
+GILD,90,2019-06-28 00:00:00+00:00,Has Gilead Sciences (GILD) Outpaced Other Medical Stocks This Year?,neutral,True,negative,negative,positive,positive
+GILD,91,2022-02-12 00:00:00+00:00,Is the FDA's Partial Hold Bad News for Gilead Investors?,negative,True,negative,negative,negative,negative
+GILD,93,2019-06-30 00:00:00+00:00,AbbVie And Gilead - 2 Different Strategies To Improve Growth,neutral,True,neutral,positive,positive,neutral
+GILD,94,2020-06-23 00:00:00+00:00,Gilead to buy 49.9% stake in cancer drug developer Pionyr for $275 mln,neutral,True,neutral,neutral,neutral,neutral
+GILD,95,2022-08-30 00:00:00+00:00,Gilead (GILD) Outpaces Industry in Six Months: What Lies Ahead?,positive,True,negative,negative,neutral,neutral
+GILD,96,2022-02-02 00:00:00+00:00,"Notable Wednesday Option Activity: PYPL, GILD, MCK",neutral,True,neutral,neutral,neutral,neutral
+GILD,97,2020-10-20 00:00:00+00:00,Is Gilead Sciences a Good Coronavirus Stock?,neutral,True,neutral,positive,positive,neutral
+GILD,100,2019-06-18 00:00:00+00:00,GILD Crosses Above Key Moving Average Level,positive,True,neutral,neutral,positive,positive
+GILD,101,2023-11-28 00:00:00+00:00,US FDA investigating safety risk of CAR-T therapies,negative,False,neutral,neutral,neutral,neutral
+GILD,103,2021-09-30 00:00:00+00:00,3 Top Dividend Stocks Yielding More Than 4%,neutral,False,neutral,positive,positive,neutral
+GILD,104,2023-09-08 00:00:00+00:00,"Health Care Sector Update for 09/08/2023: BIOC, GILD, NVOS",neutral,True,neutral,neutral,neutral,neutral
+GILD,105,2021-07-09 00:00:00+00:00,"Notable ETF Outflow Detected - IBB, GILD, MRNA, ILMN",neutral,True,neutral,neutral,neutral,positive
+GILD,106,2023-02-03 00:00:00+00:00,Gilead Sciences (GILD) Declares $0.75 Dividend,neutral,True,neutral,neutral,neutral,neutral
+GILD,107,2020-11-04 00:00:00+00:00,Will Gilead's Remdesivir Only Be a Short-Lived Success Story?,negative,True,neutral,neutral,neutral,neutral
+GILD,108,2020-12-23 00:00:00+00:00,2 Ultra-High-Growth Healthcare Stocks That Are Just Getting Started,neutral,False,neutral,neutral,positive,neutral
+GILD,109,2023-08-21 00:00:00+00:00,US FDA puts Gilead Sciences blood cancer drug studies on hold,negative,True,neutral,neutral,neutral,neutral
+SBUX,1,2023-09-04 00:00:00+00:00,Here's Why Investors Should Retain Starbucks (SBUX) Stock,positive,True,neutral,neutral,neutral,neutral
+SBUX,2,2019-05-16 00:00:00+00:00,3 Must-See Quotes From Starbucks' Earnings Call,neutral,True,neutral,neutral,neutral,neutral
+SBUX,3,2020-05-03 00:00:00+00:00,The Decision That May Be the Key to Starbucks’ Recovery,neutral,True,neutral,positive,neutral,neutral
+SBUX,4,2023-01-31 00:00:00+00:00,Best Stocks To Buy Today? 2 Consumer Discretionary Stocks In Focus,neutral,False,neutral,neutral,neutral,neutral
+SBUX,5,2023-08-02 00:00:00+00:00,Barclays Maintains Starbucks (SBUX) Overweight Recommendation,positive,True,neutral,neutral,negative,neutral
+SBUX,6,2019-08-13 00:00:00+00:00,Starbucks (SBUX) Remains Perky Amid the Volatility,positive,True,neutral,negative,negative,positive
+SBUX,7,2023-12-06 00:00:00+00:00,"The Zacks Analyst Blog Highlights Johnson & Johnson, T-Mobile US, Caterpillar, Broadcom and Starbucks",neutral,True,neutral,neutral,neutral,neutral
+SBUX,8,2020-05-04 00:00:00+00:00,These Were Starbucks' Most Popular Menu Items in Q2,neutral,True,neutral,neutral,neutral,neutral
+SBUX,10,2019-11-12 00:00:00+00:00,Happy Hour At Starbucks On Nov. 14,neutral,True,neutral,neutral,neutral,neutral
+SBUX,11,2022-09-23 00:00:00+00:00,Starbucks (SBUX) Stock Moves -0.63%: What You Should Know,neutral,True,neutral,neutral,neutral,neutral
+SBUX,13,2019-10-28 00:00:00+00:00,"Noteworthy Monday Option Activity: GLW, PFE, SBUX",neutral,True,neutral,neutral,neutral,neutral
+SBUX,14,2020-03-12 00:00:00+00:00,The Latest Market Sell-Off Is an Opportunity to Buy These 4 Stocks,neutral,False,neutral,neutral,positive,neutral
+SBUX,15,2020-05-09 00:00:00+00:00,"If You Invested $10,000 in Starbucks' IPO, This Is How Much You'd Have Now",neutral,True,neutral,neutral,neutral,neutral
+SBUX,16,2021-09-09 00:00:00+00:00,"4 Top Stock Trades for Friday: GME, FB, TLT, SBUX",neutral,True,neutral,neutral,neutral,neutral
+SBUX,17,2020-08-10 00:00:00+00:00,"Noteworthy Monday Option Activity: ARR, PAYC, SBUX",neutral,True,neutral,neutral,neutral,neutral
+SBUX,18,2022-09-11 00:00:00+00:00,California's Minimum Wage May Rise to $22 Next Year. Is Starbucks Still a Buy?,negative,True,neutral,positive,positive,neutral
+SBUX,19,2023-07-28 00:00:00+00:00,Here's the Next Stock I'm Going to Buy,neutral,False,neutral,neutral,neutral,neutral
+SBUX,20,2023-03-23 00:00:00+00:00,Starbucks (NASDAQ:SBUX): What’s Brewing in China?,neutral,True,neutral,neutral,neutral,neutral
+SBUX,21,2019-10-27 00:00:00+00:00,Starbucks Is Rolling Out Delivery to a Market Near You,positive,True,neutral,neutral,neutral,neutral
+SBUX,22,2020-01-07 00:00:00+00:00,Starbucks To Serve Oat Milk Honey Latte In 1300 Locations,neutral,True,neutral,neutral,neutral,neutral
+SBUX,23,2019-07-18 00:00:00+00:00,"With Starbucks Now, the Coffee Chain Tests a Model for the App Era",neutral,True,neutral,neutral,neutral,neutral
+SBUX,24,2019-07-22 00:00:00+00:00,Starbucks To Take Stake Restaurant Tech Company Brightloom,neutral,True,neutral,neutral,neutral,neutral
+SBUX,25,2023-06-17 00:00:00+00:00,SBUX Quantitative Stock Analysis,neutral,True,neutral,neutral,neutral,neutral
+SBUX,26,2020-03-19 00:00:00+00:00,Why Shares of Starbucks Are Bouncing Back Today,positive,True,neutral,positive,positive,positive
+SBUX,27,2019-10-10 00:00:00+00:00,Todd Gordon's Starbucks Options Trade,neutral,True,neutral,neutral,neutral,neutral
+SBUX,28,2021-10-03 00:00:00+00:00,Starbucks (NASDAQ:SBUX) Is Paying Out A Larger Dividend Than Last Year,positive,True,neutral,positive,positive,positive
+SBUX,29,2020-11-23 00:00:00+00:00,Starbucks Stock Might Not Have Any Upside?,negative,True,neutral,neutral,neutral,neutral
+SBUX,30,2019-02-15 00:00:00+00:00,"After Hours Most Active for Feb 15, 2019 : F, BAC, CZR, EMB, ZNGA, KO, GE, BBT, CMCSA, T, SBUX, INTC",neutral,True,neutral,neutral,neutral,neutral
+SBUX,31,2021-08-29 00:00:00+00:00,3 Food and Beverage Companies for Dividend Stock Fans,neutral,False,neutral,neutral,neutral,neutral
+SBUX,32,2021-02-15 00:00:00+00:00,5 Robinhood Stocks to Buy and Hold Forever,neutral,False,neutral,neutral,neutral,neutral
+SBUX,33,2022-01-20 00:00:00+00:00,Starbucks (SBUX) Dips More Than Broader Markets: What You Should Know,negative,True,neutral,neutral,negative,neutral
+SBUX,34,2021-02-11 00:00:00+00:00,Here's What Stood Out in Starbucks' Earnings Report,neutral,True,neutral,neutral,neutral,neutral
+SBUX,35,2022-02-17 00:00:00+00:00,"Notable ETF Outflow Detected - VCR, SBUX, TGT, BKNG",neutral,True,neutral,neutral,neutral,positive
+SBUX,36,2021-10-26 00:00:00+00:00,Starbucks Q4 Earnings Preview: Here's What Investors Should Know,neutral,True,neutral,neutral,neutral,neutral
+SBUX,37,2023-08-24 00:00:00+00:00,SBUX vs. BROS: Which Coffee Stock is Brewing the Most Upside?,neutral,True,neutral,neutral,neutral,neutral
+SBUX,38,2022-03-25 00:00:00+00:00,Starbucks Stock Still Has Huge Opportunity for Growth,positive,True,positive,positive,positive,positive
+SBUX,39,2021-07-22 00:00:00+00:00,"Notable Thursday Option Activity: FE, ETSY, SBUX",neutral,True,neutral,neutral,neutral,neutral
+SBUX,40,2023-08-20 00:00:00+00:00,Better Buy: Starbucks vs. McDonald's Stock,neutral,True,neutral,neutral,neutral,neutral
+SBUX,41,2021-11-21 00:00:00+00:00,Does Starbucks Still Have Lots of Upside Potential?,neutral,True,neutral,neutral,positive,neutral
+SBUX,42,2021-06-03 00:00:00+00:00,Interesting SBUX Put And Call Options For July 23rd,neutral,True,neutral,neutral,neutral,neutral
+SBUX,43,2022-11-02 00:00:00+00:00,Starbucks Q3 Preview: What's in Store?,neutral,True,neutral,neutral,neutral,neutral
+SBUX,45,2021-09-15 00:00:00+00:00,"Wednesday Sector Laggards: Utilities, Services",neutral,False,neutral,neutral,neutral,neutral
+SBUX,46,2020-06-10 00:00:00+00:00,Starbucks Expecting Huge Revenue Declines in the Third Quarter,negative,True,negative,negative,negative,negative
+SBUX,47,2023-11-15 00:00:00+00:00,SBUX Factor-Based Stock Analysis - Peter Lynch,neutral,True,neutral,neutral,neutral,neutral
+SBUX,48,2022-12-29 00:00:00+00:00,"Noteworthy Thursday Option Activity: TWLO, SBUX, FSR",neutral,True,neutral,neutral,neutral,neutral
+SBUX,49,2023-10-03 00:00:00+00:00,Will Starbucks (SBUX) Beat Estimates Again in Its Next Earnings Report?,neutral,True,positive,positive,positive,positive
+SBUX,50,2023-09-06 00:00:00+00:00,Column: Starbucks ruling is a warning: Companies can be liable for violence at stores in dodgy areas,negative,True,neutral,negative,negative,negative
+SBUX,51,2022-04-19 00:00:00+00:00,Analysts Estimate Starbucks (SBUX) to Report a Decline in Earnings: What to Look Out for,negative,True,negative,negative,negative,negative
+SBUX,52,2020-01-16 00:00:00+00:00,"If You Had Invested $1,000 in Starbucks' IPO, Here's How Much You'd Have Today",neutral,True,neutral,neutral,neutral,neutral
+SBUX,53,2019-09-04 00:00:00+00:00,"5 Top Stock Trades for Thursday: ROKU, SBUX, SLV, LYFT, SQ",neutral,True,neutral,neutral,neutral,neutral
+SBUX,54,2023-05-15 00:00:00+00:00,3 Robinhood Stocks to Buy Right Now,neutral,False,neutral,neutral,neutral,neutral
+SBUX,56,2023-06-30 00:00:00+00:00,"Noteworthy Friday Option Activity: SBUX, CZR, NOW",neutral,True,neutral,neutral,neutral,neutral
+SBUX,57,2019-08-03 00:00:00+00:00,"Bulls And Bears Of The Week: Boeing, GM, Pfizer, Starbucks And More",neutral,True,neutral,neutral,neutral,neutral
+SBUX,59,2023-02-20 00:00:00+00:00,Validea Guru Fundamental Report for SBUX - 2/20/2023,neutral,True,neutral,neutral,neutral,neutral
+SBUX,60,2023-11-14 00:00:00+00:00,Starbucks (SBUX) Boasts Earnings & Price Momentum: Should You Buy?,positive,True,neutral,positive,positive,neutral
+SBUX,61,2020-12-09 00:00:00+00:00,"Starbucks eyes walk-thru stores, technology to power post-pandemic growth",positive,True,neutral,positive,positive,neutral
+SBUX,62,2022-03-30 00:00:00+00:00,Starbucks (SBUX) Stock Moves -0.22%: What You Should Know,neutral,True,neutral,neutral,neutral,neutral
+SBUX,63,2019-08-02 00:00:00+00:00,"After Doubling, Does Starbucks Still Have Room to Run?",neutral,True,neutral,neutral,neutral,neutral
+SBUX,64,2020-08-27 00:00:00+00:00,"IUSG, LMT, SBUX, INTU: Large Outflows Detected at ETF",neutral,True,neutral,neutral,neutral,negative
+SBUX,65,2022-10-05 00:00:00+00:00,U.S. senators ask Starbucks for information about union dealings,negative,True,neutral,neutral,neutral,neutral
+SBUX,67,2019-01-23 00:00:00+00:00,"5 Must-See Stock Charts for Thursday: ABT, IBM, SBUX, PZZA",neutral,True,neutral,neutral,neutral,neutral
+SBUX,69,2020-11-15 00:00:00+00:00,How the Coronavirus Vaccine May Affect Consumer Goods Stocks,neutral,False,neutral,neutral,neutral,neutral
+SBUX,71,2023-11-17 00:00:00+00:00,Peter Lynch Detailed Fundamental Analysis - SBUX,neutral,True,neutral,neutral,neutral,neutral
+SBUX,72,2020-12-23 00:00:00+00:00,Why Starbucks's Stock Just Hit a New High,positive,True,positive,positive,positive,neutral
+SBUX,74,2023-01-10 00:00:00+00:00,"XLY, NKE, LOW, SBUX: ETF Inflow Alert",neutral,True,neutral,neutral,neutral,neutral
+SBUX,76,2020-04-25 00:00:00+00:00,Why I'll Be Watching Starbucks Closely When It Reports Earnings Next Week,neutral,True,neutral,neutral,neutral,neutral
+SBUX,77,2019-08-04 00:00:00+00:00,5 Top Blue Chip Stocks to Buy Now,neutral,False,neutral,neutral,positive,neutral
+SBUX,79,2019-02-22 00:00:00+00:00,Coffee Bean Prices Are Set to Surge: Should Starbucks Investors Be Worried?,negative,True,positive,positive,positive,neutral
+SBUX,80,2020-01-18 00:00:00+00:00,Keep an Eye on Starbucks' High-Tech Ideas in Its Q1 Report,neutral,True,neutral,neutral,neutral,neutral
+SBUX,81,2019-06-19 00:00:00+00:00,How High Can Starbucks Fly? It All Hinges on One Metric,neutral,True,neutral,neutral,neutral,neutral
+SBUX,83,2020-03-23 00:00:00+00:00,"Consumer Sector Update for 03/23/2020: YUMC,SBUX,M",neutral,True,neutral,neutral,neutral,neutral
+SBUX,84,2023-06-22 00:00:00+00:00,"Notable Thursday Option Activity: SBUX, ATVI, ACN",neutral,True,neutral,neutral,neutral,neutral
+SBUX,85,2019-08-14 00:00:00+00:00,"Notable Wednesday Option Activity: SBUX, CHGG, ISRG",neutral,True,neutral,neutral,neutral,neutral
+SBUX,86,2020-04-13 00:00:00+00:00,How Stay-at-Home Orders Are Impacting Businesses,neutral,False,neutral,negative,neutral,negative
+SBUX,87,2020-06-21 00:00:00+00:00,It's Time to Double Down on Starbucks Stock,positive,True,positive,positive,positive,neutral
+SBUX,88,2023-06-21 00:00:00+00:00,"Consumer Sector Update for 06/21/2023: UBER, DLTR, SBUX, SHAK, MULN",neutral,True,neutral,neutral,neutral,neutral
+SBUX,89,2023-06-09 00:00:00+00:00,"WALL ST WEEK AHEAD-Investors rethink recession plays, boosting U.S. stock market laggards",neutral,False,positive,positive,positive,positive
+SBUX,90,2023-04-18 00:00:00+00:00,"Notable Tuesday Option Activity: BIIB, NKE, SBUX",neutral,True,neutral,neutral,neutral,neutral
+SBUX,91,2022-10-01 00:00:00+00:00,Starbucks Stock Is Soaring After This Major Update,positive,True,positive,positive,positive,positive
+SBUX,93,2022-08-30 00:00:00+00:00,"Notable Tuesday Option Activity: CF, SBUX, MPW",neutral,True,neutral,neutral,neutral,neutral
+SBUX,94,2019-10-05 00:00:00+00:00,McDonald's Takes a Page from the Starbucks Playbook,neutral,True,neutral,neutral,neutral,neutral
+SBUX,95,2023-11-12 00:00:00+00:00,"Starbucks' Master Plan Is Finally Taking Form, but Is the Stock a Buy Now?",positive,True,neutral,neutral,neutral,neutral
+SBUX,96,2023-09-21 00:00:00+00:00,"Noteworthy Thursday Option Activity: UBER, SBUX, CVNA",neutral,True,neutral,neutral,neutral,neutral
+SBUX,97,2023-12-07 00:00:00+00:00,"MGK, DIS, SPGI, SBUX: ETF Inflow Alert",neutral,True,neutral,neutral,neutral,neutral
+SBUX,98,2023-09-15 00:00:00+00:00,Name A Better Trio Than These Underrated High Potential Stocks,neutral,False,positive,positive,positive,neutral
+SBUX,100,2022-09-19 00:00:00+00:00,Does Starbucks’ (NASDAQ:SBUX) New Strategy Justify Its Stock Valuation?,neutral,True,neutral,positive,positive,neutral
+SBUX,101,2022-11-08 00:00:00+00:00,Top Stocks To Buy Now? 2 Consumer Discretionary Stocks In Focus,neutral,False,neutral,neutral,neutral,neutral
+SBUX,103,2023-07-11 00:00:00+00:00,EXPLAINER-What is Nasdaq's special rebalancing and its impact?,neutral,False,neutral,neutral,neutral,neutral
+SBUX,104,2019-01-10 00:00:00+00:00,Interesting SBUX Put And Call Options For March 1st,neutral,True,neutral,neutral,neutral,neutral
+SBUX,106,2019-01-17 00:00:00+00:00,"XLY, NKE, SBUX, BKNG: ETF Outflow Alert",neutral,True,neutral,neutral,neutral,neutral
+SBUX,107,2022-03-31 00:00:00+00:00,"Noteworthy ETF Inflows: XLY, NKE, TGT, SBUX",neutral,True,neutral,neutral,neutral,positive
+SBUX,109,2021-01-08 00:00:00+00:00,Better Buy: Starbucks vs. Constellation Brands,neutral,True,neutral,neutral,neutral,neutral
+SBUX,110,2021-07-30 00:00:00+00:00,3 Top Defensive Stocks To Watch In August 2021,neutral,False,neutral,neutral,neutral,neutral

@@ -1,0 +1,244 @@
+{
+  "ticker": "AAPL",
+  "labelled": 99,
+  "skipped": 11,
+  "unlabelled": 0,
+  "label_distribution": {
+    "neutral": 67,
+    "negative": 17,
+    "positive": 15
+  },
+  "models": [
+    {
+      "model": "DistilBERT fine-tuned",
+      "n": 99,
+      "accuracy": 0.6869,
+      "accuracy_ci_low": 0.596,
+      "accuracy_ci_high": 0.7778,
+      "macro_f1": 0.5359,
+      "macro_f1_ci_low": 0.4181,
+      "macro_f1_ci_high": 0.6476,
+      "ece": 0.1593,
+      "reference_minus_model_macro_f1": NaN,
+      "diff_ci_low": NaN,
+      "diff_ci_high": NaN,
+      "bootstrap_p_value": NaN,
+      "mcnemar_p_value": NaN
+    },
+    {
+      "model": "DistilBERT class-weighted",
+      "n": 99,
+      "accuracy": 0.7071,
+      "accuracy_ci_low": 0.6162,
+      "accuracy_ci_high": 0.798,
+      "macro_f1": 0.6153,
+      "macro_f1_ci_low": 0.5024,
+      "macro_f1_ci_high": 0.7199,
+      "ece": 0.1913,
+      "reference_minus_model_macro_f1": -0.0795,
+      "diff_ci_low": -0.1893,
+      "diff_ci_high": 0.0229,
+      "bootstrap_p_value": 0.127,
+      "mcnemar_p_value": 0.790527
+    },
+    {
+      "model": "DistilBERT headline-adapted",
+      "n": 99,
+      "accuracy": 0.6465,
+      "accuracy_ci_low": 0.5556,
+      "accuracy_ci_high": 0.7374,
+      "macro_f1": 0.5627,
+      "macro_f1_ci_low": 0.4565,
+      "macro_f1_ci_high": 0.6623,
+      "ece": 0.1937,
+      "reference_minus_model_macro_f1": -0.0268,
+      "diff_ci_low": -0.1281,
+      "diff_ci_high": 0.0617,
+      "bootstrap_p_value": 0.575,
+      "mcnemar_p_value": 0.454498
+    },
+    {
+      "model": "finbert (off-the-shelf)",
+      "n": 99,
+      "accuracy": 0.7071,
+      "accuracy_ci_low": 0.6162,
+      "accuracy_ci_high": 0.798,
+      "macro_f1": 0.6096,
+      "macro_f1_ci_low": 0.4897,
+      "macro_f1_ci_high": 0.7101,
+      "ece": 0.1166,
+      "reference_minus_model_macro_f1": -0.0737,
+      "diff_ci_low": -0.2003,
+      "diff_ci_high": 0.0511,
+      "bootstrap_p_value": 0.277,
+      "mcnemar_p_value": 0.831812
+    },
+    {
+      "model": "Majority class (neutral)",
+      "n": 99,
+      "accuracy": 0.6768,
+      "accuracy_ci_low": 0.5859,
+      "accuracy_ci_high": 0.7677,
+      "macro_f1": 0.2691,
+      "macro_f1_ci_low": 0.2463,
+      "macro_f1_ci_high": 0.2895,
+      "ece": NaN,
+      "reference_minus_model_macro_f1": 0.2668,
+      "diff_ci_low": 0.1472,
+      "diff_ci_high": 0.3789,
+      "bootstrap_p_value": 0.0,
+      "mcnemar_p_value": 1.0
+    }
+  ],
+  "sensitivity_company_specific_only": {
+    "excluded_market_wide_headlines": 5,
+    "pattern": "^(?:US STOCKS|Wall St|Dow\\b|Stock Market (?:News|Today)|Pre-Market Most Active|Stock Investors|Fed Surprise|Position Scrimmage)",
+    "models": [
+      {
+        "model": "DistilBERT fine-tuned",
+        "n": 94,
+        "accuracy": 0.7021,
+        "accuracy_ci_low": 0.6064,
+        "accuracy_ci_high": 0.7979,
+        "macro_f1": 0.5429,
+        "macro_f1_ci_low": 0.4138,
+        "macro_f1_ci_high": 0.6653,
+        "ece": 0.1458,
+        "reference_minus_model_macro_f1": NaN,
+        "diff_ci_low": NaN,
+        "diff_ci_high": NaN,
+        "bootstrap_p_value": NaN,
+        "mcnemar_p_value": NaN
+      },
+      {
+        "model": "DistilBERT class-weighted",
+        "n": 94,
+        "accuracy": 0.7128,
+        "accuracy_ci_low": 0.617,
+        "accuracy_ci_high": 0.7979,
+        "macro_f1": 0.6098,
+        "macro_f1_ci_low": 0.4872,
+        "macro_f1_ci_high": 0.7197,
+        "ece": 0.18,
+        "reference_minus_model_macro_f1": -0.0669,
+        "diff_ci_low": -0.1777,
+        "diff_ci_high": 0.036,
+        "bootstrap_p_value": 0.251,
+        "mcnemar_p_value": 1.0
+      },
+      {
+        "model": "DistilBERT headline-adapted",
+        "n": 94,
+        "accuracy": 0.6489,
+        "accuracy_ci_low": 0.5532,
+        "accuracy_ci_high": 0.7447,
+        "macro_f1": 0.5543,
+        "macro_f1_ci_low": 0.4395,
+        "macro_f1_ci_high": 0.6589,
+        "ece": 0.1882,
+        "reference_minus_model_macro_f1": -0.0115,
+        "diff_ci_low": -0.1161,
+        "diff_ci_high": 0.0806,
+        "bootstrap_p_value": 0.81,
+        "mcnemar_p_value": 0.301758
+      },
+      {
+        "model": "finbert (off-the-shelf)",
+        "n": 94,
+        "accuracy": 0.7128,
+        "accuracy_ci_low": 0.617,
+        "accuracy_ci_high": 0.8085,
+        "macro_f1": 0.6023,
+        "macro_f1_ci_low": 0.4807,
+        "macro_f1_ci_high": 0.7197,
+        "ece": 0.1083,
+        "reference_minus_model_macro_f1": -0.0595,
+        "diff_ci_low": -0.1985,
+        "diff_ci_high": 0.072,
+        "bootstrap_p_value": 0.382,
+        "mcnemar_p_value": 1.0
+      },
+      {
+        "model": "Majority class (neutral)",
+        "n": 94,
+        "accuracy": 0.6809,
+        "accuracy_ci_low": 0.5851,
+        "accuracy_ci_high": 0.7662,
+        "macro_f1": 0.27,
+        "macro_f1_ci_low": 0.2461,
+        "macro_f1_ci_high": 0.2892,
+        "ece": NaN,
+        "reference_minus_model_macro_f1": 0.2728,
+        "diff_ci_low": 0.1432,
+        "diff_ci_high": 0.3957,
+        "bootstrap_p_value": 0.0,
+        "mcnemar_p_value": 0.823803
+      }
+    ]
+  },
+  "annotators": [
+    "claude-opus-5.5 (LLM annotator, not human-verified)"
+  ],
+  "skip_reasons": {
+    "off-topic": 11
+  },
+  "domain_shift": {
+    "model": "DistilBERT fine-tuned",
+    "phrasebank_test_macro_f1": 0.8388,
+    "headline_macro_f1": 0.5359,
+    "drop": 0.3029
+  },
+  "headline_agreement_vs_reference": [
+    {
+      "model": "DistilBERT class-weighted",
+      "n_headlines": 639,
+      "label_agreement": 0.8607,
+      "cohen_kappa": 0.7355,
+      "score_spearman": 0.9578,
+      "reference_label_share": {
+        "neutral": 0.7089,
+        "positive": 0.1534,
+        "negative": 0.1377
+      },
+      "model_label_share": {
+        "neutral": 0.5806,
+        "positive": 0.2629,
+        "negative": 0.1565
+      }
+    },
+    {
+      "model": "DistilBERT headline-adapted",
+      "n_headlines": 639,
+      "label_agreement": 0.8028,
+      "cohen_kappa": 0.6478,
+      "score_spearman": 0.9039,
+      "reference_label_share": {
+        "neutral": 0.7089,
+        "positive": 0.1534,
+        "negative": 0.1377
+      },
+      "model_label_share": {
+        "neutral": 0.5211,
+        "positive": 0.3005,
+        "negative": 0.1784
+      }
+    },
+    {
+      "model": "finbert (off-the-shelf)",
+      "n_headlines": 639,
+      "label_agreement": 0.8122,
+      "cohen_kappa": 0.6205,
+      "score_spearman": 0.6871,
+      "reference_label_share": {
+        "neutral": 0.7089,
+        "positive": 0.1534,
+        "negative": 0.1377
+      },
+      "model_label_share": {
+        "neutral": 0.6385,
+        "negative": 0.1894,
+        "positive": 0.1721
+      }
+    }
+  ]
+}
