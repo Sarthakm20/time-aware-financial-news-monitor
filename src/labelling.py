@@ -148,3 +148,32 @@ def sample_training_headlines(
     out.insert(0, "item_id", range(1, len(out) + 1))
     out["label"] = ""
     return out
+
+
+def sample_relevance_stratified(
+    news: pd.DataFrame,
+    ticker: str,
+    n_pass: int = 80,
+    n_fail: int = 30,
+    exclude_titles: Optional[set] = None,
+    seed: int = RANDOM_SEED,
+) -> pd.DataFrame:
+    """Blind sample for one company: ``n_pass`` headlines the relevance filter keeps, ``n_fail`` it drops.
+
+    The filter decision is not stored (annotators must not see it); it is recomputed at evaluation
+    time, where the two strata are re-weighted by their true shares to estimate precision and recall.
+    """
+    from src.relevance import add_relevance
+
+    pool = news[news["Stock_symbol"].str.upper() == ticker.upper()]
+    pool = pool[~pool["Article_title"].isin(exclude_titles or set())].drop_duplicates(subset="Article_title")
+    pool = add_relevance(pool, ticker=ticker)
+    kept = pool[pool["relevant"]]
+    dropped = pool[~pool["relevant"]]
+    sample = pd.concat([kept.sample(n=min(n_pass, len(kept)), random_state=seed),
+                        dropped.sample(n=min(n_fail, len(dropped)), random_state=seed)])
+    sample = sample.sample(frac=1.0, random_state=seed).reset_index(drop=True)
+    out = sample[["Date", "Article_title"]].copy()
+    out.insert(0, "item_id", range(1, len(out) + 1))
+    out["label"] = ""
+    return out

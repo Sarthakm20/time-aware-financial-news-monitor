@@ -65,6 +65,10 @@ The compute cost was modest: a single 2‑epoch training run took ~5–7 minutes
 - **Domain shift (measured, large):** The classifier is trained on PhraseBank sentences but applied to news *headlines*. On 230 annotated TSLA headlines its macro F1 is 0.496 vs 0.839 on PhraseBank (Results §5), so **the TSLA sentiment timeline should be read as a rough tone indicator, not a precise measurement.**
 - **Annotation provenance:** The headline labels were produced by an LLM annotator (Claude), following `docs/annotation_guidelines.md`, and have **not yet been verified by a human**. Treat the headline results as provisional; a human pass (or a second annotator for inter-annotator agreement) would strengthen them.
 - **Ticker tagging noise:** 65 of 300 sampled "TSLA" headlines (21.7%) are not about Tesla at all (other companies, crypto, personal finance). They are excluded from the headline evaluation but *are* included in the monitoring timeline.
+- **FNSPID coverage:**
+  - The Nasdaq-100 slice keeps **exactly one headline per company per day**, so a "daily sentiment" is one headline's score.
+  - **13 of 89 tickers have gaps longer than 90 days, almost all starting 10 June 2020.** The large caps are hit hardest: AMZN is missing 1,002 days, AAPL 723, TSLA 691 (Jun 2020 – May 2022) and NVDA 433. GILD and SBUX are essentially complete.
+  - Treat these stretches as missing data, not quiet news. The dashboard warns when a selected company has one.
 - **Recency weighting on long windows:** With a 30-day half-life, headlines older than ~6 months carry under 2% weight, so the recency-weighted score is nearly identical for the 180-day, 365-day and all-history windows (~+0.10). Compare unweighted means across windows, and weighted vs unweighted within a window.
 - **Data Freshness:** The open-source FNSPID dataset covers historical news up through late 2023. Consequently, all demonstrated timelines reflect historical research rather than live real-time feeds.
 - **Scope & Non-Advisory:** It is meant to summarize tone in financial reporting. It does not predict stock prices or asset returns, and does not constitute trading signals or investment advice.
@@ -223,6 +227,63 @@ Results for the adapted model, excluding headlines that merely report price move
 5. **Price-move headlines inflate the association.** Excluding them cuts the same-day IC by about 40% (0.133 → 0.079). Any news-sentiment study should control for headlines that merely narrate returns.
 
 > This is an association study on historical data. It does not show that sentiment can be traded profitably, and it is not investment advice.
+
+### 8. Accuracy Beyond Tesla: Six-Company Headline Evaluation
+
+The headline accuracy check (§5) and the relevance-filter check (§7) originally covered Tesla only. They now cover **five more companies from different sectors**: Apple (hardware), Nvidia (semiconductors), Amazon (retail/cloud), Gilead (biotech) and Starbucks (consumer).
+
+**Sampling (blind, per company):**
+- 80 headlines the relevance filter keeps, which is what the system actually scores;
+- 30 headlines it drops, so the filter's recall can be measured;
+- the two strata are re-weighted by their true sizes;
+- headlines used in training or already labelled are excluded;
+- 550 new labels in total, LLM-annotated under `docs/annotation_guidelines.md` and **not human-verified**.
+
+**Sentiment accuracy on headlines the system scores** (on-topic and passing the filter):
+
+| Model | 5 new companies (N=391) | All 6 incl. Tesla (N=554) | vs PhraseBank model (McNemar *p*, all 6) |
+|:---|:---:|:---:|:---:|
+| DistilBERT (PhraseBank only) | 0.578 [0.517, 0.634] | 0.569 [0.518, 0.615] | (reference) |
+| DistilBERT class-weighted | 0.653 [0.594, 0.702] | 0.643 [0.597, 0.686] | 0.028 |
+| **DistilBERT headline-adapted** | **0.688** [0.634, 0.737] | **0.655** [0.608, 0.696] | **0.005** |
+| FinBERT (off-the-shelf) | 0.609 [0.549, 0.661] | 0.600 [0.551, 0.644] | 1.00 |
+| Always "neutral" | 0.241 | 0.230 | < 10⁻⁶ |
+
+<sub>Macro F1 [95% bootstrap CI]. Accuracy, all 6: 65.0% (PhraseBank model) / 69.9% (adapted) vs 52.7% always-neutral.</sub>
+
+| Company | PhraseBank model | Headline-adapted | FinBERT | N |
+|:---|:---:|:---:|:---:|:---:|
+| TSLA | 0.537 | 0.575 | 0.565 | 163 |
+| AAPL | 0.558 | 0.619 | 0.648 | 77 |
+| NVDA | 0.548 | **0.709** | 0.633 | 80 |
+| AMZN | 0.510 | 0.588 | 0.513 | 76 |
+| GILD | 0.581 | **0.705** | 0.543 | 80 |
+| SBUX | 0.568 | **0.706** | 0.613 | 78 |
+
+**Relevance filter, per company:**
+
+| | TSLA | AAPL | NVDA | AMZN | GILD | SBUX |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Precision | 1.00 | 0.96 | 1.00 | 0.96 | 1.00 | 1.00 |
+| Recall (re-weighted) | 0.67 | 0.41 | 0.39 | 0.57 | 0.62 | 0.63 |
+
+**Findings**
+1. **The domain shift is general, not a Tesla quirk.** The PhraseBank model scores 0.51–0.58 macro F1 on every company's headlines, against 0.84 on PhraseBank sentences.
+2. **Headline adaptation helps significantly once more companies are measured** (+0.09 macro F1 pooled, *p* = 0.005). The gain is largest where headlines resemble the training headlines (NVDA, GILD, SBUX ≈ 0.70) and smallest for Tesla, the one company held out of training entirely. Caveat: the training and evaluation labels come from the same LLM annotator, so part of the gain may be learning that annotator's conventions. Human labels would settle this.
+3. **The relevance filter is precise everywhere (0.96–1.00).** Its recall is modest, but **96% of the on-topic headlines it drops are neutral** generic listicles. It keeps 262 of the 268 sampled headlines that carry sentiment (98%), so it removes noise while losing almost no signal.
+4. **Every model beats the always-neutral baseline** on the filtered headlines (65–70% vs 53% accuracy), unlike on Tesla's unfiltered sample (§5). Filtering out off-topic headlines is part of why.
+
+*Sources: `outputs/metrics/multi_company_*.csv`, `multi_company_evaluation.json`, per-company `<ticker>_headline_evaluation.json`. Reproduce: `python -m src.pipeline evaluate-multi`.*
+
+**The same per-company treatment as Tesla.** Each of the five companies went through the Tesla workflow (`python -m src.pipeline fetch-news score monitor benchmark evaluate-headlines --ticker <T>`). Each now has:
+- a time-aware monitor: 30/180/365-day and all-history windows with recency weighting, plus a 30-day rolling chart (`outputs/metrics/<t>_sentiment_window_summary.csv`, `outputs/figures/<t>_30day_rolling_sentiment.png`);
+- headlines scored by all four models;
+- a headline evaluation with the domain-shift figure, the company-specific sensitivity check and model agreement (`<t>_headline_evaluation.json`).
+
+| Latest 30 days vs all history (unweighted, PhraseBank model) | TSLA | AAPL | NVDA | AMZN | GILD | SBUX |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Last 30 days | +0.124 | +0.148 | +0.149 | −0.009 | +0.084 | −0.009 |
+| All history | +0.024 | +0.056 | +0.083 | +0.082 | +0.113 | +0.082 |
 
 ---
 

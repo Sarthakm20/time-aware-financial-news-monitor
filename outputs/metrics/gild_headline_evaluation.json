@@ -1,0 +1,158 @@
+{
+  "ticker": "GILD",
+  "labelled": 95,
+  "skipped": 15,
+  "unlabelled": 0,
+  "label_distribution": {
+    "neutral": 64,
+    "positive": 19,
+    "negative": 12
+  },
+  "models": [
+    {
+      "model": "DistilBERT fine-tuned",
+      "n": 95,
+      "accuracy": 0.7474,
+      "accuracy_ci_low": 0.6526,
+      "accuracy_ci_high": 0.8316,
+      "macro_f1": 0.5755,
+      "macro_f1_ci_low": 0.4385,
+      "macro_f1_ci_high": 0.6923,
+      "ece": 0.1712,
+      "reference_minus_model_macro_f1": NaN,
+      "diff_ci_low": NaN,
+      "diff_ci_high": NaN,
+      "bootstrap_p_value": NaN,
+      "mcnemar_p_value": NaN
+    },
+    {
+      "model": "DistilBERT class-weighted",
+      "n": 95,
+      "accuracy": 0.6947,
+      "accuracy_ci_low": 0.6,
+      "accuracy_ci_high": 0.7895,
+      "macro_f1": 0.5569,
+      "macro_f1_ci_low": 0.4315,
+      "macro_f1_ci_high": 0.6688,
+      "ece": 0.1578,
+      "reference_minus_model_macro_f1": 0.0185,
+      "diff_ci_low": -0.0643,
+      "diff_ci_high": 0.0946,
+      "bootstrap_p_value": 0.63,
+      "mcnemar_p_value": 0.266846
+    },
+    {
+      "model": "DistilBERT headline-adapted",
+      "n": 95,
+      "accuracy": 0.6947,
+      "accuracy_ci_low": 0.6,
+      "accuracy_ci_high": 0.7895,
+      "macro_f1": 0.6161,
+      "macro_f1_ci_low": 0.4841,
+      "macro_f1_ci_high": 0.7251,
+      "ece": 0.171,
+      "reference_minus_model_macro_f1": -0.0406,
+      "diff_ci_low": -0.1666,
+      "diff_ci_high": 0.0691,
+      "bootstrap_p_value": 0.51,
+      "mcnemar_p_value": 0.38331
+    },
+    {
+      "model": "finbert (off-the-shelf)",
+      "n": 95,
+      "accuracy": 0.6632,
+      "accuracy_ci_low": 0.5684,
+      "accuracy_ci_high": 0.7579,
+      "macro_f1": 0.5332,
+      "macro_f1_ci_low": 0.4209,
+      "macro_f1_ci_high": 0.6368,
+      "ece": 0.1635,
+      "reference_minus_model_macro_f1": 0.0423,
+      "diff_ci_low": -0.0963,
+      "diff_ci_high": 0.1701,
+      "bootstrap_p_value": 0.585,
+      "mcnemar_p_value": 0.133801
+    },
+    {
+      "model": "Majority class (neutral)",
+      "n": 95,
+      "accuracy": 0.6737,
+      "accuracy_ci_low": 0.5789,
+      "accuracy_ci_high": 0.7684,
+      "macro_f1": 0.2683,
+      "macro_f1_ci_low": 0.2444,
+      "macro_f1_ci_high": 0.2897,
+      "ece": NaN,
+      "reference_minus_model_macro_f1": 0.3071,
+      "diff_ci_low": 0.1676,
+      "diff_ci_high": 0.4233,
+      "bootstrap_p_value": 0.0,
+      "mcnemar_p_value": 0.118469
+    }
+  ],
+  "annotators": [
+    "claude-opus-5.5 (LLM annotator, not human-verified)"
+  ],
+  "skip_reasons": {
+    "off-topic": 15
+  },
+  "domain_shift": {
+    "model": "DistilBERT fine-tuned",
+    "phrasebank_test_macro_f1": 0.8388,
+    "headline_macro_f1": 0.5755,
+    "drop": 0.2633
+  },
+  "headline_agreement_vs_reference": [
+    {
+      "model": "DistilBERT class-weighted",
+      "n_headlines": 1301,
+      "label_agreement": 0.814,
+      "cohen_kappa": 0.612,
+      "score_spearman": 0.9611,
+      "reference_label_share": {
+        "neutral": 0.7786,
+        "positive": 0.1599,
+        "negative": 0.0615
+      },
+      "model_label_share": {
+        "neutral": 0.5972,
+        "positive": 0.3136,
+        "negative": 0.0892
+      }
+    },
+    {
+      "model": "DistilBERT headline-adapted",
+      "n_headlines": 1301,
+      "label_agreement": 0.7633,
+      "cohen_kappa": 0.5344,
+      "score_spearman": 0.8579,
+      "reference_label_share": {
+        "neutral": 0.7786,
+        "positive": 0.1599,
+        "negative": 0.0615
+      },
+      "model_label_share": {
+        "neutral": 0.5534,
+        "positive": 0.3367,
+        "negative": 0.1099
+      }
+    },
+    {
+      "model": "finbert (off-the-shelf)",
+      "n_headlines": 1301,
+      "label_agreement": 0.7817,
+      "cohen_kappa": 0.4975,
+      "score_spearman": 0.6775,
+      "reference_label_share": {
+        "neutral": 0.7786,
+        "positive": 0.1599,
+        "negative": 0.0615
+      },
+      "model_label_share": {
+        "neutral": 0.6733,
+        "positive": 0.216,
+        "negative": 0.1107
+      }
+    }
+  ]
+}

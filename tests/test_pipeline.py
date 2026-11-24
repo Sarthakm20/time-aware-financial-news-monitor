@@ -201,3 +201,58 @@ def test_event_study_stage_end_to_end(tmp_path):
     summary = json.loads((tmp_path / "outputs" / "metrics" / "event_study_summary.json").read_text())
     assert summary["runs"][0]["tickers"] == 3
     assert (tmp_path / "outputs" / "figures" / "event_study_car_base.png").exists()
+
+
+def test_evaluate_multi_stage_with_fake_model(tmp_path, monkeypatch):
+    """Relevance precision/recall re-weighting and pooled accuracy, without loading a real model."""
+    import json
+    from types import SimpleNamespace
+
+    import numpy as np
+
+    import src.inference as inference
+
+    def fake_load(source):
+        return SimpleNamespace(name=str(source)), None, None
+
+    def fake_predict(texts, model, tokenizer, device, max_length=64):
+        labels = ["positive" if "beat" in t else "negative" if "miss" in t else "neutral" for t in texts]
+        n = len(texts)
+        return labels, np.full((n, 3), 1 / 3), np.full(n, 0.5), np.zeros(n)
+
+    monkeypatch.setattr(inference, "load_fine_tuned_model", fake_load)
+    monkeypatch.setattr(inference, "predict_sentiment_batch", fake_predict)
+
+    data, outputs, models = tmp_path / "data", tmp_path / "outputs", tmp_path / "models"
+    (data / "labelled").mkdir(parents=True)
+    (data / "processed").mkdir(parents=True)
+    (outputs / "metrics").mkdir(parents=True)
+    for d in ["distilbert_financial_sentiment", "distilbert_weighted", "distilbert_headline_adapted"]:
+        (models / d).mkdir(parents=True)
+    (outputs / "metrics" / "finetuned_test_metrics.json").write_text(json.dumps({"macro_f1": 0.84}))
+
+    # pool: 60 headlines pass the AAPL filter, 40 do not
+    pool = [f"Apple sales beat {i}" for i in range(30)] + [f"Apple results miss {i}" for i in range(30)] + \
+           [f"Market wrap {i}" for i in range(40)]
+    pd.DataFrame({"Stock_symbol": "AAPL", "Article_title": pool}).to_csv(
+        data / "processed" / "fnspid_all_2019_2023.csv", index=False)
+    # labelled sample: 10 kept (all on-topic, predictions correct) + 10 dropped (5 on-topic neutral, 5 off-topic)
+    kept = [(f"Apple sales beat {i}", "positive", "") for i in range(5)] + \
+           [(f"Apple results miss {i}", "negative", "") for i in range(5)]
+    dropped = [(f"Market wrap {i}", "neutral", "") for i in range(5)] + \
+              [(f"Market wrap {i}", "skip", "off-topic") for i in range(5, 10)]
+    rows = [{"item_id": k + 1, "Date": "2021-01-01", "Article_title": t, "label": lab, "note": note}
+            for k, (t, lab, note) in enumerate(kept + dropped)]
+    pd.DataFrame(rows).to_csv(data / "labelled" / "aapl_headlines_gold.csv", index=False)
+
+    args = ["evaluate-multi", "--n-boot", "100", "--data-dir", str(data), "--outputs-dir", str(outputs),
+            "--models-dir", str(models)]
+    assert pipeline.main(args) == 0
+
+    rel = pd.read_csv(outputs / "metrics" / "multi_company_relevance_filter.csv").set_index("ticker")
+    assert rel.loc["AAPL", "precision"] == 1.0
+    # found = 60 * 1.0, missed = 40 * 0.5 -> recall = 60 / 80
+    assert rel.loc["AAPL", "recall_estimate"] == pytest.approx(0.75)
+    pooled = pd.read_csv(outputs / "metrics" / "multi_company_pooled_accuracy.csv")
+    distil = pooled[(pooled.population == "pooled_5_new_companies") & (pooled.model == "DistilBERT fine-tuned")]
+    assert distil["n"].iloc[0] == 10 and distil["accuracy"].iloc[0] == 1.0  # only filter-passing headlines
