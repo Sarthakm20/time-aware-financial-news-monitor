@@ -11,18 +11,25 @@ GET  /tickers                             tickers with precomputed scores
 GET  /tickers/{symbol}/sentiment          lookback-window summary + latest headlines
 GET  /tickers/{symbol}/timeline           rolling sentiment series (weekly points)
 GET  /live/{symbol}                       live headlines (last N days) from data/live/news.db, if the feed runs
+GET  /api/...                             dashboard data (meta, overview, company, headlines, market-impact,
+                                          model-evaluation, price, live/summary); see src/dashboard_api.py
+GET  /                                    the dashboard site (web/), when web/index.html exists
 
 Sentiment summarises the tone of headlines. It is not a trading signal or investment advice.
 """
 
 from pathlib import Path
-from typing import List, Optional
+from typing import Callable, Dict, List, Optional
 
 import pandas as pd
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from src.config import LABELS
+from src.config import LABELS, METRICS_DIR, PREDICTIONS_DIR, WEB_DIR
+from src.dashboard_api import build_dashboard_router
+from src.dashboard_live import fetch_close
 from src.explorer import (
     DEFAULT_SCORED_CSV,
     load_scored,
@@ -61,7 +68,9 @@ class PredictResponse(BaseModel):
 
 
 def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DEFAULT_SCORED_CSV,
-               live_db: Path = LIVE_DB) -> FastAPI:
+               live_db: Path = LIVE_DB, scored_paths: Optional[Dict[str, Path]] = None,
+               metrics_dir: Path = METRICS_DIR, web_dir: Path = WEB_DIR,
+               price_fetcher: Callable = fetch_close) -> FastAPI:
     if service is None:
         from src.env import load_env
 
@@ -159,6 +168,18 @@ def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DE
                           for r in latest.itertuples(index=False)],
             "disclaimer": DISCLAIMER,
         }
+
+    if scored_paths is None:
+        scored_paths = {"adapted": scored_csv, "base": PREDICTIONS_DIR / "nasdaq100_scored_headlines_base.csv"}
+    app.include_router(build_dashboard_router(scored_paths, metrics_dir, live_db, price_fetcher))
+
+    index = Path(web_dir) / "index.html"
+    if index.exists():  # the API-only Docker image ships no web/; the Space does
+        @app.get("/", include_in_schema=False)
+        def site():
+            return FileResponse(index)
+
+        app.mount("/static", StaticFiles(directory=Path(web_dir) / "static"), name="static")
 
     return app
 
