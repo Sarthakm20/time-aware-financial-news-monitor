@@ -314,3 +314,22 @@ body .app-main { padding: 0 2rem 2rem; }
   .news-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .news-filters .field:first-child { grid-column: 1 / -1; }
 }
+
+/* ------------------------------------------------------------------ score a headline, live feed */
+
+.score-form { display: grid; gap: 1rem; max-width: 60rem; }
+.score-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem; }
+.score-row .field { flex: 1 1 18rem; max-width: 26rem; }
+.score-form .btn-dark { background: var(--c-sidebar); border-color: var(--c-sidebar); }
+.score-results { margin-top: 1.25rem; }
+.prob-bar { display: flex; gap: 2px; max-width: 40rem; height: 1.5rem; margin-top: 0.5rem; overflow: hidden;
+  border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+.prob { display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden; white-space: nowrap;
+  flex-basis: 0; }
+.prob-positive { background: var(--c-positive); color: #ffffff; }
+.prob-neutral { background: var(--c-neutral); color: var(--c-ink); }
+.prob-negative { background: var(--c-negative); color: var(--c-ink); }
+.relevance-tag { padding: 0.05rem 0.45rem; border-radius: 999px; font-weight: 600; }
+.relevance-tag.is-on { background: #e1f2ea; color: #065c44; }
+.relevance-tag.is-off { background: #eef0f4; color: var(--c-ink-2); }
+code { color: var(--c-ink); background: #eef1f5; padding: 0.05rem 0.3rem; border-radius: 4px; }

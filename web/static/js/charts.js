@@ -203,6 +203,21 @@ export function barsWithCI(el, { rows, yFormat = (v) => `${fmt.signed(v, 2)}%`, 
   return mount(el, option);
 }
 
+// Counts over time as bars (used under a line chart instead of a second y-axis). points: [[ms, count]]
+export function timeBars(el, { points, name, color = C.muted, xMin, xMax }) {
+  return mount(el, {
+    grid: { left: 8, right: 16, top: 8, bottom: 24, containLabel: true },
+    tooltip: { ...TOOLTIP, trigger: "axis",
+      axisPointer: { type: "line", lineStyle: { color: C.muted, type: "dashed" }, label: POINTER_LABEL },
+      formatter: (items) => `${dateLabel(items[0].value[0])}<br>${name}: <b>${fmt.int(items[0].value[1])}</b>` },
+    xAxis: { type: "time", min: xMin, max: xMax, axisLine: { lineStyle: { color: C.axis } }, axisTick: { show: false },
+      axisLabel: { ...AXIS_LABEL, hideOverlap: true }, splitLine: { show: false } },
+    yAxis: { type: "value", minInterval: 1, axisLabel: AXIS_LABEL, splitLine: { lineStyle: { color: C.grid } } },
+    series: [{ type: "bar", name, data: points, barMaxWidth: 28,
+      itemStyle: { color, borderRadius: [4, 4, 0, 0] } }],
+  });
+}
+
 export function donut(el, { slices, center }) {
   const total = slices.reduce((s, x) => s + x.value, 0) || 1;
   return mount(el, {
