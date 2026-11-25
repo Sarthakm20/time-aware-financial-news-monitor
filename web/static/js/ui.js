@@ -58,7 +58,7 @@ export function card({ title, info, scope, tools, body, className = "" }) {
   if (toolBox.childNodes.length) head.append(toolBox);
   const panel = h("section", { class: `panel ${className}` });
   if (title || toolBox.childNodes.length) panel.append(head);
-  if (body) panel.append(...[body].flat());
+  if (body) panel.append(...[body].flat().filter((x) => x !== null && x !== undefined && x !== false));
   return panel;
 }
 

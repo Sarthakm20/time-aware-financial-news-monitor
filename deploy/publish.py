@@ -34,6 +34,7 @@ SPACE_FILES = [
     "outputs/metrics/multi_company_pooled_accuracy.csv", "outputs/metrics/multi_company_per_company_accuracy.csv",
     "outputs/metrics/multi_company_relevance_filter.csv",
     "outputs/metrics/event_study_car_paths.csv", "outputs/metrics/corpus_summary.json",
+    "outputs/metrics/event_study_buckets_by_year.csv", "outputs/metrics/event_study_car_paths_by_year.csv",
     "outputs/metrics/adapted_test_metrics.json",
 ]
 # Directories copied whole: the static site (HTML, CSS, JS, vendored libraries, fonts).

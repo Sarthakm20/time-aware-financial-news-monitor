@@ -21,7 +21,6 @@ from src.dashboard_data import (
 )
 from src.dashboard_live import fetch_close, live_summary
 from src.dashboard_metrics import (
-    SCOPE_ALL,
     MetricsUnavailable,
     corpus,
     headline_f1,
@@ -29,6 +28,7 @@ from src.dashboard_metrics import (
     market_relationship,
     model_evaluation,
     relevance,
+    scope_label,
 )
 from src.explorer import load_scored, ticker_overview
 
@@ -88,13 +88,14 @@ def build_dashboard_router(scored_paths: Dict[str, Path], metrics_dir: Path, liv
                     "headlines": {"scored": int(len(sub)),
                                   "collected": c.get("collected_headlines") if not (ticker or period) else None},
                     "f1": headline_f1(metrics_dir, model, ticker),
-                    "company_days": {"value": market_impact(metrics_dir, model, "all")["events"], "scope": SCOPE_ALL},
+                    "company_days": {"value": market_impact(metrics_dir, model, "all", period)["events"],
+                                     "scope": scope_label(period)},
                 },
                 "distribution": sentiment_distribution(sub),
                 "mean_sentiment": float(sub["sentiment_score"].mean()) if len(sub) else None,
                 "trend": trend_points(sub),
                 "relevance": relevance(metrics_dir),
-                "market": market_relationship(metrics_dir, model, "excluding"),
+                "market": market_relationship(metrics_dir, model, "excluding", period),
                 "disclaimer": DISCLAIMER,
             })
 
@@ -134,8 +135,9 @@ def build_dashboard_router(scored_paths: Dict[str, Path], metrics_dir: Path, liv
                                 page=page, page_size=page_size)
 
     @router.get("/market-impact")
-    def market(model: Model = "adapted", headlines: Literal["excluding", "all"] = "excluding"):
-        return guarded(market_impact, metrics_dir, model, headlines)
+    def market(model: Model = "adapted", headlines: Literal["excluding", "all"] = "excluding",
+               period: Period = period_query()):
+        return guarded(market_impact, metrics_dir, model, headlines, period)
 
     @router.get("/model-evaluation")
     def models():

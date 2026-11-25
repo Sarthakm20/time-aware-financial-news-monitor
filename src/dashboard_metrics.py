@@ -46,14 +46,24 @@ def corpus(metrics_dir: Path) -> Optional[Dict[str, Any]]:
         return None
 
 
-def _run(metrics_dir: Path, model: str, variant: str) -> Dict[str, Any]:
-    runs = _load(metrics_dir, "event_study_summary.json")["runs"]
-    return next(r for r in runs if r["model"] == model and r["headlines"] == VARIANTS[variant])
+def scope_label(year: Optional[int] = None) -> str:
+    return f"All companies · {year}" if year else SCOPE_ALL
 
 
-def _buckets(metrics_dir: Path, model: str, variant: str) -> pd.DataFrame:
-    b = _load(metrics_dir, "event_study_buckets.csv")
-    return b[(b["model"] == model) & (b["headlines"] == VARIANTS[variant])]
+def _run(metrics_dir: Path, model: str, variant: str, year: Optional[int] = None) -> Dict[str, Any]:
+    summary = _load(metrics_dir, "event_study_summary.json")
+    runs = summary.get("runs_by_year", []) if year else summary["runs"]
+    match = [r for r in runs if r["model"] == model and r["headlines"] == VARIANTS[variant]
+             and (not year or r["year"] == int(year))]
+    if not match:
+        raise MetricsUnavailable(f"event-study results for {year}")
+    return match[0]
+
+
+def _buckets(metrics_dir: Path, model: str, variant: str, year: Optional[int] = None) -> pd.DataFrame:
+    b = _load(metrics_dir, "event_study_buckets_by_year.csv" if year else "event_study_buckets.csv")
+    b = b[(b["model"] == model) & (b["headlines"] == VARIANTS[variant])]
+    return b[b["year"] == int(year)] if year else b
 
 
 def headline_f1(metrics_dir: Path, model: str, ticker: Optional[str] = None) -> Dict[str, Any]:
@@ -92,27 +102,34 @@ def _volume_ratio(b: pd.DataFrame) -> float:
     return round(float(av0.loc["negative", "value"] / av0.loc["positive", "value"]), 1)
 
 
-def market_relationship(metrics_dir: Path, model: str, variant: str = "excluding") -> Dict[str, Any]:
-    """Day-0 market-adjusted return by headline tone (percent, 95% CI) and the volume ratio, negative vs positive."""
-    b = _buckets(metrics_dir, model, variant)
+def market_relationship(metrics_dir: Path, model: str, variant: str = "excluding",
+                        year: Optional[int] = None) -> Dict[str, Any]:
+    """Day-0 market-adjusted return by headline tone (percent, 95% CI) and the volume ratio, negative vs positive.
+
+    ``year`` restricts to event days in that calendar year (all companies)."""
+    run = _run(metrics_dir, model, variant, year)
+    b = _buckets(metrics_dir, model, variant, year)
     ar0 = b[b["outcome"] == "ar_0"].set_index("group")
     return clean({
         "variant": VARIANTS[variant],
-        "events": _run(metrics_dir, model, variant)["events"],
-        "scope": SCOPE_ALL,
+        "events": run["events"],
+        "scope": scope_label(year),
         "by_tone": [{"group": g, "value": ar0.loc[g, "value"] * 100, "ci_low": ar0.loc[g, "ci_low"] * 100,
                      "ci_high": ar0.loc[g, "ci_high"] * 100} for g in TONES],
         "volume_ratio": _volume_ratio(b),
     })
 
 
-def market_impact(metrics_dir: Path, model: str, variant: str = "excluding") -> Dict[str, Any]:
-    b = _buckets(metrics_dir, model, variant)
+def market_impact(metrics_dir: Path, model: str, variant: str = "excluding",
+                  year: Optional[int] = None) -> Dict[str, Any]:
+    run = _run(metrics_dir, model, variant, year)
+    b = _buckets(metrics_dir, model, variant, year)
     spread = b[b["group"] == "positive minus negative"].set_index("outcome")
-    run = _run(metrics_dir, model, variant)
     try:
-        paths = _load(metrics_dir, "event_study_car_paths.csv")
+        paths = _load(metrics_dir, "event_study_car_paths_by_year.csv" if year else "event_study_car_paths.csv")
         paths = paths[(paths["model"] == model) & (paths["headlines"] == VARIANTS[variant])]
+        if year:
+            paths = paths[paths["year"] == int(year)]
         paths = paths.sort_values(["group", "day"])
         car_paths = [{"group": r.group, "day": int(r.day), "mean_car": round(r.mean_car * 100, 4)}
                      for r in paths.itertuples()]
@@ -122,7 +139,7 @@ def market_impact(metrics_dir: Path, model: str, variant: str = "excluding") -> 
         "variant": VARIANTS[variant],
         "events": run["events"],
         "tickers": run["tickers"],
-        "scope": SCOPE_ALL,
+        "scope": scope_label(year),
         "spread": [{"outcome": o, "label": label, "value": spread.loc[o, "value"] * 100,
                     "ci_low": spread.loc[o, "ci_low"] * 100, "ci_high": spread.loc[o, "ci_high"] * 100,
                     "unit": "pts" if o == "av_0" else "pct",

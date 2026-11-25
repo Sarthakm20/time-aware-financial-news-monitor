@@ -3,20 +3,21 @@ import { ApiError, getJSON } from "./api.js";
 import { card, fmt, loading, note } from "./ui.js";
 import { onRoute, readRoute, setParams } from "./state.js";
 
-// Which global filters each page honours (the rest are shown dimmed; see spec section 8.0).
+// Which global filters each page honours. Filters a page doesn't use are hidden there (their values stay in the
+// URL, so they're still set when the visitor returns to a page that uses them).
 const PAGES = {
   overview: { title: "Overview", desc: "Historical financial-news sentiment across the Nasdaq-100, 2019–2023",
     filters: ["company", "period", "model"], load: () => import("./pages/overview.js") },
   company: { title: "Company Analysis", desc: "Sentiment over time, lookback windows and headlines for one company",
     filters: ["company", "period", "model"], load: () => import("./pages/company.js") },
   market: { title: "Market Impact", desc: "How headline tone lines up with market-adjusted returns and trading volume",
-    filters: ["model"], load: () => import("./pages/market.js") },
+    filters: ["period", "model"], load: () => import("./pages/market.js") },
   news: { title: "News Explorer", desc: "Search, filter and read every scored headline",
     filters: ["company", "period", "model"], load: () => import("./pages/news.js") },
   models: { title: "Model Evaluation", desc: "How accurate the sentiment classifier is, and where it falls short",
-    filters: ["company", "model"], load: () => import("./pages/models.js") },
+    filters: ["model"], load: () => import("./pages/models.js") },
   score: { title: "Score a Headline", desc: "Score your own headlines with the deployed model",
-    filters: ["company"], load: () => import("./pages/score.js") },
+    filters: [], load: () => import("./pages/score.js") },
   live: { title: "Live Feed", desc: "Headlines collected since the live feed started, scored as they arrive",
     filters: ["company"], load: () => import("./pages/live.js") },
 };
@@ -62,10 +63,9 @@ function syncFilters({ page, params }) {
   els.model.value = params.model || "adapted";
   const applies = PAGES[page].filters;
   for (const [name, input] of [["company", els.company], ["period", els.period], ["model", els.model]]) {
-    const idle = !applies.includes(name);
-    input.closest(".filter").classList.toggle("is-idle", idle);
-    input.title = idle ? "Doesn't apply on this page" : "";
+    input.closest(".filter").hidden = !applies.includes(name);
   }
+  els.company.form.hidden = applies.length === 0;
 }
 
 function bindFilters() {

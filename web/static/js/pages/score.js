@@ -8,8 +8,8 @@ const EXAMPLES = "Tesla Deliveries Top Estimates as Demand Surges\n"
   + "Apple To Report Q3 Earnings On Thursday";
 const PROB_ORDER = [["negative", "Negative"], ["neutral", "Neutral"], ["positive", "Positive"]];
 
-// Kept across filter changes so a re-render doesn't wipe what the visitor typed or scored.
-const state = { text: EXAMPLES, ticker: null, result: null, error: null };
+// Kept across visits so a re-render doesn't wipe what the visitor typed or scored.
+const state = { text: EXAMPLES, result: null, error: null };
 
 function probabilityBar(probs) {
   return h("div", { class: "prob-bar", role: "img",
@@ -24,36 +24,27 @@ function probabilityBar(probs) {
 function resultsView() {
   if (state.error) return note({ kind: "error", text: state.error });
   if (!state.result) return null;
-  const { predictions, model, ticker, truncated } = state.result;
+  const { predictions, model, truncated } = state.result;
   return h("div", {},
     truncated ? note({ kind: "info", text: `Only the first ${MAX_LINES} headlines were scored.` }) : null,
     h("ul", { class: "rows" }, predictions.map((p) => h("li", {},
       h("div", { class: "row-meta" }, sentimentBadge(p.label, p.sentiment_score),
-        h("span", {}, `confidence ${fmt.pct(p.confidence)}`),
-        p.relevant === null || p.relevant === undefined ? null
-          : h("span", { class: `relevance-tag ${p.relevant ? "is-on" : "is-off"}` },
-            p.relevant ? `About ${ticker}` : `Not about ${ticker}`)),
+        h("span", {}, `confidence ${fmt.pct(p.confidence)}`)),
       h("p", { class: "row-title" }, p.headline),
       probabilityBar(p.probabilities)))),
     h("p", { class: "caption" }, `Model: ${model}. Known weakness: product recalls are often scored neutral rather than negative.`));
 }
 
-export async function render(root, params) {
-  if (state.ticker === null) state.ticker = params.ticker || "";
+export async function render(root) {
   const textarea = h("textarea", { id: "s-text", class: "form-control", rows: 6, spellcheck: "true" });
   textarea.value = state.text;
   textarea.addEventListener("input", () => { state.text = textarea.value; });
-  const ticker = h("input", { id: "s-ticker", class: "form-control", type: "text", maxlength: 10, value: state.ticker,
-    placeholder: "e.g. TSLA", autocomplete: "off", spellcheck: "false" });
-  ticker.addEventListener("input", () => { state.ticker = ticker.value; });
   const button = h("button", { type: "submit", class: "btn btn-dark" }, "Score headlines");
   const out = h("div", { class: "score-results", "aria-live": "polite" }, resultsView());
 
   const form = h("form", { class: "score-form" },
     h("div", { class: "field" }, h("label", { for: "s-text" }, "Headlines, one per line"), textarea),
-    h("div", { class: "score-row" },
-      h("div", { class: "field" }, h("label", { for: "s-ticker" }, "Company ticker (optional, adds the relevance check)"), ticker),
-      button));
+    h("div", { class: "score-row" }, button));
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const lines = textarea.value.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -63,12 +54,11 @@ export async function render(root, params) {
       out.replaceChildren(resultsView());
       return;
     }
-    const symbol = ticker.value.trim().toUpperCase() || null;
     button.disabled = true;
     button.textContent = "Scoring…";
     try {
-      const body = await postJSON("/predict", { headlines: lines.slice(0, MAX_LINES), ticker: symbol });
-      state.result = { predictions: body.predictions, model: body.model, ticker: symbol, truncated: lines.length > MAX_LINES };
+      const body = await postJSON("/predict", { headlines: lines.slice(0, MAX_LINES) });
+      state.result = { predictions: body.predictions, model: body.model, truncated: lines.length > MAX_LINES };
       state.error = null;
     } catch (err) {
       state.result = null;
@@ -83,6 +73,5 @@ export async function render(root, params) {
   });
 
   root.replaceChildren(card({ title: "Your Headlines", className: "span-12",
-    info: "Scores come from the deployed model (P(positive) − P(negative), from −1 to +1). The relevance check "
-      + "says whether a headline is about the company you name.", body: [form, out] }));
+    info: "Scores come from the deployed model: P(positive) − P(negative), from −1 to +1.", body: [form, out] }));
 }

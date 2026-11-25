@@ -245,7 +245,6 @@ body .app-main { padding: 0 2rem 2rem; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
-.filter.is-idle { opacity: 0.55; }
 
 /* ------------------------------------------------------------------ overview */
 
@@ -329,9 +328,6 @@ body .app-main { padding: 0 2rem 2rem; }
 .prob-positive { background: var(--c-positive); color: #ffffff; }
 .prob-neutral { background: var(--c-neutral); color: var(--c-ink); }
 .prob-negative { background: var(--c-negative); color: var(--c-ink); }
-.relevance-tag { padding: 0.05rem 0.45rem; border-radius: 999px; font-weight: 600; }
-.relevance-tag.is-on { background: #e1f2ea; color: #065c44; }
-.relevance-tag.is-off { background: #eef0f4; color: var(--c-ink-2); }
 code { color: var(--c-ink); background: #eef1f5; padding: 0.05rem 0.3rem; border-radius: 4px; }
 
 .info-btn { cursor: pointer; }

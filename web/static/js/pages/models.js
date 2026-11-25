@@ -60,7 +60,7 @@ function heatmapCard(data, params) {
   const selected = name(SELECTED[params.model || "adapted"]);
   requestAnimationFrame(() => charts.push(heatmap(chartEl, {
     xCats: models.map(name), yCats: tickers, cells, min: Math.min(...values), max: Math.max(...values),
-    highlightRow: tickers.includes(params.ticker) ? params.ticker : null, highlightCol: selected })));
+    highlightCol: selected })));
   return card({ title: "Macro F1 by Company", className: "span-12",
     info: "Macro F1 on LLM-annotated headlines that pass the relevance filter, for each annotated company. "
       + "Source: multi_company_per_company_accuracy.csv.",
@@ -70,8 +70,7 @@ function heatmapCard(data, params) {
       { key: "n", label: "Headlines", num: true, format: fmt.int },
       { key: "macro_f1", label: "Macro F1", num: true, format: (v) => fmt.num(v, 3) },
       { key: "accuracy", label: "Accuracy", num: true, format: (v) => fmt.pct(v, 1) },
-    ] }), h("p", { class: "caption" }, `The selected model (${selected}) is in bold`
-      + `${tickers.includes(params.ticker) ? `, and ${params.ticker} is outlined` : ""}.`)] });
+    ] }), h("p", { class: "caption" }, `The selected model (${selected}) is in bold.`)] });
 }
 
 function relevanceCard(data) {

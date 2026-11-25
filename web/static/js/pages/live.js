@@ -112,7 +112,7 @@ export async function render(root, params, ctx) {
   ctx.setStatus(`Live · updated ${fmt.date(data.last_run_utc.slice(0, 10))}`, true);
   const summary = h("p", { class: "scope" }, `Last update ${data.last_run_utc} UTC · ${data.runs} runs · `
     + `${fmt.int(data.total_headlines)} headlines across ${data.tickers} companies · sources: ${data.sources}. `
-    + "Live headlines are scored once by the configured model; the Period and Model filters don't apply here.");
+    + "Live headlines are scored once, as they arrive, by the deployed model.");
   if (!data.ticker_has_data) {
     root.replaceChildren(summary, note({ kind: "info", text: `No live headlines for ${data.ticker} yet. Pick another company.` }),
       h("div", { class: "grid" }, checksCard(data)));

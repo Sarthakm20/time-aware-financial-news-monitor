@@ -15,15 +15,16 @@ URL, so a copied link reopens the same view. Every chart shows exact values unde
 |:---|:---|
 | Overview | Coverage, the 30-day rolling sentiment trend, the sentiment split, the relevance filter and day-0 return by news tone |
 | Company Analysis | Any of 89 tickers: rolling sentiment with a synced share-price chart, lookback windows with recency weighting, and the latest / most positive / most negative headlines |
-| Market Impact | Event-study results: positive-minus-negative return gaps with CIs and the cumulative abnormal return paths |
+| Market Impact | Event-study results, for all years or one year: positive-minus-negative return gaps with CIs and the cumulative abnormal return paths |
 | News Explorer | Search and filter all 27,146 scored headlines by text, company, sentiment and date |
 | Model Evaluation | PhraseBank vs real-headline performance per model and company, relevance filter, seed variation and calibration, with the domain-shift caveat always visible |
-| Score a Headline | Live scoring with the deployed model, plus the relevance check |
+| Score a Headline | Live scoring of your own headlines with the deployed model |
 | Live Feed | Recent live headlines (publish times, links), daily sentiment, alerts and the Gemini agreement check; reads `data/live/news.db` |
 
-Everything except Score a Headline and the Live Feed runs from the committed `outputs/` files. Event-study,
-relevance and pooled accuracy figures exist only for all companies together, so they are labelled
-"All companies · 2019–2023" and ignore the company and period filters.
+Everything except Score a Headline and the Live Feed runs from the committed `outputs/` files. Filters a page
+cannot use are hidden there. Event-study figures exist for all companies together, overall and per year, so they
+follow the Period filter and are labelled "All companies · {period}"; relevance and pooled accuracy figures exist only
+for all companies and all years, and are labelled "All companies · 2019–2023".
 
 ## REST API (`src/api.py`)
 

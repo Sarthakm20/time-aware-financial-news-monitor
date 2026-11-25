@@ -40,6 +40,7 @@ def test_space_bundle_serves_the_site_on_its_own(tmp_path, monkeypatch):
         overview = client.get("/api/overview")
         assert overview.status_code == 200 and overview.json()["cards"]["company_days"]["value"] == 24807
         assert client.get("/api/market-impact").json()["car_paths_available"] is True
+        assert client.get("/api/market-impact?period=2021").json()["scope"] == "All companies · 2021"
         assert client.get("/api/live/summary").json()["available"] is False
     finally:  # drop the bundle's modules; monkeypatch then restores the project's own
         for mod in [m for m in sys.modules if m == "src" or m.startswith("src.")]:

@@ -177,3 +177,16 @@ def test_site_files_are_revalidated_after_a_redeploy(client):
     # A Space redeploy must never leave a browser running a mix of old and new modules.
     assert client.get("/").headers["cache-control"] == "no-cache"
     assert client.get("/static/js/main.js").headers["cache-control"] == "no-cache"
+
+
+def test_market_impact_and_overview_follow_the_period(client):
+    mi = client.get("/api/market-impact?period=2021").json()
+    assert mi["scope"] == "All companies · 2021" and 0 < mi["events"] < 22999
+    ov = client.get("/api/overview?period=2021").json()
+    assert ov["market"]["scope"] == "All companies · 2021" and ov["market"]["events"] == mi["events"]
+    days = ov["cards"]["company_days"]
+    assert days["scope"] == "All companies · 2021"
+    assert days["value"] == client.get("/api/market-impact?period=2021&headlines=all").json()["events"]
+    assert client.get("/api/market-impact?period=2018").status_code == 422
+    assert client.get("/api/overview").json()["cards"]["company_days"] == {"value": 24807,
+                                                                          "scope": "All companies · 2019–2023"}

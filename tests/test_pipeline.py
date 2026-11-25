@@ -206,6 +206,16 @@ def test_event_study_stage_end_to_end(tmp_path):
     assert set(paths["headlines"]) == {"all relevant headlines", "excluding price-move headlines"}
     assert set(paths["group"]) == {"positive", "negative"} and paths["day"].min() == -5 and paths["day"].max() == 10
 
+    # Per-year breakdown, so the dashboard's Period filter can apply to the event study.
+    by_year = pd.read_csv(tmp_path / "outputs" / "metrics" / "event_study_buckets_by_year.csv")
+    assert list(by_year.columns[:3]) == ["model", "headlines", "year"] and set(by_year["year"]) == {2021}
+    assert {"ar_0", "av_0"} <= set(by_year["outcome"]) and "positive minus negative" in set(by_year["group"])
+    year_paths = pd.read_csv(tmp_path / "outputs" / "metrics" / "event_study_car_paths_by_year.csv")
+    assert list(year_paths.columns) == ["model", "headlines", "year", "group", "day", "mean_car", "n_events"]
+    year_runs = summary["runs_by_year"]
+    assert {r["year"] for r in year_runs} == {2021} and sum(r["events"] for r in year_runs if
+                                                          r["headlines"] == "all relevant headlines") == summary["runs"][0]["events"]
+
 
 def test_corpus_summary_stage(tmp_path):
     import json

@@ -186,6 +186,20 @@ never relabelled as the selected company's.
 | Model Evaluation page | no; highlights the selected company's heatmap row if annotated | no | highlights the selected model |
 | Live Feed | yes | no | no (caption explains) |
 
+**Revision (2026-11-25, owner's decision after review).** Filters a page cannot use are hidden on that page, not
+dimmed. The event study gains a per-year breakdown (`event_study_buckets_by_year.csv`,
+`event_study_car_paths_by_year.csv`, `runs_by_year` in `event_study_summary.json`), so the **Period** filter now
+applies to it, labelled "All companies · {year}". Per-company event studies stay out: the median company has about
+35 negative-headline days, too few for a meaningful estimate. Filters per page:
+
+| Page | Company | Period | Model |
+|---|---|---|---|
+| Overview, Company Analysis, News Explorer | yes | yes | yes |
+| Market Impact | hidden | yes (per-year event study) | yes |
+| Model Evaluation | hidden | hidden | yes (highlights the selected model) |
+| Score a Headline | hidden | hidden | hidden (and no ticker / relevance input) |
+| Live Feed | yes | hidden | hidden |
+
 **8.1 Overview** (follows the reference image)
 - Stat cards ×4 (§6). With a company selected: Companies covered becomes that company's headline count and date
   range; Headlines and sentiment follow the filters; F1 and Company-days follow §8.0.

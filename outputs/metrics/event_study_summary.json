@@ -41,5 +41,147 @@
       "first_event": "2019-01-02",
       "last_event": "2024-01-02"
     }
+  ],
+  "runs_by_year": [
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "year": 2019,
+      "events": 5582,
+      "tickers": 80
+    },
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "year": 2020,
+      "events": 4129,
+      "tickers": 83
+    },
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "year": 2021,
+      "events": 3460,
+      "tickers": 60
+    },
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "year": 2022,
+      "events": 5073,
+      "tickers": 63
+    },
+    {
+      "model": "base",
+      "headlines": "all relevant headlines",
+      "year": 2023,
+      "events": 6562,
+      "tickers": 71
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "year": 2019,
+      "events": 5209,
+      "tickers": 80
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "year": 2020,
+      "events": 3805,
+      "tickers": 83
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "year": 2021,
+      "events": 3326,
+      "tickers": 60
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "year": 2022,
+      "events": 4549,
+      "tickers": 63
+    },
+    {
+      "model": "base",
+      "headlines": "excluding price-move headlines",
+      "year": 2023,
+      "events": 6109,
+      "tickers": 71
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "year": 2019,
+      "events": 5582,
+      "tickers": 80
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "year": 2020,
+      "events": 4129,
+      "tickers": 83
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "year": 2021,
+      "events": 3460,
+      "tickers": 60
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "year": 2022,
+      "events": 5073,
+      "tickers": 63
+    },
+    {
+      "model": "adapted",
+      "headlines": "all relevant headlines",
+      "year": 2023,
+      "events": 6562,
+      "tickers": 71
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "year": 2019,
+      "events": 5209,
+      "tickers": 80
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "year": 2020,
+      "events": 3805,
+      "tickers": 83
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "year": 2021,
+      "events": 3326,
+      "tickers": 60
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "year": 2022,
+      "events": 4549,
+      "tickers": 63
+    },
+    {
+      "model": "adapted",
+      "headlines": "excluding price-move headlines",
+      "year": 2023,
+      "events": 6109,
+      "tickers": 71
+    }
   ]
 }

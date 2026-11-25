@@ -113,7 +113,7 @@ function relevanceCard(rel) {
     ] });
 }
 
-function marketCard(market) {
+function marketCard(market, params) {
   const rows = market.by_tone.map((r) => ({ category: TONE_NAMES[r.group], value: r.value, low: r.ci_low,
     high: r.ci_high, color: TONE_COLORS[r.group] }));
   const chartEl = h("div", { class: "chart chart-sm", role: "img",
@@ -132,12 +132,14 @@ function marketCard(market) {
           { key: "value", label: "Return", num: true, format: (v) => `${fmt.signed(v, 2)}%` },
           { key: "low", label: "95% CI", num: true, format: (v, r) => `${fmt.signed(r.low, 2)}% to ${fmt.signed(r.high, 2)}%` },
         ] }),
-        h("p", { class: "caption" }, `Excluding price-move headlines · ${fmt.int(market.events)} company-days`)),
+        h("p", { class: "caption" }, `Excluding price-move headlines · ${fmt.int(market.events)} company-days`
+          + `${params.period ? ` in ${params.period}` : ""}`)),
       h("div", { class: "findings" },
-        h("h3", { class: "sub-head" }, "Key findings"),
+        h("h3", { class: "sub-head" }, params.period ? "Key findings (full 2019–2023 study)" : "Key findings"),
         h("ul", {},
           h("li", {}, "News often describes price moves after they happen, rather than predicting them."),
-          h("li", {}, `Negative-news days see about ${market.volume_ratio}× the abnormal trading volume of positive ones.`)),
+          h("li", {}, `Negative-news days see about ${market.volume_ratio}× the abnormal trading volume of positive ones`
+            + `${params.period ? ` (${params.period})` : ""}.`)),
         h("a", { href: "#/market" }, "See Market Impact"))) });
 }
 
@@ -153,6 +155,6 @@ export async function render(root, params, ctx) {
   root.replaceChildren(
     statRow(data, params, pb),
     h("div", { class: "grid" }, trendCard(data, params), distributionCard(data)),
-    h("div", { class: "grid" }, relevanceCard(data.relevance), marketCard(data.market)),
+    h("div", { class: "grid" }, relevanceCard(data.relevance), marketCard(data.market, params)),
   );
 }

@@ -45,7 +45,7 @@ function spreadCard(data) {
       vol) });
 }
 
-function pathsCard(data) {
+function pathsCard(data, period) {
   const title = "Cumulative Abnormal Return Around Headline Days";
   if (!data.car_paths_available) {
     return card({ title, className: "span-12",
@@ -70,11 +70,13 @@ function pathsCard(data) {
       { key: "day", label: "Day", format: dayLabel },
       { key: "positive", label: "Positive days", num: true, format: (v) => `${fmt.signed(v, 2)}%` },
       { key: "negative", label: "Negative days", num: true, format: (v) => `${fmt.signed(v, 2)}%` },
-    ] }), h("p", { class: "caption" }, "The lines split before day 0: much of the move is already under way when the headline appears.")] });
+    ] }), period ? null
+      : h("p", { class: "caption" }, "The lines split before day 0: much of the move is already under way when the headline appears.")] });
 }
 
-function findingsCard() {
-  return card({ title: "What This Shows", className: "span-12", body: h("ul", { class: "findings-list" },
+function findingsCard(period) {
+  return card({ title: period ? "What the Full 2019–2023 Study Shows" : "What This Shows", className: "span-12",
+    body: h("ul", { class: "findings-list" },
     h("li", {}, h("strong", {}, "Mostly after the fact. "),
       "Much of the gap already exists the day before the headline date, and there is no significant drift over the following week. Headlines largely report moves."),
     h("li", {}, h("strong", {}, "Bad news draws more trading. "),
@@ -85,17 +87,16 @@ function findingsCard() {
 
 export async function render(root, params, ctx) {
   const variant = params.headlines === "all" ? "all" : "excluding";
-  const data = await getJSON("/api/market-impact", { model: params.model, headlines: variant });
+  const data = await getJSON("/api/market-impact", { model: params.model, headlines: variant, period: params.period });
   if (!ctx.isCurrent()) return;
   destroy();
   const toggle = segmented({ label: "Which headlines", options: VARIANTS, value: variant,
     onChange: (key) => setParams({ headlines: key === "excluding" ? null : key }) });
   root.replaceChildren(
     h("div", { class: "page-tools" }, toggle,
-      h("span", { class: "scope" }, `${data.scope} · ${fmt.int(data.events)} company-days · ${data.tickers} companies. `
-        + "The Company and Period filters don't apply here.")),
+      h("span", { class: "scope" }, `${data.scope} · ${fmt.int(data.events)} company-days · ${data.tickers} companies`)),
     h("div", { class: "grid" }, spreadCard(data)),
-    h("div", { class: "grid" }, pathsCard(data)),
-    h("div", { class: "grid" }, findingsCard()),
+    h("div", { class: "grid" }, pathsCard(data, params.period)),
+    h("div", { class: "grid" }, findingsCard(params.period)),
   );
 }

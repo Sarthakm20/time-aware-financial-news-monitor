@@ -74,3 +74,31 @@ def test_missing_files_raise(tmp_path):
     with pytest.raises(MetricsUnavailable):
         model_evaluation(tmp_path)
     assert corpus(tmp_path) is None
+
+
+def _year_run(model, variant, year):
+    runs = json.loads((METRICS_DIR / "event_study_summary.json").read_text(encoding="utf-8"))["runs_by_year"]
+    return next(r for r in runs if r["model"] == model and r["headlines"] == variant and r["year"] == year)
+
+
+def test_market_figures_follow_the_period():
+    m = market_relationship(METRICS_DIR, "adapted", year=2021)
+    run = _year_run("adapted", "excluding price-move headlines", 2021)
+    assert m["scope"] == "All companies · 2021" and m["events"] == run["events"] and m["events"] < 22999
+    assert [r["group"] for r in m["by_tone"]] == ["positive", "neutral", "negative"]
+    assert m["by_tone"][0]["value"] != market_relationship(METRICS_DIR, "adapted")["by_tone"][0]["value"]
+    mi = market_impact(METRICS_DIR, "adapted", "all", year=2021)
+    assert mi["scope"] == "All companies · 2021" and mi["tickers"] == _year_run("adapted", "all relevant headlines", 2021)["tickers"]
+    assert mi["car_paths_available"] and {p["group"] for p in mi["car_paths"]} == {"positive", "negative"}
+    assert len(mi["spread"]) == 5 and mi["volume_ratio"] > 0
+
+
+def test_every_dashboard_year_has_results():
+    for year in (2019, 2020, 2021, 2022, 2023):
+        for model in ("adapted", "base"):
+            assert market_impact(METRICS_DIR, model, "excluding", year=year)["events"] > 1000
+
+
+def test_year_without_results_is_unavailable():
+    with pytest.raises(MetricsUnavailable):
+        market_impact(METRICS_DIR, "adapted", year=2018)
