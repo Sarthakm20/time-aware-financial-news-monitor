@@ -55,6 +55,7 @@ def test_market_impact_spread_and_paths():
     assert mi["car_paths_available"] and {p["group"] for p in mi["car_paths"]} == {"positive", "negative"}
     assert mi["events"] == 22999 and mi["tickers"] == 85
     assert market_impact(METRICS_DIR, "base", "all")["events"] == 24807
+    assert mi["volume_ratio"] == 1.9 and market_impact(METRICS_DIR, "adapted", "all")["volume_ratio"] == 1.8
 
 
 def test_model_evaluation_includes_adapted_without_ci():

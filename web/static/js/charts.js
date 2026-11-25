@@ -237,7 +237,7 @@ export function ring(el, { value, color = C.positive, label }) {
 }
 
 // One-hue blue heatmap with the value printed in every cell (identity never by colour alone).
-export function heatmap(el, { xCats, yCats, cells, min, max, format = (v) => fmt.num(v, 2), highlightRow }) {
+export function heatmap(el, { xCats, yCats, cells, min, max, format = (v) => fmt.num(v, 2), highlightRow, highlightCol }) {
   const ramp = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95"];
   const dark = (v) => (v - min) / (max - min) > 0.55;
   return mount(el, {
@@ -245,7 +245,8 @@ export function heatmap(el, { xCats, yCats, cells, min, max, format = (v) => fmt
     tooltip: { ...TOOLTIP, trigger: "item",
       formatter: (p) => `${yCats[p.value[1]]} · ${xCats[p.value[0]]}<br><b>${format(p.value[2])}</b>` },
     xAxis: { type: "category", data: xCats, position: "top", axisTick: { show: false }, axisLine: { show: false },
-      axisLabel: { ...AXIS_LABEL, color: C.ink2, interval: 0, width: 110, overflow: "break" } },
+      axisLabel: { ...AXIS_LABEL, color: C.ink2, interval: 0, width: 110, overflow: "break",
+        formatter: (v) => (v === highlightCol ? `{hl|${v}}` : v), rich: { hl: { fontWeight: 700, color: C.ink } } } },
     yAxis: { type: "category", data: yCats, inverse: true, axisTick: { show: false }, axisLine: { show: false },
       axisLabel: { ...AXIS_LABEL, color: C.ink2,
         formatter: (v) => (v === highlightRow ? `{hl|${v}}` : v), rich: { hl: { fontWeight: 700, color: C.ink } } } },

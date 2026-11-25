@@ -86,18 +86,23 @@ def relevance(metrics_dir: Path) -> Dict[str, Any]:
     })
 
 
+def _volume_ratio(b: pd.DataFrame) -> float:
+    """Day-0 abnormal log-volume on negative-headline days relative to positive ones."""
+    av0 = b[b["outcome"] == "av_0"].set_index("group")
+    return round(float(av0.loc["negative", "value"] / av0.loc["positive", "value"]), 1)
+
+
 def market_relationship(metrics_dir: Path, model: str, variant: str = "excluding") -> Dict[str, Any]:
     """Day-0 market-adjusted return by headline tone (percent, 95% CI) and the volume ratio, negative vs positive."""
     b = _buckets(metrics_dir, model, variant)
     ar0 = b[b["outcome"] == "ar_0"].set_index("group")
-    av0 = b[b["outcome"] == "av_0"].set_index("group")
     return clean({
         "variant": VARIANTS[variant],
         "events": _run(metrics_dir, model, variant)["events"],
         "scope": SCOPE_ALL,
         "by_tone": [{"group": g, "value": ar0.loc[g, "value"] * 100, "ci_low": ar0.loc[g, "ci_low"] * 100,
                      "ci_high": ar0.loc[g, "ci_high"] * 100} for g in TONES],
-        "volume_ratio": round(float(av0.loc["negative", "value"] / av0.loc["positive", "value"]), 1),
+        "volume_ratio": _volume_ratio(b),
     })
 
 
@@ -125,6 +130,7 @@ def market_impact(metrics_dir: Path, model: str, variant: str = "excluding") -> 
                    for o, label in SPREAD_LABELS.items()],
         "car_paths": car_paths,
         "car_paths_available": bool(car_paths),
+        "volume_ratio": _volume_ratio(b),
     })
 
 
