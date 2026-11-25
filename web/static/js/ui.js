@@ -97,9 +97,16 @@ export function sentimentBadge(label, score) {
 
 export function segmented({ options, value, onChange, label }) {
   const group = h("div", { class: "seg", role: "group", "aria-label": label });
+  let selected = value;
   for (const [key, text] of options) {
-    group.append(h("button", { type: "button", "aria-pressed": String(key === value),
-      onclick: () => key !== value && onChange(key) }, text));
+    const button = h("button", { type: "button", "aria-pressed": String(key === value) }, text);
+    button.addEventListener("click", () => {
+      if (key === selected) return;
+      selected = key;
+      for (const b of group.children) b.setAttribute("aria-pressed", String(b === button));
+      onChange(key);
+    });
+    group.append(button);
   }
   return group;
 }

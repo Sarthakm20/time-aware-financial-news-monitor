@@ -192,6 +192,7 @@ body .app-main { padding: 0 2rem 2rem; }
 .chart { width: 100%; height: 320px; }
 .chart-sm { height: 220px; }
 .chart-xs { height: 140px; }
+.chart-donut { height: 300px; }
 .table-toggle { margin-top: 0.5rem; padding: 0; border: 0; background: none; color: var(--bs-link-color);
   font-size: 0.8125rem; }
 .data-table { width: 100%; margin-top: 0.5rem; font-size: 0.875rem; border-collapse: collapse; }
@@ -216,6 +217,10 @@ body .app-main { padding: 0 2rem 2rem; }
 
 /* ------------------------------------------------------------------ responsive */
 
+@media (min-width: 992px) {
+  /* keep the navy column full height even when the page is taller than the viewport */
+  body .app-wrapper { background: linear-gradient(to right, var(--c-sidebar) 248px, var(--c-page) 248px); }
+}
 @media (max-width: 1199.98px) {
   .span-3 { grid-column: span 6; }
   .span-4, .span-5, .span-7, .span-8 { grid-column: span 12; }
@@ -233,6 +238,7 @@ body .app-main { padding: 0 2rem 2rem; }
   .filter .form-control, .filter .form-select, #f-model { min-width: 0; width: 100%; }
   .page-head h1 { font-size: 1.75rem; }
   .chart { height: 260px; }
+  .chart-xs { height: 140px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -240,3 +246,20 @@ body .app-main { padding: 0 2rem 2rem; }
 }
 
 .filter.is-idle { opacity: 0.55; }
+
+/* ------------------------------------------------------------------ overview */
+
+.sub-head { margin: 0 0 0.5rem; font-size: 0.9375rem; font-weight: 600; }
+.relevance { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 1rem; }
+.relevance-ring { margin: 0; text-align: center; }
+.relevance-ring figcaption { display: grid; gap: 0.1rem; font-size: 0.875rem; }
+.relevance-ring figcaption span { color: var(--c-ink-2); font-size: 0.8125rem; }
+.relevance-precision { padding-left: 1rem; border-left: 1px solid var(--c-border); text-align: center; }
+.market-split { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; }
+.findings { padding-left: 1.5rem; border-left: 1px solid var(--c-border); }
+.findings ul { margin: 0 0 1rem; padding-left: 1.1rem; }
+.findings li { margin-bottom: 0.6rem; max-width: 45ch; }
+@media (max-width: 767.98px) {
+  .market-split, .relevance { grid-template-columns: minmax(0, 1fr); }
+  .findings, .relevance-precision { padding-left: 0; border-left: 0; padding-top: 1rem; border-top: 1px solid var(--c-border); }
+}
