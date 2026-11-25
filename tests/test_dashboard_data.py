@@ -91,7 +91,7 @@ def test_search_is_literal_paged_and_bounded(scored):
     assert set(r["rows"][0]) == {"date", "ticker", "headline", "label", "sentiment_score", "confidence"}
     far = search_headlines(scored, page=999)
     assert far["rows"] == [] and far["total"] == len(scored)
-    assert search_headlines(scored, sort="most_negative")["rows"][0]["sentiment_score"] == scored["sentiment_score"].min()
+    assert search_headlines(scored, sort="most_negative")["rows"][0]["sentiment_score"] == round(float(scored["sentiment_score"].min()), 4)
     assert search_headlines(scored, ticker="aapl", label="negative")["total"] == 30
     assert search_headlines(scored, start="2019-01-01", end="2019-12-31")["total"] == 5
 
