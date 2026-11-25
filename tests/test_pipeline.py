@@ -201,6 +201,33 @@ def test_event_study_stage_end_to_end(tmp_path):
     summary = json.loads((tmp_path / "outputs" / "metrics" / "event_study_summary.json").read_text())
     assert summary["runs"][0]["tickers"] == 3
     assert (tmp_path / "outputs" / "figures" / "event_study_car_base.png").exists()
+    paths = pd.read_csv(tmp_path / "outputs" / "metrics" / "event_study_car_paths.csv")
+    assert list(paths.columns) == ["model", "headlines", "group", "day", "mean_car", "n_events"]
+    assert set(paths["headlines"]) == {"all relevant headlines", "excluding price-move headlines"}
+    assert set(paths["group"]) == {"positive", "negative"} and paths["day"].min() == -5 and paths["day"].max() == 10
+
+
+def test_corpus_summary_stage(tmp_path):
+    import json
+
+    collected = pd.DataFrame({
+        "Date": ["2019-01-02 00:00:00+00:00", "2019-03-01 00:00:00+00:00", "2020-05-05 00:00:00+00:00",
+                 "2021-07-07 00:00:00+00:00", "2023-12-29 00:00:00+00:00"],
+        "Article_title": [f"headline {i}" for i in range(5)],
+        "Stock_symbol": ["AAA", "AAA", "BBB", "BBB", "AAA"],
+    })
+    (tmp_path / "data" / "processed").mkdir(parents=True)
+    collected.to_csv(tmp_path / "data" / "processed" / "fnspid_all_2019_2023.csv", index=False)
+    (tmp_path / "outputs" / "predictions").mkdir(parents=True)
+    collected.iloc[[1, 2, 3]].assign(sentiment_score=0.1, predicted_label="neutral").to_csv(
+        tmp_path / "outputs" / "predictions" / "nasdaq100_scored_headlines_adapted.csv", index=False)
+
+    args = ["corpus-summary", "--data-dir", str(tmp_path / "data"), "--outputs-dir", str(tmp_path / "outputs"),
+            "--models-dir", str(tmp_path / "m")]
+    assert pipeline.main(args) == 0
+    summary = json.loads((tmp_path / "outputs" / "metrics" / "corpus_summary.json").read_text())
+    assert summary == {"collected_headlines": 5, "scored_headlines": 3, "tickers": 2, "first_date": "2019-03-01",
+                       "last_date": "2021-07-07", "source": "FNSPID 2019-2023, relevance-filtered"}
 
 
 def test_evaluate_multi_stage_with_fake_model(tmp_path, monkeypatch):
