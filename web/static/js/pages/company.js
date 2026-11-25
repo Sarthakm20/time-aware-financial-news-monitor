@@ -7,6 +7,7 @@ import { noHeadlines } from "./overview.js";
 
 const ORDERS = [["latest", "Latest"], ["most_positive", "Most positive"], ["most_negative", "Most negative"]];
 const PAGE = 12;
+const MAX_ROWS = 100; // /api/company caps n at 100
 let charts = [];
 
 export function destroy() {
@@ -151,7 +152,7 @@ function windowsCard(view, params) {
 
 function headlinesCard(view, params) {
   const order = params.order || "latest";
-  const n = Number(params.n || PAGE);
+  const n = Math.min(Number(params.n || PAGE), MAX_ROWS);
   const seg = segmented({ label: "Order headlines", options: ORDERS, value: order,
     onChange: (key) => setParams({ order: key === "latest" ? null : key, n: null }) });
   if (!view.headlines.length) return card({ title: "Headlines", className: "span-12", tools: seg, body: emptyState(noHeadlines(params)) });
@@ -159,9 +160,9 @@ function headlinesCard(view, params) {
     h("div", { class: "row-meta" }, sentimentBadge(r.label, r.sentiment_score), h("span", {}, fmt.date(r.date)),
       h("span", {}, `confidence ${fmt.pct(r.confidence)}`)),
     h("p", { class: "row-title" }, r.headline))));
-  const more = view.headlines.length >= n && n < view.cards.headlines
+  const more = view.headlines.length >= n && n < view.cards.headlines && n < MAX_ROWS
     ? h("button", { type: "button", class: "btn btn-outline-secondary btn-sm mt-2",
-      onclick: () => setParams({ n: n + PAGE }, { replace: true }) }, "Show more") : null;
+      onclick: () => setParams({ n: Math.min(n + PAGE, MAX_ROWS) }, { replace: true }) }, "Show more") : null;
   return card({ title: "Headlines", className: "span-12", tools: seg, body: [list, more] });
 }
 
@@ -172,7 +173,7 @@ export async function render(root, params, ctx) {
   }
   const view = await getJSON(`/api/company/${encodeURIComponent(params.ticker)}`, {
     period: params.period, model: params.model, window_days: params.window_days,
-    half_life_days: params.half_life_days, order: params.order, n: params.n || PAGE,
+    half_life_days: params.half_life_days, order: params.order, n: Math.min(Number(params.n || PAGE), MAX_ROWS),
   });
   if (!ctx.isCurrent()) return;
   destroy();

@@ -8,6 +8,32 @@ const SORTS = [["newest", "Newest first"], ["oldest", "Oldest first"], ["most_po
   ["most_negative", "Most negative"]];
 const LABELS = [["", "All sentiment"], ["positive", "Positive"], ["neutral", "Neutral"], ["negative", "Negative"]];
 
+// The filter form is built once per visit; later renders replace only the results, so the search box is never
+// rebuilt under the visitor's cursor (no lost keystrokes, trailing spaces or caret jumps).
+let view = null;
+let scrollToResults = false;
+let committedQ = null; // the search text this page itself last wrote to the URL
+
+export function destroy() {
+  view = null;
+  committedQ = null;
+}
+
+// Back/forward can change the URL without the form: copy params into the controls. The search box is left
+// alone when the URL holds what this page just committed (the visitor may still be typing).
+function syncForm(form, params) {
+  const values = { "n-q": params.q || "", "n-label": params.label || "", "n-start": params.start || "",
+    "n-end": params.end || "", "n-sort": params.sort || "newest" };
+  for (const [id, value] of Object.entries(values)) {
+    const el = form.querySelector(`#${id}`);
+    if (!el || el.value === value) continue;
+    if (id === "n-q" && (params.q || null) === committedQ) continue;
+    if (id !== "n-q" && el === document.activeElement) continue;
+    el.value = value;
+  }
+  committedQ = params.q || null;
+}
+
 function field(id, label, control) {
   return h("div", { class: "field" }, h("label", { for: id }, label), control);
 }
@@ -22,7 +48,10 @@ function select(id, options, value, onChange) {
 function filterBar(params) {
   const search = h("input", { id: "n-q", class: "form-control", type: "search", value: params.q || "",
     placeholder: "Words in the headline", autocomplete: "off", maxlength: 200 });
-  const commit = debounce(() => setParams({ q: search.value.trim() || null, page: null }, { replace: true }), 300);
+  const commit = debounce(() => {
+    committedQ = search.value.trim() || null;
+    setParams({ q: committedQ, page: null }, { replace: true });
+  }, 300);
   search.addEventListener("input", commit);
   const date = (id, key, label) => {
     const el = h("input", { id, class: "form-control", type: "date", value: params[key] || "", min: "2019-01-01",
@@ -53,7 +82,10 @@ function pageList(page, pages) {
 
 function pagination(page, pages) {
   if (pages <= 1) return null;
-  const go = (p) => setParams({ page: p === 1 ? null : p });
+  const go = (p) => {
+    scrollToResults = true;
+    setParams({ page: p === 1 ? null : p });
+  };
   const button = (label, target, attrs = {}) => h("button", { type: "button", class: "page-btn",
     disabled: target < 1 || target > pages, onclick: () => go(target), ...attrs }, label);
   return h("nav", { class: "pager", "aria-label": "Result pages" },
@@ -91,16 +123,15 @@ export async function render(root, params, ctx) {
   });
   if (!ctx.isCurrent()) return;
 
-  // Keep typing uninterrupted: the page re-renders from the URL, so restore focus and caret.
-  const active = document.activeElement;
-  const focusId = active && root.contains(active) ? active.id : null;
-  const caret = focusId === "n-q" ? active.selectionStart : null;
-
-  root.replaceChildren(card({ className: "news-panel", body: [filterBar(params), ...results(data, page)] }));
-
-  if (focusId) {
-    const el = document.getElementById(focusId);
-    el?.focus();
-    if (caret !== null && el) el.setSelectionRange(caret, caret);
+  if (!view || !root.contains(view.form)) {
+    view = { form: filterBar(params), results: h("div", { class: "news-results" }) };
+    root.replaceChildren(card({ className: "news-panel", body: [view.form, view.results] }));
+  } else {
+    syncForm(view.form, params);
+  }
+  view.results.replaceChildren(...results(data, page).filter(Boolean));
+  if (scrollToResults) {
+    scrollToResults = false;
+    view.results.scrollIntoView({ block: "start" });
   }
 }

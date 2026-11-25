@@ -92,10 +92,11 @@ function relevanceCard(data) {
 
 function stabilityCard(data) {
   return card({ title: "Stability and Calibration", className: "span-6", body: [
-    h("p", { class: "m-0" }, `Seed variation (${data.seeds.n} seeds): macro F1 ${fmt.num(data.seeds.mean, 3)} ± `
-      + `${fmt.num(data.seeds.std, 3)} on PhraseBank.`),
+    h("p", { class: "m-0" }, "Both figures are for PhraseBank DistilBERT, on the PhraseBank test sentences."),
+    h("p", { class: "mt-2 mb-0" }, `Seed variation (${data.seeds.n} seeds): macro F1 ${fmt.num(data.seeds.mean, 3)} ± `
+      + `${fmt.num(data.seeds.std, 3)}.`),
     h("p", { class: "mt-2 mb-0" }, `Calibration: expected calibration error ${fmt.num(data.calibration_ece, 3)}, `
-      + "so the model's probabilities are used as is."),
+      + "so its probabilities are used as is."),
   ] });
 }
 

@@ -36,17 +36,16 @@ export const fmt = {
   },
 };
 
-let popoverCount = 0;
-
 // A content panel. `info` is the source/definition text shown in a popover from the title's (i) button.
 export function card({ title, info, scope, tools, body, className = "" }) {
   const head = h("div", { class: "panel-head" });
   if (title) {
     const heading = h("h2", {}, title);
     if (info) {
-      const id = `pop-${++popoverCount}`;
-      const btn = h("button", { type: "button", class: "info-btn", "aria-label": `About ${title}`,
-        "aria-describedby": id }, icon("info-circle"));
+      // <a tabindex=0>, not <button>: Safari doesn't focus a clicked button, so a focus-triggered popover
+      // on a button never opens there (Bootstrap's documented pattern for dismissible popovers).
+      const btn = h("a", { class: "info-btn", role: "button", tabindex: "0", "aria-label": `About ${title}` },
+        icon("info-circle"));
       heading.append(btn);
       queueMicrotask(() => new window.bootstrap.Popover(btn, {
         content: info, trigger: "focus", placement: "top", customClass: "info-popover" }));

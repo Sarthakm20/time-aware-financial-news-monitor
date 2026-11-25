@@ -333,3 +333,6 @@ body .app-main { padding: 0 2rem 2rem; }
 .relevance-tag.is-on { background: #e1f2ea; color: #065c44; }
 .relevance-tag.is-off { background: #eef0f4; color: var(--c-ink-2); }
 code { color: var(--c-ink); background: #eef1f5; padding: 0.05rem 0.3rem; border-radius: 4px; }
+
+.info-btn { cursor: pointer; }
+.news-results { scroll-margin-top: 1rem; }

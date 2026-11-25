@@ -44,6 +44,15 @@ from src.service import MAX_HEADLINE_CHARS, MAX_HEADLINES_PER_REQUEST, Sentiment
 DISCLAIMER = "Summarises headline tone; not a trading signal or investment advice."
 
 
+class RevalidatingStaticFiles(StaticFiles):
+    """Static files the browser must revalidate (cheap 304s via ETag), so a redeploy never mixes old and new JS."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 class PredictRequest(BaseModel):
     headlines: List[str] = Field(..., min_length=1, max_length=MAX_HEADLINES_PER_REQUEST,
                                  examples=[["Tesla deliveries beat estimates", "Intel cuts guidance"]])
@@ -177,9 +186,9 @@ def create_app(service: Optional[SentimentService] = None, scored_csv: Path = DE
     if index.exists():  # the API-only Docker image ships no web/; the Space does
         @app.get("/", include_in_schema=False)
         def site():
-            return FileResponse(index)
+            return FileResponse(index, headers={"Cache-Control": "no-cache"})
 
-        app.mount("/static", StaticFiles(directory=Path(web_dir) / "static"), name="static")
+        app.mount("/static", RevalidatingStaticFiles(directory=Path(web_dir) / "static"), name="static")
 
     return app
 

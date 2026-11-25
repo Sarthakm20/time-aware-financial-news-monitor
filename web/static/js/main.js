@@ -91,6 +91,11 @@ function markNav(page) {
 
 async function render(route) {
   const token = ++current.token;
+  if (route.params.ticker && !tickerSet.has(route.params.ticker)) {
+    carryAlert = note({ kind: "error", text: `No company called ${route.params.ticker} in the dataset.` });
+    setParams({ ticker: null }, { replace: true });
+    return;
+  }
   const entry = PAGES[route.page];
   const pageChanged = route.page !== current.page;
   if (pageChanged) {

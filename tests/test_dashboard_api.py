@@ -158,3 +158,22 @@ def test_real_shell_lists_seven_pages_and_assets(real_client):
     for asset in ["/static/js/main.js", "/static/css/app.css", "/static/vendor/echarts.min.js",
                   "/static/vendor/adminlte.min.css", "/static/fonts/public-sans-latin-400-normal.woff2"]:
         assert real_client.get(asset).status_code == 200, asset
+
+
+def test_overview_numbers_match_committed_files(real_client):
+    ov = real_client.get("/api/overview").json()
+    assert ov["cards"]["headlines"] == {"scored": 27146, "collected": 61818}
+    d = ov["distribution"]
+    assert (round(d["positive"], 3), round(d["neutral"], 3), round(d["negative"], 3)) == (0.266, 0.606, 0.129)
+    assert d["n"] == 27146
+
+
+def test_search_matches_regex_characters_literally(real_client):
+    body = real_client.get("/api/headlines", params={"q": "(NVDA)", "page_size": 100}).json()
+    assert body["total"] > 0 and all("(nvda)" in r["headline"].lower() for r in body["rows"])
+
+
+def test_site_files_are_revalidated_after_a_redeploy(client):
+    # A Space redeploy must never leave a browser running a mix of old and new modules.
+    assert client.get("/").headers["cache-control"] == "no-cache"
+    assert client.get("/static/js/main.js").headers["cache-control"] == "no-cache"
