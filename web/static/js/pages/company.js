@@ -1,7 +1,7 @@
 // Company Analysis (spec 8.2): one company's sentiment over time, lookback windows and headlines.
 import { getJSON } from "../api.js";
 import { C, connect, lineChart, withTable } from "../charts.js";
-import { card, debounce, emptyState, fmt, h, note, segmented, sentimentBadge, statCard } from "../ui.js";
+import { card, emptyState, fmt, h, note, segmented, sentimentBadge, statCard } from "../ui.js";
 import { setParams } from "../state.js";
 import { noHeadlines } from "./overview.js";
 
@@ -55,11 +55,11 @@ function notes(view) {
 function rangeControl({ id, label, min, max, value, unit, onInput }) {
   const output = h("output", { for: id, class: "range-value" }, `${value} ${unit}`);
   const input = h("input", { id, type: "range", class: "form-range", min, max, step: 1, value });
-  const commit = debounce((v) => onInput(v), 300);
+  // Update the label while dragging; reload only when the value is committed (release, or a key press).
   input.addEventListener("input", () => {
     output.textContent = `${input.value} ${unit}`;
-    commit(Number(input.value));
   });
+  input.addEventListener("change", () => onInput(Number(input.value)));
   return h("div", { class: "range-control" }, h("label", { for: id }, label), input, output);
 }
 
@@ -166,7 +166,6 @@ function headlinesCard(view, params) {
 }
 
 export async function render(root, params, ctx) {
-  destroy();
   if (!params.ticker) {
     setParams({ ticker: "TSLA" }, { replace: true });
     return;
@@ -176,6 +175,7 @@ export async function render(root, params, ctx) {
     half_life_days: params.half_life_days, order: params.order, n: params.n || PAGE,
   });
   if (!ctx.isCurrent()) return;
+  destroy();
   root.replaceChildren(
     cards(view),
     ...notes(view),

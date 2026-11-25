@@ -142,13 +142,13 @@ function marketCard(market) {
 }
 
 export async function render(root, params, ctx) {
-  destroy();
   const model = params.model || "adapted";
   const [data, evaluation] = await Promise.all([
     getJSON("/api/overview", { ticker: params.ticker, period: params.period, model }),
     getJSON("/api/model-evaluation").catch(() => null),
   ]);
   if (!ctx.isCurrent()) return;
+  destroy();
   const pb = evaluation?.phrasebank.find((r) => r.model === PHRASEBANK_NAME[model])?.macro_f1;
   root.replaceChildren(
     statRow(data, params, pb),

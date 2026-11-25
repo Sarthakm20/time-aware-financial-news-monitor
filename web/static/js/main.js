@@ -93,8 +93,10 @@ async function render(route) {
   const token = ++current.token;
   const entry = PAGES[route.page];
   const pageChanged = route.page !== current.page;
-  current.module?.destroy?.();
-  current.module = null;
+  if (pageChanged) {
+    current.module?.destroy?.();
+    current.module = null;
+  }
   current.page = route.page;
 
   els.title.textContent = entry.title;
@@ -105,9 +107,14 @@ async function render(route) {
   setStatus("Historical data · not live");
   // A carried alert survives redirects (e.g. Company Analysis defaulting to TSLA) until a render completes.
   els.alert.replaceChildren(...(carryAlert ? [carryAlert] : []));
-  if (pageChanged) window.scrollTo(0, 0);
-  els.body.replaceChildren(loading());
+  // Same page, new filters: keep the old view until the new one is ready (no flash, focus kept).
+  if (pageChanged) {
+    window.scrollTo(0, 0);
+    els.body.replaceChildren(loading());
+  }
 
+  const active = document.activeElement;
+  const focusId = active && els.body.contains(active) && active.id ? active.id : null;
   try {
     const module = await entry.load();
     if (token !== current.token) return;
@@ -115,7 +122,11 @@ async function render(route) {
     await module.render(els.body, route.params, {
       meta, setStatus, isCurrent: () => token === current.token,
     });
-    if (token === current.token) carryAlert = null;
+    if (token === current.token) {
+      carryAlert = null;
+      // Filter changes rebuild the view; put keyboard focus back on the control the user was on.
+      if (focusId && !els.body.contains(document.activeElement)) document.getElementById(focusId)?.focus();
+    }
   } catch (err) {
     if (token !== current.token) return;
     if (err instanceof ApiError && err.status === 404 && route.params.ticker) {

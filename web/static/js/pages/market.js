@@ -84,10 +84,10 @@ function findingsCard() {
 }
 
 export async function render(root, params, ctx) {
-  destroy();
   const variant = params.headlines === "all" ? "all" : "excluding";
   const data = await getJSON("/api/market-impact", { model: params.model, headlines: variant });
   if (!ctx.isCurrent()) return;
+  destroy();
   const toggle = segmented({ label: "Which headlines", options: VARIANTS, value: variant,
     onChange: (key) => setParams({ headlines: key === "excluding" ? null : key }) });
   root.replaceChildren(

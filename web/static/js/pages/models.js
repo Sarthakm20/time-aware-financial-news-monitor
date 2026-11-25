@@ -100,9 +100,9 @@ function stabilityCard(data) {
 }
 
 export async function render(root, params, ctx) {
-  destroy();
   const data = await getJSON("/api/model-evaluation");
   if (!ctx.isCurrent()) return;
+  destroy();
   const selected = SELECTED[params.model || "adapted"];
   root.replaceChildren(
     note({ kind: "caveat", text: "Domain shift: macro F1 falls from 0.84 on PhraseBank sentences to about "
