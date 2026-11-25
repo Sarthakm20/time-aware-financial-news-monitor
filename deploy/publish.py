@@ -20,12 +20,12 @@ MODEL_REPO = "distilbert-financial-headline-sentiment"
 SPACE_REPO = "news-sentiment-monitor"
 MODEL_FILES = ["config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json"]
 
-# What the Space needs to run the dashboard (no raw data, no models, no secrets).
+# What the Space needs to serve the dashboard site and its API (no raw data, no models, no secrets).
 SPACE_FILES = [
-    "app/streamlit_app.py",
     "src/__init__.py", "src/config.py", "src/explorer.py", "src/aggregation.py", "src/service.py",
     "src/inference.py", "src/relevance.py", "src/company_names.py", "src/labels.py", "src/onnx_backend.py",
     "src/live_feed.py", "src/env.py",
+    "src/api.py", "src/dashboard_api.py", "src/dashboard_data.py", "src/dashboard_metrics.py", "src/dashboard_live.py",
     "outputs/predictions/nasdaq100_scored_headlines_adapted.csv",
     "outputs/predictions/nasdaq100_scored_headlines_base.csv",
     "outputs/metrics/event_study_summary.json", "outputs/metrics/event_study_buckets.csv",
@@ -33,8 +33,11 @@ SPACE_FILES = [
     "outputs/metrics/seed_summary.json",
     "outputs/metrics/multi_company_pooled_accuracy.csv", "outputs/metrics/multi_company_per_company_accuracy.csv",
     "outputs/metrics/multi_company_relevance_filter.csv",
-    "outputs/figures/event_study_car_adapted.png", "outputs/figures/event_study_car_base.png",
+    "outputs/metrics/event_study_car_paths.csv", "outputs/metrics/corpus_summary.json",
+    "outputs/metrics/adapted_test_metrics.json",
 ]
+# Directories copied whole: the static site (HTML, CSS, JS, vendored libraries, fonts).
+SPACE_TREES = ["web"]
 
 
 def stage_model(staging: Path, user: str) -> str:
@@ -56,6 +59,10 @@ def stage_space(staging: Path, user: str) -> str:
         dst = staging / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
+    for rel in SPACE_TREES:
+        if not (ROOT / rel / "index.html").exists():
+            sys.exit(f"missing {rel}/index.html; the dashboard site is not built")
+        shutil.copytree(ROOT / rel, staging / rel, ignore=shutil.ignore_patterns("__pycache__", ".*"))
     for name in ["Dockerfile", "README.md", "requirements.txt"]:
         text = (ROOT / "deploy" / "space" / name).read_text(encoding="utf-8").replace("<hf-user>", user)
         (staging / name).write_text(text, encoding="utf-8")

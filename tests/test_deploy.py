@@ -1,5 +1,6 @@
-"""The Hugging Face Space bundle must contain everything the dashboard imports and reads."""
+"""The Hugging Face Space bundle must contain everything the dashboard site imports and reads."""
 
+import importlib
 import importlib.util
 import sys
 from pathlib import Path
@@ -13,24 +14,37 @@ spec.loader.exec_module(publish)
 
 
 @pytest.mark.skipif(not all((ROOT / f).exists() for f in publish.SPACE_FILES), reason="outputs not available")
-def test_space_bundle_runs_the_dashboard_on_its_own(tmp_path, monkeypatch):
-    pytest.importorskip("streamlit")
-    from streamlit.testing.v1 import AppTest
+def test_space_bundle_serves_the_site_on_its_own(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
 
     repo = publish.stage_space(tmp_path, "someone")
     assert repo == "someone/news-sentiment-monitor"
     for name in ["Dockerfile", "README.md", "requirements.txt"]:
         assert (tmp_path / name).exists()
     readme = (tmp_path / "README.md").read_text(encoding="utf-8")
-    assert "sdk: docker" in readme and "<hf-user>" not in readme
+    assert "sdk: docker" in readme and "app_port: 7860" in readme and "<hf-user>" not in readme
+    assert "uvicorn" in (tmp_path / "Dockerfile").read_text(encoding="utf-8")
+    assert "streamlit" not in (tmp_path / "requirements.txt").read_text(encoding="utf-8").lower()
+    assert not (tmp_path / "app").exists()
 
-    # Run the dashboard from the bundle only: the project's own src/ must not be importable.
+    # Serve the site from the bundle only: the project's own src/ must not be importable.
     monkeypatch.setattr(sys, "path", [str(tmp_path)] + [p for p in sys.path if Path(p).resolve() != ROOT])
     for mod in [m for m in sys.modules if m == "src" or m.startswith("src.")]:
         monkeypatch.delitem(sys.modules, mod)
-    at = AppTest.from_file(str(tmp_path / "app" / "streamlit_app.py"), default_timeout=180).run()
-    assert not at.exception, [e.value for e in at.exception]
-    assert at.metric[0].label == "Headlines"
+    try:
+        api = importlib.import_module("src.api")
+        assert Path(api.__file__).resolve().is_relative_to(tmp_path.resolve())
+        client = TestClient(api.create_app())  # every default path now resolves inside the bundle
+        assert "Market Impact" in client.get("/").text
+        assert client.get("/static/js/pages/overview.js").status_code == 200
+        overview = client.get("/api/overview")
+        assert overview.status_code == 200 and overview.json()["cards"]["company_days"]["value"] == 24807
+        assert client.get("/api/market-impact").json()["car_paths_available"] is True
+        assert client.get("/api/live/summary").json()["available"] is False
+    finally:  # drop the bundle's modules; monkeypatch then restores the project's own
+        for mod in [m for m in sys.modules if m == "src" or m.startswith("src.")]:
+            if Path(getattr(sys.modules[mod], "__file__", "") or "").resolve().is_relative_to(tmp_path.resolve()):
+                del sys.modules[mod]
 
 
 def test_model_card_has_license_and_no_placeholders_after_staging(tmp_path):

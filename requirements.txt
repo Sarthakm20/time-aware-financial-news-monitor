@@ -22,4 +22,3 @@ ipywidgets>=8.0.0
 # API and dashboard
 fastapi>=0.110.0
 uvicorn>=0.29.0
-streamlit>=1.40.0

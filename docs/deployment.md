@@ -1,21 +1,29 @@
 # Apps & Deployment
 
 
-## Dashboard (`app/streamlit_app.py`)
+## Dashboard (`web/` + `src/dashboard_api.py`)
 
 ```bash
-streamlit run app/streamlit_app.py
+uvicorn src.api:app --reload      # open http://localhost:8000
 ```
 
-| Tab | What it shows |
-|:---|:---|
-| 🔎 Company explorer | Any of 89 Nasdaq-100 tickers: rolling sentiment timeline (optional live share-price overlay), lookback windows with recency weighting, and the latest / most positive / most negative headlines |
-| 📈 Market reaction | Event-study results: the CAR chart and positive-minus-negative spreads with CIs |
-| 🧪 Model quality | PhraseBank vs real-headline performance, seed variation and calibration, with the domain-shift caveat always visible |
-| ✍️ Score a headline | Live scoring with the headline-adapted model, plus the relevance check |
-| 📡 Live feed | This week's headlines for the selected company (publish times, links), daily sentiment, alerts and the Gemini agreement check; reads `data/live/news.db` |
+The FastAPI app serves the dashboard site (`web/`, static HTML/CSS/JS on AdminLTE 4 and Apache ECharts, no build
+step) and the JSON it reads (`/api/...`). Company, period and model filters sit in the top bar and are kept in the
+URL, so a copied link reopens the same view. Every chart shows exact values under the cursor and can be shown as a table.
 
-Everything except live scoring and the live feed runs from the committed `outputs/` files.
+| Page | What it shows |
+|:---|:---|
+| Overview | Coverage, the 30-day rolling sentiment trend, the sentiment split, the relevance filter and day-0 return by news tone |
+| Company Analysis | Any of 89 tickers: rolling sentiment with a synced share-price chart, lookback windows with recency weighting, and the latest / most positive / most negative headlines |
+| Market Impact | Event-study results: positive-minus-negative return gaps with CIs and the cumulative abnormal return paths |
+| News Explorer | Search and filter all 27,146 scored headlines by text, company, sentiment and date |
+| Model Evaluation | PhraseBank vs real-headline performance per model and company, relevance filter, seed variation and calibration, with the domain-shift caveat always visible |
+| Score a Headline | Live scoring with the deployed model, plus the relevance check |
+| Live Feed | Recent live headlines (publish times, links), daily sentiment, alerts and the Gemini agreement check; reads `data/live/news.db` |
+
+Everything except Score a Headline and the Live Feed runs from the committed `outputs/` files. Event-study,
+relevance and pooled accuracy figures exist only for all companies together, so they are labelled
+"All companies · 2019–2023" and ignore the company and period filters.
 
 ## REST API (`src/api.py`)
 
@@ -31,6 +39,7 @@ uvicorn src.api:app --port 8000      # interactive docs: http://localhost:8000/d
 | `GET /tickers/{symbol}/sentiment` | Lookback-window summary and latest headlines |
 | `GET /tickers/{symbol}/timeline` | Weekly rolling-sentiment series |
 | `GET /live/{symbol}?days=7` | Live headlines and their sentiment from the live feed (503 if the feed isn't set up) |
+| `GET /api/...` | The dashboard's data: `meta`, `overview`, `company/{symbol}`, `headlines`, `market-impact`, `model-evaluation`, `price/{symbol}`, `live/summary` (see `/docs`) |
 
 ```bash
 curl -X POST localhost:8000/predict -H "Content-Type: application/json" \
@@ -38,6 +47,8 @@ curl -X POST localhost:8000/predict -H "Content-Type: application/json" \
 ```
 
 ## Docker
+
+The root Docker image is API-only; the Hugging Face Space (`python deploy/publish.py space --user <hf-user>`) serves the dashboard.
 
 ```bash
 docker build -t news-sentiment-api .

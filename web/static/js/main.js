@@ -140,7 +140,21 @@ async function render(route) {
   }
 }
 
+// Skip links move focus only: following "#main" would replace the hash that holds the view state.
+function bindSkipLinks() {
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a.skip-link");
+    if (!link) return;
+    event.preventDefault();
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+    if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+    target.focus();
+  }, true);
+}
+
 async function start() {
+  bindSkipLinks();
   bindFilters();
   try {
     meta = await getJSON("/api/meta");
