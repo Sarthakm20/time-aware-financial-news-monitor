@@ -65,14 +65,25 @@ export function withTable(chartEl, { columns, rows, caption }) {
 
 const dateLabel = (ms) => fmt.date(new Date(ms).toISOString());
 
+// Break a time series where consecutive points are further apart than maxGapDays, so a stretch with no
+// headlines shows as a gap (missing data), never as a straight line implying values that don't exist.
+function breakGaps(data, maxGapDays) {
+  const out = [];
+  for (let i = 0; i < data.length; i += 1) {
+    if (i && data[i][0] - data[i - 1][0] > maxGapDays * 864e5) out.push([(data[i][0] + data[i - 1][0]) / 2, null]);
+    out.push(data[i]);
+  }
+  return out;
+}
+
 // Line chart over time (xType "time") or over a numeric axis (xType "value", e.g. event days).
 export function lineChart(el, {
   series, xType = "time", xFormat = dateLabel, yFormat = (v) => fmt.signed(v, 2), yMin, yMax,
-  zeroLine = true, area = true, endLabels = false, zoom = xType === "time", xName, yName,
+  zeroLine = true, area = true, endLabels = false, zoom = xType === "time", slider = zoom, xName, yName, maxGapDays = xType === "time" ? 14 : null,
 }) {
   const multi = series.length > 1;
   const option = {
-    grid: { left: 8, right: endLabels ? 104 : 16, top: multi ? 36 : 16, bottom: zoom ? 56 : 28, containLabel: true },
+    grid: { left: 8, right: endLabels ? 104 : 16, top: multi ? 36 : 16, bottom: slider ? 56 : 28, containLabel: true },
     legend: multi ? { top: 0, left: 0, icon: "roundRect", itemWidth: 14, itemHeight: 4,
       textStyle: { color: C.ink2, fontSize: 12 } } : undefined,
     tooltip: {
@@ -80,9 +91,12 @@ export function lineChart(el, {
       axisPointer: { type: "cross", lineStyle: { color: C.muted, type: "dashed" },
         crossStyle: { color: C.muted, type: "dashed" }, label: POINTER_LABEL },
       formatter: (items) => {
+        const at = items[0]?.axisValue;
+        items = items.filter((it) => it.value && it.value[1] !== null && it.value[1] !== undefined);
+        if (!items.length) return at === undefined ? "" : `${xFormat(at)}<br>No headlines in this stretch`;
         const head = xFormat(items[0].axisValue);
         const lines = items.map((it) => `${it.marker}${it.seriesName}: <b>${yFormat(it.value[1])}</b>`
-          + (it.value[2] !== undefined ? ` <span style="color:${C.muted}">(${fmt.int(it.value[2])} headlines)</span>` : ""));
+          + (it.value[2] !== undefined ? ` <span style="color:${C.muted}">(${fmt.int(it.value[2])} headline${it.value[2] === 1 ? "" : "s"})</span>` : ""));
         return [`<div style="margin-bottom:4px;color:${C.ink2}">${head}</div>`, ...lines].join("<br>");
       },
     },
@@ -102,12 +116,13 @@ export function lineChart(el, {
     },
     dataZoom: zoom ? [
       { type: "inside", filterMode: "none" },
-      { type: "slider", height: 18, bottom: 8, borderColor: C.grid, fillerColor: "rgba(42,120,214,0.10)",
+      slider && { type: "slider", height: 18, bottom: 8, borderColor: C.grid, fillerColor: "rgba(42,120,214,0.10)",
         handleStyle: { color: "#ffffff", borderColor: C.axis }, textStyle: { color: C.muted, fontSize: 11 },
         dataBackground: { lineStyle: { color: C.axis }, areaStyle: { color: C.grid } }, labelFormatter: (v) => dateLabel(v) },
-    ] : undefined,
+    ].filter(Boolean) : undefined,
     series: series.map((s, i) => ({
-      type: "line", name: s.name, data: s.data, showSymbol: false, symbolSize: 8,
+      type: "line", name: s.name, data: maxGapDays ? breakGaps(s.data, maxGapDays) : s.data, connectNulls: false,
+      showSymbol: false, symbolSize: 8,
       lineStyle: { width: 2, color: s.color || C.accent }, itemStyle: { color: s.color || C.accent },
       areaStyle: area && !multi ? { color: s.color || C.accent, opacity: 0.1 } : undefined,
       emphasis: { disabled: true },
@@ -242,8 +257,15 @@ export function heatmap(el, { xCats, yCats, cells, min, max, format = (v) => fmt
   });
 }
 
+// Sync crosshairs, and make the first chart's zoom window drive the others (same x range assumed).
 export function connect(...handles) {
   echarts.connect(handles.map((hd) => hd.chart));
+  const [lead, ...rest] = handles;
+  lead.chart.on("datazoom", () => {
+    const dz = lead.chart.getOption().dataZoom?.[0];
+    if (!dz) return;
+    for (const other of rest) other.chart.dispatchAction({ type: "dataZoom", start: dz.start, end: dz.end });
+  });
 }
 
 // Even y-range that always includes zero, rounded out to the nearest 0.1.

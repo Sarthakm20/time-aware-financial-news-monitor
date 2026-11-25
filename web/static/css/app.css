@@ -263,3 +263,20 @@ body .app-main { padding: 0 2rem 2rem; }
   .market-split, .relevance { grid-template-columns: minmax(0, 1fr); }
   .findings, .relevance-precision { padding-left: 0; border-left: 0; padding-top: 1rem; border-top: 1px solid var(--c-border); }
 }
+
+/* ------------------------------------------------------------------ company analysis */
+
+.chart-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 2rem; margin-bottom: 1rem; }
+.range-control { display: grid; grid-template-columns: auto 10rem auto; align-items: center; gap: 0.75rem;
+  font-size: 0.875rem; }
+.range-control label { color: var(--c-ink-2); }
+.range-value { min-width: 4.5rem; font-variant-numeric: tabular-nums; color: var(--c-ink); }
+.form-switch { margin: 0; font-size: 0.875rem; }
+.form-check-input:checked { background-color: var(--c-sidebar); border-color: var(--c-sidebar); }
+.form-range::-webkit-slider-thumb { background: var(--c-sidebar); }
+.form-range::-moz-range-thumb { background: var(--c-sidebar); }
+.data-table tbody th { font-weight: 600; padding: 0.45rem 0.6rem; border-bottom: 1px solid #eef1f5; }
+@media (max-width: 575.98px) {
+  .range-control { grid-template-columns: 1fr auto; }
+  .range-control input { grid-column: 1 / -1; grid-row: 2; }
+}

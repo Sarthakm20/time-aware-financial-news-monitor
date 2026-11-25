@@ -103,8 +103,8 @@ async function render(route) {
   markNav(route.page);
   syncFilters(route);
   setStatus("Historical data · not live");
+  // A carried alert survives redirects (e.g. Company Analysis defaulting to TSLA) until a render completes.
   els.alert.replaceChildren(...(carryAlert ? [carryAlert] : []));
-  carryAlert = null;
   if (pageChanged) window.scrollTo(0, 0);
   els.body.replaceChildren(loading());
 
@@ -115,6 +115,7 @@ async function render(route) {
     await module.render(els.body, route.params, {
       meta, setStatus, isCurrent: () => token === current.token,
     });
+    if (token === current.token) carryAlert = null;
   } catch (err) {
     if (token !== current.token) return;
     if (err instanceof ApiError && err.status === 404 && route.params.ticker) {
