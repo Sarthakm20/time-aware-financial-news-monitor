@@ -20,6 +20,7 @@ OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 METRICS_DIR = OUTPUTS_DIR / "metrics"
 PREDICTIONS_DIR = OUTPUTS_DIR / "predictions"
 FIGURES_DIR = OUTPUTS_DIR / "figures"
+WEB_DIR = PROJECT_ROOT / "web"
 
 
 def ensure_project_dirs() -> None:

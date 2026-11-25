@@ -27,7 +27,7 @@ jobs:
         run: pip install -r requirements-dev.txt
 
       - name: Lint
-        run: ruff check src tests app deploy
+        run: ruff check src tests deploy
 
       - name: Test
         run: pytest

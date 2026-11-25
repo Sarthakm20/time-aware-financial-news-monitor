@@ -131,3 +131,9 @@ The pipeline is split into two logical phases that reflect the complete research
 * `src/alerts.py`: Sentiment-drop and volume-spike alerts, webhook posting.
 * `src/gemini.py`: Minimal Gemini REST client: blind headline annotation, search-grounded headline discovery.
 * `src/env.py`: Reads API keys from the environment or a git-ignored `.env` file.
+* `src/api.py`: FastAPI app: `/predict`, the `/tickers` and `/live` endpoints, and the dashboard site.
+* `src/dashboard_api.py`: The dashboard's `/api/...` routes, built from three payload modules: `src/dashboard_data.py`
+  (scored headlines: filters, trend, company view, search), `src/dashboard_metrics.py` (committed evaluation and
+  event-study results) and `src/dashboard_live.py` (live feed summary, Yahoo prices).
+* `web/`: The dashboard site: `index.html`, `static/css/app.css`, `static/js/` (URL state, chart builders, one module
+  per page) and pinned vendored libraries in `static/vendor/` (see `VERSIONS.txt`).

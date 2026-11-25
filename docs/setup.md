@@ -64,13 +64,13 @@ python -m src.pipeline adapt score-all prices event-study
 
 ```bash
 pytest              # unit tests + regression checks against the committed data and metrics
-ruff check src tests app deploy
+ruff check src tests deploy
 ```
 
 The test suite covers:
 - the split logic, recency weights, window and rolling aggregations, and metric calculations;
 - inference post-processing (with a fake model, so no download is needed) and the pipeline CLI;
-- the API endpoints, a headless run of the dashboard, and the Space bundle.
+- the API and dashboard endpoints, the static site mount, and the Space bundle serving the site on its own.
 
 It also verifies that `src/` reproduces the committed train/validation/test splits exactly and the published TSLA rolling-sentiment value. GitHub Actions runs lint and tests on every push, then **builds the API Docker image and smoke-tests the running container**.
 

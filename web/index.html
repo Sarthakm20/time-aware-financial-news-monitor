@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sentiment Monitor</title>
+  <meta name="description" content="Nasdaq-100 headline sentiment, market reaction and model quality, 2019–2023, plus a live news feed.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%231c2740'/%3E%3Cpath d='M3 11l3-3 2 2 5-5' stroke='%237fb0f0' stroke-width='1.6' fill='none'/%3E%3C/svg%3E">
+  <link rel="preload" href="/static/fonts/public-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/vendor/adminlte.min.css">
+  <link rel="stylesheet" href="/static/vendor/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="layout-fixed sidebar-expand-lg">
+<div class="app-wrapper">
+
+  <aside class="app-sidebar" aria-label="Sidebar">
+    <div class="brand">
+      <a href="#/overview" class="brand-name">Sentiment<br>Monitor</a>
+      <span class="brand-sub">Nasdaq-100 Research</span>
+    </div>
+    <div class="sidebar-wrapper">
+      <nav aria-label="Pages">
+        <ul class="nav sidebar-menu flex-column" id="nav">
+          <li class="nav-item"><a class="nav-link" href="#/overview" data-page="overview"><i class="nav-icon bi bi-house" aria-hidden="true"></i><p>Overview</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/company" data-page="company"><i class="nav-icon bi bi-buildings" aria-hidden="true"></i><p>Company Analysis</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/market" data-page="market"><i class="nav-icon bi bi-bar-chart" aria-hidden="true"></i><p>Market Impact</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/news" data-page="news"><i class="nav-icon bi bi-newspaper" aria-hidden="true"></i><p>News Explorer</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/models" data-page="models"><i class="nav-icon bi bi-shield-check" aria-hidden="true"></i><p>Model Evaluation</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/score" data-page="score"><i class="nav-icon bi bi-pencil-square" aria-hidden="true"></i><p>Score a Headline</p></a></li>
+          <li class="nav-item"><a class="nav-link" href="#/live" data-page="live"><i class="nav-icon bi bi-broadcast" aria-hidden="true"></i><p>Live Feed</p></a></li>
+        </ul>
+      </nav>
+      <section class="dataset" aria-labelledby="dataset-title">
+        <h2 id="dataset-title">Dataset context</h2>
+        <ul>
+          <li><i class="bi bi-calendar3" aria-hidden="true"></i><span id="ds-years">2019 – 2023</span></li>
+          <li><i class="bi bi-buildings" aria-hidden="true"></i><span id="ds-companies">Nasdaq-100 companies</span></li>
+          <li><i class="bi bi-newspaper" aria-hidden="true"></i><span id="ds-headlines">Collected headlines</span></li>
+        </ul>
+      </section>
+    </div>
+    <p class="data-status" id="data-status"><span class="dot" aria-hidden="true"></span><span>Historical data · not live</span></p>
+  </aside>
+
+  <header class="app-header">
+    <button class="menu-toggle" type="button" data-lte-toggle="sidebar" aria-label="Open the page menu">
+      <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+    <form class="filters" id="filters" role="search" aria-label="Filters" onsubmit="return false">
+      <div class="filter">
+        <label for="f-company">Company</label>
+        <input id="f-company" class="form-control" type="search" list="ticker-list" placeholder="All companies"
+               autocomplete="off" spellcheck="false" maxlength="10">
+        <datalist id="ticker-list"></datalist>
+      </div>
+      <div class="filter">
+        <label for="f-period">Period</label>
+        <select id="f-period" class="form-select"><option value="">All years</option></select>
+      </div>
+      <div class="filter">
+        <label for="f-model">Model</label>
+        <select id="f-model" class="form-select"></select>
+      </div>
+    </form>
+  </header>
+
+  <main class="app-main" id="main" tabindex="-1">
+    <div class="page-head">
+      <h1 id="page-title">Overview</h1>
+      <p id="page-desc"></p>
+    </div>
+    <div id="page-alert" role="status" aria-live="polite"></div>
+    <div id="page-body" class="page-body"></div>
+    <footer class="page-foot" id="page-foot">Research prototype. Sentiment summarises the tone of dated news headlines; it does not predict returns and is not investment advice.</footer>
+  </main>
+</div>
+
+<script src="/static/vendor/bootstrap.bundle.min.js"></script>
+<script src="/static/vendor/adminlte.min.js"></script>
+<script src="/static/vendor/echarts.min.js"></script>
+<script type="module" src="/static/js/main.js"></script>
+</body>
+</html>

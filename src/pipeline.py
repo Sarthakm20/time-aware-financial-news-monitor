@@ -672,6 +672,25 @@ def stage_prices(p: Paths, args: argparse.Namespace) -> None:
     print(f"  prices for {prices['ticker'].nunique() - 1} of {len(tickers)} tickers; missing: {missing}")
 
 
+def stage_corpus_summary(p: Paths, args: argparse.Namespace) -> None:
+    """Collected vs scored headline counts, so the dashboard can show them without shipping raw data."""
+    collected = pd.read_csv(_require(p.processed / "fnspid_all_2019_2023.csv", "prepare"),
+                            usecols=["Date", "Stock_symbol"])
+    scored = pd.read_csv(_require(all_scored_csv(p, "adapted"), "score-all"), usecols=["Date", "Stock_symbol"])
+    dates = pd.to_datetime(scored["Date"], utc=True)
+    _write_json({
+        "collected_headlines": int(len(collected)),
+        "scored_headlines": int(len(scored)),
+        "tickers": int(scored["Stock_symbol"].str.upper().nunique()),
+        "first_date": str(dates.min().date()),
+        "last_date": str(dates.max().date()),
+        "source": "FNSPID 2019-2023, relevance-filtered",
+    }, p.metrics / "corpus_summary.json")
+
+
+MIN_EVENTS_PER_YEAR = 200  # skip stray years (e.g. Dec 31 news assigned to the next January's trading day)
+
+
 def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
     """Headline sentiment vs abnormal returns and volume, all tickers (date-clustered bootstrap)."""
     from src.event_study import (
@@ -685,7 +704,8 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
     from src.visualization import plot_car_paths
 
     returns = add_returns(load_prices(_require(p.data / "prices" / "daily.csv", "prices")))
-    ic_tables, bucket_tables, runs = [], [], []
+    ic_tables, bucket_tables, path_tables, runs = [], [], [], []
+    year_buckets, year_paths, year_runs = [], [], []
     for slug in SCORING_MODELS:
         path = all_scored_csv(p, slug)
         if not path.exists():
@@ -701,6 +721,24 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
                 table.insert(1, "headlines", variant)
             ic_tables.append(ic)
             bucket_tables.append(buckets)
+            car_paths = mean_car_paths(panel, threshold=args.event_threshold)
+            car_paths.insert(0, "model", slug)
+            car_paths.insert(1, "headlines", variant)
+            path_tables.append(car_paths)
+            # Per calendar year of the event day, so the dashboard's Period filter can apply.
+            for year, sub in panel.groupby(panel["event_date"].dt.year):
+                if len(sub) < MIN_EVENTS_PER_YEAR:
+                    continue
+                yb = bucket_returns(sub, threshold=args.event_threshold, n_boot=args.n_event_boot, seed=args.seed)
+                yp = mean_car_paths(sub, threshold=args.event_threshold)
+                for table in (yb, yp):
+                    table.insert(0, "model", slug)
+                    table.insert(1, "headlines", variant)
+                    table.insert(2, "year", int(year))
+                year_buckets.append(yb)
+                year_paths.append(yp)
+                year_runs.append({"model": slug, "headlines": variant, "year": int(year), "events": len(sub),
+                                  "tickers": int(sub["ticker"].nunique())})
             runs.append({"model": slug, "headlines": variant, "events": len(panel),
                          "tickers": int(panel["ticker"].nunique()),
                          "first_event": str(panel["event_date"].min().date()),
@@ -708,7 +746,7 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
             print(f"  [{slug} | {variant}] {len(panel)} ticker-days")
             print(ic[["outcome", "n_events", "value", "ci_low", "ci_high", "p_value"]].to_string(index=False))
             if exclude:
-                plot_car_paths(mean_car_paths(panel, threshold=args.event_threshold),
+                plot_car_paths(car_paths,
                                title=f"Cumulative abnormal return around headline days ({slug} model, "
                                      f"price-move headlines excluded)",
                                save_path=p.figures / f"event_study_car_{slug}.png")
@@ -717,6 +755,9 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
         raise SystemExit("No scored headlines - run: python -m src.pipeline score-all")
     _write_csv(pd.concat(ic_tables, ignore_index=True), p.metrics / "event_study_information_coefficients.csv")
     _write_csv(pd.concat(bucket_tables, ignore_index=True), p.metrics / "event_study_buckets.csv")
+    _write_csv(pd.concat(path_tables, ignore_index=True), p.metrics / "event_study_car_paths.csv")
+    _write_csv(pd.concat(year_buckets, ignore_index=True), p.metrics / "event_study_buckets_by_year.csv")
+    _write_csv(pd.concat(year_paths, ignore_index=True), p.metrics / "event_study_car_paths_by_year.csv")
     _write_json({
         "design": {
             "unit": "ticker x trading day with >=1 relevant headline; sentiment = mean P(pos)-P(neg)",
@@ -728,6 +769,7 @@ def stage_event_study(p: Paths, args: argparse.Namespace) -> None:
             "not_advice": "Association study on historical data; not a trading signal or investment advice.",
         },
         "runs": runs,
+        "runs_by_year": year_runs,
     }, p.metrics / "event_study_summary.json")
 
 
@@ -1150,6 +1192,7 @@ STAGES: Dict[str, Callable[[Paths, argparse.Namespace], None]] = {
     "score-all": stage_score_all,
     "prices": stage_prices,
     "event-study": stage_event_study,
+    "corpus-summary": stage_corpus_summary,
     "analyze": stage_analyze,
     "fetch-news": stage_fetch_news,
     "score": stage_score,

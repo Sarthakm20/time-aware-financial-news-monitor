@@ -1,0 +1,11 @@
+Vendored front-end files (pinned; downloaded from cdn.jsdelivr.net on 2026-11-25). No build step.
+
+admin-lte 4.10.2 (MIT)        dist/css/adminlte.min.css, dist/js/adminlte.min.js
+bootstrap 5.3.9 (MIT)         dist/js/bootstrap.bundle.min.js
+bootstrap-icons 1.13.2 (MIT)  font/bootstrap-icons.min.css, font/fonts/bootstrap-icons.woff2|woff -> fonts/
+echarts 5.6.0 (Apache-2.0)    dist/echarts.min.js
+@fontsource/public-sans 5.3.0 (OFL-1.1)  files/public-sans-latin-{400,500,600,700}-normal.woff2 -> ../fonts/
+
+Typeface note: the design chose Libre Franklin, but the @fontsource/libre-franklin 5.3.0 latin files have no
+'tnum' (tabular figures) feature, so per the design doc (section 7) the site uses Public Sans, Libre Franklin's
+tabular-figure derivative, as its single family.

@@ -27,9 +27,8 @@
    python -m src.pipeline --list
    python -m src.pipeline prepare evaluate score monitor
 
-   # Interactive dashboard and REST API (see docs/deployment.md)
-   streamlit run app/streamlit_app.py
-   uvicorn src.api:app --port 8000          # docs at http://localhost:8000/docs
+   # Interactive dashboard and REST API, served together (see docs/deployment.md)
+   uvicorn src.api:app --reload             # dashboard: http://localhost:8000, API docs: /docs
    ```
    *The notebooks (execution order in [docs/architecture.md](docs/architecture.md)) document the research step by step; `python -m src.pipeline` is the reproducible path built on the same `src/` code.*
 
