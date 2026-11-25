@@ -142,3 +142,19 @@ def test_site_served_and_api_not_shadowed(client):
     assert "<html" in client.get("/").text.lower()
     assert client.get("/static/js/main.js").status_code == 200
     assert client.get("/health").json()["status"] == "ok" and client.get("/tickers").status_code == 200
+
+
+@pytest.fixture()
+def real_client():
+    load_scored.cache_clear()
+    return TestClient(create_app(service=FakeService()))
+
+
+def test_real_shell_lists_seven_pages_and_assets(real_client):
+    html = real_client.get("/").text
+    for label in ["Overview", "Company Analysis", "Market Impact", "News Explorer", "Model Evaluation",
+                  "Score a Headline", "Live Feed"]:
+        assert label in html
+    for asset in ["/static/js/main.js", "/static/css/app.css", "/static/vendor/echarts.min.js",
+                  "/static/vendor/adminlte.min.css", "/static/fonts/public-sans-latin-400-normal.woff2"]:
+        assert real_client.get(asset).status_code == 200, asset
